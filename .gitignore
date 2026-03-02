@@ -50,3 +50,6 @@ result
 
 # Opam linking
 _opam
+
+# Playground build files:
+*playground
