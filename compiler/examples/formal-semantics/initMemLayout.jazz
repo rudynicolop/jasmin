@@ -1,0 +1,14 @@
+inline
+fn mem() -> reg u64 {
+  reg u64 r;
+  reg u64 p;
+
+  p = 0x1000;
+
+  [ p + 0] = 255;
+  r = [ p + 0];
+
+  return r;
+}
+
+exec mem (0x1000 : 8)

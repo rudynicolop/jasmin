@@ -1,0 +1,12 @@
+param int N = 4;
+
+fn zero() -> reg u64[N] {
+  inline int i;
+  reg u64[N] t;
+  for i = 0 to N {
+    t[i] = i;
+  }
+  return t;
+}
+
+exec zero()
