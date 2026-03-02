@@ -47,3 +47,6 @@ Makefile.coq.conf
 
 # nix build output
 result
+
+# Opam linking
+_opam
