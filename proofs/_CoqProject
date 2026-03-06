@@ -198,3 +198,6 @@ lang/waes.v
 lang/warray_.v
 lang/word.v
 lang/wsize.v
+
+# Rudy's examples examples
+hoareExamples/simple.v

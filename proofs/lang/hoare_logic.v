@@ -283,6 +283,7 @@ Context {E E0: Type -> Type} {wE: with_Error E E0} {iE0 : InvEvent E0} {iEr : In
 
 (* input-sensitive Hoare triple on ktrees; the post-condition is a
    relation between input and output *)
+(* NOTE: [I] is the input and [O] is the output. *)
 Definition khoare_io {I O}
    (P : Pred I) (F : ktree E I O) (Q : Pred_io I O) :=
   forall i, P i -> lutt preInv postInv (Q i) (F i).
@@ -833,7 +834,9 @@ Lemma whoare_assgn (Rv Rtr: Pred_v) (P Q : Pred_c) ii x tg ty e :
   (forall s, P s -> rhoare Rv (truncate_val (eval_atype ty)) Rtr PredT) ->
   (forall v, Rtr v -> rhoare P (write_lval true (p_globs p) x v) Q PredT) ->
   whoare p ev P [:: MkI ii (Cassgn x tg ty e)] Q.
-Proof. by apply hoare_assgn. Qed.
+Proof.
+  Set Printing Implicit.
+  by apply hoare_assgn. Qed.
 
 Lemma whoare_opn (Rve Rvo : Pred_vs) P Q ii xs tag o es :
   rhoare P (fun s => sem_pexprs true (p_globs p) s es) Rve PredT ->

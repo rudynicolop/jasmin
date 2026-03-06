@@ -2,7 +2,10 @@ export
 fn main(reg u32 pt) -> reg u32 {
   reg u32 tmp;
 
+  /* Question: What is this doing? */
   tmp = [:u32 pt + 0];
+  /* Question: Does this fail because the [+ 1] is not
+     aligned with 32? */
   tmp = [#aligned:u32 pt + 1];
   
   return tmp;

@@ -1,3 +1,5 @@
+/* This test fails because [i] is not bound by the length of the array. */
+
 export
 fn main(reg ptr u32[4] a, reg u32 i) -> reg u32 {
   reg u32 x;

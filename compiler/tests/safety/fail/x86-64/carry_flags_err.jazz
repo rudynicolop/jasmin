@@ -4,6 +4,7 @@ fn test() -> reg u64 {
   reg u64 i;
 
   i = 2;
+  /* What is this line doing? */
   cf, i -= 1;
   if (!cf){
     while (true) { i += 1;}
