@@ -1,12 +1,11 @@
-Require Export hoare_logic.
-Require Import it_sems_core core_logics.
-Require Import expr oseq psem_core (*compiler_util*).
+From Jasmin Require Export hoare_logic.
+From Jasmin Require Import it_sems_core core_logics.
+From Jasmin Require Import expr oseq psem_core.
 
 From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
 
 (** NOTE: Jéremy's recommendation, since mathcomp disables bullets. *)
 Set Bullet Behavior "Strict Subproofs".
-(* Set Default Goal Selector "!". *)
 
 (*** Short Hoare Logic Examples. *)
 
@@ -47,21 +46,33 @@ Section programs.
       NOTE: Using [AT_keep] to avoid shenanigans.
       NOTE: I believe that [arr_access] controls if the index
       is scaled by the word size?
+      NOTE: We need to explicitly convert the value
+      to be stored in the array to a word, otherwise
+      we get a type error.
    *)
   Definition assgn_u32_array i al (idx :Z) x : cmd :=
     [:: MkI i
-       (Cassgn (Laset al AAscale U32 x idx) AT_keep aint 5%Z)].
+       (Cassgn (Laset al AAscale U32 x idx) AT_keep (aword U32)
+          (Papp1 (Oword_of_int U32) 5%Z))].
 
 End programs.
 
-(* TODO: I think [whoare] is too weak... *)
+(** NOTE: To rule out bad behavior, we set the conditions for error
+    events to [False].
+    TODO: Do we want to do this for the precondition too, or just
+    the postcondition? *)
+Definition impossible_invEvent (E0 : Type -> Type) : InvEvent E0 :=
+  {| preInv0_ := fun _ _ => False
+  ; postInv0_ := fun _ _ _ => False |}.
+Definition impossible_invErr : InvErr :=
+  {| invErr_ := fun _ => False |}.
 
-Section proofs_whoare.
+Section proofs_hoare.
 
   (** ** Proofs about programs.
 
-    NOTE: Here I don't care about errors so I use [whoare].
-    TODO: I think I actually want to completely rule out errors... *)
+      NOTE: We use [False] for the predicate for error cases,
+      in order to completely rule out bad behavior. *)
 
   (** Generic parameters. *)
   Context
@@ -76,37 +87,35 @@ Section proofs_whoare.
       {scP : semCallParams}
       {dc : DirectCall}.
 
-  (** Generic parameters for [whoare].*)
+  (** Generic parameters for [hoare].*)
   Context {E E0: Type -> Type}.
   Context {sem_F : sem_Fun E} {wE: with_Error E E0} {iE0 : InvEvent E0}.
   Context (p : prog) (ev: extra_val_t).
 
-  (** Copied from test section in [proofs/lang/hoare_logic.v] *)
-  #[local] Existing Instance trivial_invErr.
-  #[local] Existing Instance trivial_invEvent.
-  (* #[local] Notation pre := (fun s0 s => s = s0). *)
-  (* #[local] Notation post X := (fun s0 s => s0.(evm) =[\ X] s.(evm)). *)
-  #[local] Existing Instance trivial_spec.
+  (** We need to create the instances for the error pre/postconditions
+      so they are discoverable by our [hoare] triple uses. *)
+  Local Existing Instance impossible_invEvent.
+  Local Existing Instance impossible_invErr.
 
   (** Factor out common section parameters. *)
-  #[local] Notation WHoare := (whoare p ev).
+  Local Notation Hoare := (hoare p ev).
 
-  Lemma whoare_while_true_basic i1 i2 al :
-    WHoare (fun _ => True) (while_true i1 i2 al) (fun _ => True).
+  Lemma hoare_while_true_basic i1 i2 al :
+    Hoare (fun _ => True) (while_true i1 i2 al) (fun _ => True).
   Proof.
-    apply whoare_while; auto.
-    all: by apply hoare_skip.
+    apply hoare_while with (Qerr := fun _ => False); simpl; auto.
+    1, 3: by apply hoare_skip.
+    rewrite /sem_cond /= => _ //.
   Qed.
 
-  Lemma whoare_while_diverge i1 i2 al Q :
-    WHoare (fun _ => True) (while_true i1 i2 al) Q.
+  Lemma hoare_while_diverge i1 i2 al Q :
+    Hoare (fun _ => True) (while_true i1 i2 al) Q.
   Proof.
-    rewrite /WHoare /isem_cmd_ /=. apply khoare_bind with Q.
+    rewrite /Hoare /isem_cmd_ /=. apply khoare_bind with Q.
     2:{ (* Intros everything *)
       move => >.
       (* The same as [refine (@khoare_ret _ _ _ _ _ _ _ _ _ _ _ _).] *)
-      apply: khoare_ret.
-      done. }
+      apply: khoare_ret. done. }
     apply khoare_iter, khoare_bind with (fun _ => True);
       first by apply khoare_ret.
     (* Why do I need to apply this? *)
@@ -119,47 +128,63 @@ Section proofs_whoare.
     all: by apply khoare_ret.
   Qed.
 
-  Lemma whoare_assert_false i msg Q :
-    WHoare (fun _ => False) (assert_false i msg) Q.
-  Proof. apply whoare_assert; intuition. Qed.
+  Lemma hoare_assert_false i msg Q :
+    Hoare (fun _ => False) (assert_false i msg) Q.
+  Proof. apply hoare_assert with (Qerr:=fun _ => False); intuition. Qed.
 
+  (** NOTE the differences between the applications of
+      [rhoare_bind], [rhoare_read], and [rhoare_write]. *)
   Lemma whoare_assgn_int_zero_plus_zero_local i x :
-    WHoare
+    eval_atype (vtype x.(v_var)) = cint ->
+    Hoare
       (fun _ => True)
       (assgn_int_zero_plus_zero_local i x)
-      (fun s => get_gvar true (p_globs p) s.(evm) (mk_lvar x)
-             = ok (Vint 0%Z)).
+      (fun s : estate => s.(evm).[x] = Vint 0%Z).
   Proof.
-    apply whoare_assgn with
+    intros Hx_type.
+    apply hoare_assgn with
       (Rv:=fun v => v = Vint 0%Z)
-      (Rtr:=fun v => v = Vint 0%Z); simpl.
+      (Rtr:=fun v => v = Vint 0%Z)
+      (Qerr:=fun _ => False); simpl; auto.
     { (* NOTE: Is this the best way? *)
       rewrite /sem_sop2 /=.
-      apply (@rhoare_ok error) with (QE:=PredT); auto. }
+      by apply rhoare_ok with (QE:=fun _ : error => False). }
     { rewrite /truncate_val /= => _ _.
-      apply rhoare_read with (R:=eq 0%Z).
-      - rewrite wrhoareP => v z -> /= [= <-] //.
-      - intros ? <-. rewrite /rhoare /rhoare_io //. }
-    intros ? ->. rewrite wrhoareP => s1 s2 _.
-    intros [Hdb Htrunc Hget]%(write_get_gvarP_eq (p_globs p)).
-    simpl in *.
-    destruct (eval_atype (vtype x)); simpl in *;
-      discriminate || assumption.
+      apply rhoare_bind with (R:=eq 0%Z) (QET:=fun _ => False); auto.
+      { move => ? -> /= //. }
+      apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
+    intros ? ->.
+    (* NOTE: Since we use both [s] and [vm], we need [rhoare_read]. *)
+    apply rhoare_read with (fun s => s.[x] = Vint 0%Z).
+    { rewrite /set_var /= Hx_type /= => s _.
+      rewrite Vm.setP_eq Hx_type /= //. }
+    intros vm Hvm_get.
+    apply rhoare_ok with (QE:=fun _ : error => False) => s _ /= //.
   Qed.
 
   (* TODO: how to write this spec? *)
-  Lemma whoare_assgn_u32_array_trivial i al idx x (*vs*) :
-    WHoare
+  Lemma hoare_assgn_u32_array i al idx x (*vs*) :
+    Hoare
       (fun s : estate => True)
       (assgn_u32_array i al idx x)
       (fun s : estate => True).
   Proof.
-    apply whoare_assgn with
-      (Rv:=eq (Vint 5%Z)) (Rtr:=eq (Vint 5%Z)); simpl.
-    (* NOTE: Why does it not care about memory safety? *)
-    all: auto.
-    - rewrite /rhoare /rhoare_io //.
-    - rewrite /rhoare /rhoare_io // => _ _ ? <- /= //.
-  Qed.
+    eapply hoare_assgn with (Rv:=eq (Vword _))
+      (Rtr:=eq (Vword _)) (Qerr:=fun _ => False) => /= //.
+    { rewrite /truncate_val /= => _ _.
+      eapply rhoare_bind with (R:=eq _) (QET:=fun _ : error => False) => /= //.
+      { intros ? <-. rewrite /= truncate_word_u //. }
+      apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
+    intros ? <-. rewrite /write_lval /= truncate_word_u /=.
+    intros s _. simpl.
+    Unset Printing Notations.
+    rewrite /on_arr_var /=.
+    (* Print WArray.set. *)
+  (* TODO: need to do the following:
+     - [x] needs to map to an array in memory [Varr n t], ow it's a type error.
+     - The actual array of values is [t : WArray.array n].
+     - Do we need [idx < n]?
+   *)
+  Abort.
 
-End proofs_whoare.
+End proofs_hoare.
