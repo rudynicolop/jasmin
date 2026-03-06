@@ -2,6 +2,8 @@ Require Export hoare_logic.
 Require Import it_sems_core core_logics.
 Require Import expr oseq psem_core (*compiler_util*).
 
+From mathcomp Require Import ssreflect (*ssrfun ssrbool eqtype*).
+
 (*** Short Hoare Logic Examples. *)
 
 Section programs.
@@ -54,20 +56,33 @@ Section proofs_whoare.
     WHoare (fun _ => True) (while_true i1 i2 al) (fun _ => True).
   Proof.
     apply whoare_while; auto.
-    all: apply hoare_skip; auto.
+    all: by apply hoare_skip.
   Qed.
 
   Lemma whoare_while_diverge i1 i2 al Q :
     WHoare (fun _ => True) (while_true i1 i2 al) Q.
   Proof.
-    eapply hoare_weaken1 with (P2:=fun _ => True);
-      last apply whoare_while_full; simpl; auto.
-    all: try solve [intuition].
-    - apply hoare_skip.
-      (* TODO: impossible, maybe I need
-         to unfold, run interpreter, and manually
-         apply [khoare_iter]... *)
-      admit.
-    - apply hoare_skip. intuition.
-  Abort.
+    rewrite /WHoare /isem_cmd_ /=.
+    apply khoare_bind with Q.
+    2:{
+      (* Intros everything *)
+      move => >.
+      (* The same as [refine (@khoare_ret _ _ _ _ _ _ _ _ _ _ _ _).] *)
+      apply: khoare_ret.
+      done.
+    }
+    apply khoare_iter.
+    apply khoare_bind with (fun _ => True);
+      first by apply khoare_ret.
+    (* Why do I need to apply this? *)
+    apply khoare_eq_pred => s.
+    apply khoare_read with
+      (fun b => sem_cond (p_globs p) true s = ok b).
+    { rewrite /isem_cond /sem_cond /=.
+      by apply khoare_ret. }
+    rewrite /sem_cond /= => ? [= <-].
+    apply khoare_bind with (fun s' => s' = s /\ True).
+    { by apply khoare_ret. }
+    by apply khoare_ret.
+  Qed.
 End proofs_whoare.
