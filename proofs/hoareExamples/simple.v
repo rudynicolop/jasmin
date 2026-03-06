@@ -2,7 +2,13 @@ Require Export hoare_logic.
 Require Import it_sems_core core_logics.
 Require Import expr oseq psem_core (*compiler_util*).
 
-From mathcomp Require Import ssreflect (*ssrfun ssrbool eqtype*).
+From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
+
+(** NOTE: Jéremy's recommendation, since mathcomp disables bullets. *)
+Set Bullet Behavior "Strict Subproofs".
+(* Set Default Goal Selector "!". *)
+
+
 
 (*** Short Hoare Logic Examples. *)
 
@@ -12,9 +18,27 @@ Section programs.
 
   Context `{asmop:asmOp}.
 
-  (** Infinite loop. *)
+  (** Infinite loop.
+
+      NOTE: coercions for [Pbool] are defined at the
+      declaration of [pexpr]. *)
   Definition while_true i1 i2 al : cmd :=
-    [:: MkI i1 (Cwhile al [::] (Pbool true) i2 [::])].
+    [:: MkI i1 (Cwhile al [::] true i2 [::])].
+
+  (** Assert [false]. *)
+  Definition assert_false i msg : cmd :=
+    [:: MkI i (Cassert (msg, Pbool false))].
+
+  (** Assign [0 + 0] to a local variable.
+
+      NOTE: Using [AT_keep] to avoid shenanigans.
+      NOTE: For simplicity, just integer arithmetic.
+      NOTE: Coercions for [Pconst] are defined at the
+      declaration of [pexpr]. *)
+  Definition assgn_int_zero_plus_zero_local i x : cmd :=
+    [:: MkI i
+       (Cassgn (Lvar x) AT_keep aint
+          (Papp2 (Oadd Op_int) 0%Z 0%Z))].
 
 End programs.
 
@@ -62,27 +86,49 @@ Section proofs_whoare.
   Lemma whoare_while_diverge i1 i2 al Q :
     WHoare (fun _ => True) (while_true i1 i2 al) Q.
   Proof.
-    rewrite /WHoare /isem_cmd_ /=.
-    apply khoare_bind with Q.
-    2:{
-      (* Intros everything *)
+    rewrite /WHoare /isem_cmd_ /=. apply khoare_bind with Q.
+    2:{ (* Intros everything *)
       move => >.
       (* The same as [refine (@khoare_ret _ _ _ _ _ _ _ _ _ _ _ _).] *)
       apply: khoare_ret.
-      done.
-    }
-    apply khoare_iter.
-    apply khoare_bind with (fun _ => True);
+      done. }
+    apply khoare_iter, khoare_bind with (fun _ => True);
       first by apply khoare_ret.
     (* Why do I need to apply this? *)
     apply khoare_eq_pred => s.
     apply khoare_read with
       (fun b => sem_cond (p_globs p) true s = ok b).
-    { rewrite /isem_cond /sem_cond /=.
-      by apply khoare_ret. }
+    { rewrite /isem_cond /sem_cond /=. by apply khoare_ret. }
     rewrite /sem_cond /= => ? [= <-].
     apply khoare_bind with (fun s' => s' = s /\ True).
-    { by apply khoare_ret. }
-    by apply khoare_ret.
+    all: by apply khoare_ret.
+  Qed.
+
+  Lemma whoare_assert_false i msg Q :
+    WHoare (fun _ => False) (assert_false i msg) Q.
+  Proof. apply whoare_assert; intuition. Qed.
+
+  Lemma whoare_assgn_int_zero_plus_zero_local i x :
+    WHoare
+      (fun _ => True)
+      (assgn_int_zero_plus_zero_local i x)
+      (fun s => get_gvar true (p_globs p) s.(evm) (mk_lvar x)
+             = ok (Vint 0%Z)).
+  Proof.
+    apply whoare_assgn with
+      (Rv:=fun v => v = Vint 0%Z)
+      (Rtr:=fun v => v = Vint 0%Z); simpl.
+    { (* NOTE: Is this correct? *)
+      rewrite /sem_sop2 /=.
+      apply (@rhoare_ok error) with (QE:=PredT); auto. }
+    { rewrite /truncate_val /= => _ _.
+      apply rhoare_read with (R:=eq 0%Z).
+      - rewrite wrhoareP => v z -> /= [= <-] //.
+      - intros ? <-. rewrite /rhoare /rhoare_io //. }
+    intros ? ->. rewrite wrhoareP => s1 s2 _.
+    intros [Hdb Htrunc Hget]%(write_get_gvarP_eq (p_globs p)).
+    simpl in *.
+    destruct (eval_atype (vtype x)); simpl in *;
+      discriminate || assumption.
   Qed.
 End proofs_whoare.
