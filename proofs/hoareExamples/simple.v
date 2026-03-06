@@ -8,8 +8,6 @@ From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
 Set Bullet Behavior "Strict Subproofs".
 (* Set Default Goal Selector "!". *)
 
-
-
 (*** Short Hoare Logic Examples. *)
 
 Section programs.
@@ -40,13 +38,30 @@ Section programs.
        (Cassgn (Lvar x) AT_keep aint
           (Papp2 (Oadd Op_int) 0%Z 0%Z))].
 
+  (** Assign to array at index.
+
+      We make things simple by just scaling the
+      index implicitly with the word size, and we
+      use a word size of [U32].
+
+      NOTE: Using [AT_keep] to avoid shenanigans.
+      NOTE: I believe that [arr_access] controls if the index
+      is scaled by the word size?
+   *)
+  Definition assgn_u32_array i al (idx :Z) x : cmd :=
+    [:: MkI i
+       (Cassgn (Laset al AAscale U32 x idx) AT_keep aint 5%Z)].
+
 End programs.
+
+(* TODO: I think [whoare] is too weak... *)
 
 Section proofs_whoare.
 
   (** ** Proofs about programs.
 
-    NOTE: Here I don't care about errors so I use [whoare]. *)
+    NOTE: Here I don't care about errors so I use [whoare].
+    TODO: I think I actually want to completely rule out errors... *)
 
   (** Generic parameters. *)
   Context
@@ -118,7 +133,7 @@ Section proofs_whoare.
     apply whoare_assgn with
       (Rv:=fun v => v = Vint 0%Z)
       (Rtr:=fun v => v = Vint 0%Z); simpl.
-    { (* NOTE: Is this correct? *)
+    { (* NOTE: Is this the best way? *)
       rewrite /sem_sop2 /=.
       apply (@rhoare_ok error) with (QE:=PredT); auto. }
     { rewrite /truncate_val /= => _ _.
@@ -131,4 +146,20 @@ Section proofs_whoare.
     destruct (eval_atype (vtype x)); simpl in *;
       discriminate || assumption.
   Qed.
+
+  (* TODO: how to write this spec? *)
+  Lemma whoare_assgn_u32_array_trivial i al idx x (*vs*) :
+    WHoare
+      (fun s : estate => True)
+      (assgn_u32_array i al idx x)
+      (fun s : estate => True).
+  Proof.
+    apply whoare_assgn with
+      (Rv:=eq (Vint 5%Z)) (Rtr:=eq (Vint 5%Z)); simpl.
+    (* NOTE: Why does it not care about memory safety? *)
+    all: auto.
+    - rewrite /rhoare /rhoare_io //.
+    - rewrite /rhoare /rhoare_io // => _ _ ? <- /= //.
+  Qed.
+
 End proofs_whoare.
