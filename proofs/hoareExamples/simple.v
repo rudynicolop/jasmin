@@ -4,6 +4,8 @@ From Jasmin Require Import expr oseq psem_core.
 
 From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
 
+Require Import Stdlib.micromega.Lia.
+
 (** NOTE: Jéremy's recommendation, since mathcomp disables bullets. *)
 Set Bullet Behavior "Strict Subproofs".
 
@@ -165,13 +167,21 @@ Section proofs_hoare.
   (* TODO: how to write this spec? *)
   Lemma hoare_assgn_u32_array i al
     (idx : Z) (x : var_i) (n : positive) (arr : WArray.array n) :
-    (0 <= idx < n)%Z ->
+    (* Variable needs to have the correct array type. *)
+    eval_atype (vtype x.(v_var)) = carr n ->
+    (* Index needs to be non-negative. *)
+    (0 <= idx)%Z ->
+    (* TODO: Why do I need a [_ + 3]? *)
+    (idx * wsize_size U32 + 3 < n)%Z ->
     Hoare
       (fun s : estate => s.(evm).[x] = Varr arr)
       (assgn_u32_array i al idx x)
-      (fun s : estate => True).
+      (fun s : estate => exists arr',
+           (* TODO: but does this show that the rest of [s] is unchanged? *)
+           WArray.set arr al AAscale idx (wrepr U32 5) = ok arr'
+           /\ s.(evm).[x] = Varr arr').
   Proof.
-    intros Hidx.
+    intros Hxtype Hidx0 Hidxn.
     eapply hoare_assgn with (Rv:=eq (Vword _))
       (Rtr:=eq (Vword _)) (Qerr:=fun _ => False) => /= //.
     { rewrite /truncate_val /= => _ _.
@@ -190,54 +200,27 @@ Section proofs_hoare.
       apply rhoare_ok with (QE:=fun _ : error => False) => _ ->.
       (* TODO: Is there no lemma to show that [WArray.set] succeeds? *)
       rewrite /WArray.set.
-      destruct (validw (Pointer:=WArray.PointerZ) arr al
-                  (idx * mk_scale AAscale U32)%Z U32) eqn:Hvalid.
-      - pose proof writeV (Pointer:=WArray.PointerZ)
+      enough (validw (Pointer:=WArray.PointerZ) arr al
+                  (idx * mk_scale AAscale U32)%Z U32 = true) as Hvalid.
+      { pose proof writeV (Pointer:=WArray.PointerZ)
           (wrepr U32 5) arr al (idx * mk_scale AAscale U32)%Z as Hwrite.
         rewrite Hvalid in Hwrite.
         apply elimT with (2:=is_true_true) in Hwrite as [arr' Hset].
-        rewrite Hset /= //.
-      - rewrite /validw in Hvalid.
-        rewrite is_aligned_if_is_align ?WArray.is_align_scale // /= in Hvalid.
-        rewrite !Bool.andb_false_iff add_0 /= in Hvalid.
-        rewrite !Z.leb_gt in Hvalid.
-        Search (_ )
-        Search (validw _ _ _ _ = false).
-                 as [[arr' Hok] | H].
-      - rewrite Hok /= //.
-      - Se
-      admit.
-                 rewrite  /write.
-      rewrite is_aligned_if_is_align ?WArray.is_align_scale // /=.
-      destruct (WArray.set arr al AAscale idx (wrepr U32 5))
-        as [arr' |] eqn:Hset; auto.
-      Search (WArray.set _ _ _ _ _ = Error _).
-      (* TODO: Is there no lemma to infer from [WArray.set] failing? *)
-      rewrite /WArray.set in Hset.
-      rewrite /write /= in Hset.
-      pose proof WArray.is_align_scale idx U32 as HisAlign.
-      apply is_aligned_if_is_align with (al:=al) in HisAlign.
-      rewrite HisAlign /= in Hset.
-      Search WArray.set8.
-      destruct (WArray.valid8P arr)
-      Search (Result.bind _ _ = ok _).
-      Search is_align.
-      Search (write _ _ _ _ = Error _).
-      (* TODO: Is there no lemma to show that [write] succeeds for arrays? *)
-      rewrite /write /=.
-      Search (is_aligned_if _ _ _).
-      Search (write _ _ _ _ = ok _).
-      destruct (writeV (wrepr U32 5) arr al (idx * mk_scale AAscale U32)%Z).
-      Search (WArray.set _ _ _ _ _ = ok _).
-    }
-    intros s _. simpl.
-    rewrite /on_arr_var /=.
-    (* Print WArray.set. *)
-  (* TODO: need to do the following:
-     - [x] needs to map to an array in memory [Varr n t], ow it's a type error.
-     - The actual array of values is [t : WArray.array n].
-     - Do we need [idx < n]?
-   *)
-  Abort.
+        rewrite Hset /= //. }
+      rewrite /validw is_aligned_if_is_align ?WArray.is_align_scale // /=.
+      rewrite ziota_recP /= !WArray.addE /WArray.in_bound Z.add_0_r.
+      rewrite !Bool.andb_true_iff /= !Z.leb_le !Z.ltb_lt.
+      rewrite /wsize_size in Hidxn *.
+      repeat split; try lia. }
+    intros arr' Hset.
+    rewrite /write_var.
+    apply rhoare_read with (R:=fun t : Vm.t => t.[x] = Varr arr').
+    { intros s Hsx.
+      rewrite /set_var /= Hxtype /= eq_refl /= Vm.setP_eq /=.
+      rewrite Hxtype eq_refl //. }
+    intros t Ht.
+    apply rhoare_ok with (QE:=fun _ : error => False).
+    intros s Hsx. exists arr'. split; auto.
+  Qed.
 
 End proofs_hoare.
