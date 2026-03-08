@@ -57,6 +57,13 @@ Section programs.
        (Cassgn (Laset al AAscale U32 x idx) AT_keep (aword U32)
           (Papp1 (Oword_of_int U32) 5%Z))].
 
+  (** Load an array from a pointer, then read from the array. *)
+  (* TODO: *)
+  (* Definition load_array_then_get i x n al : cmd := *)
+  (*   [:: MkI i *)
+  (*      (Cassgn (Lvar x) AT_keep (aarr U32 n) (Pload al U32)) *)
+  (*   ] *)
+
 End programs.
 
 (** NOTE: To rule out bad behavior, we set the conditions for error
@@ -68,6 +75,7 @@ Definition impossible_invEvent (E0 : Type -> Type) : InvEvent E0 :=
   ; postInv0_ := fun _ _ _ => False |}.
 Definition impossible_invErr : InvErr :=
   {| invErr_ := fun _ => False |}.
+
 
 Section proofs_hoare.
 
@@ -164,7 +172,6 @@ Section proofs_hoare.
     apply rhoare_ok with (QE:=fun _ : error => False) => s _ /= //.
   Qed.
 
-  (* TODO: how to write this spec? *)
   Lemma hoare_assgn_u32_array i al
     (idx : Z) (x : var_i) (n : positive) (arr : WArray.array n) :
     (* Variable needs to have the correct array type. *)
