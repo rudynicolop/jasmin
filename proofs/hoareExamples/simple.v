@@ -163,21 +163,54 @@ Section proofs_hoare.
   Qed.
 
   (* TODO: how to write this spec? *)
-  Lemma hoare_assgn_u32_array i al idx x (*vs*) :
+  Lemma hoare_assgn_u32_array i al
+    (idx : Z) (x : var_i) (n : positive) (arr : WArray.array n) :
+    (idx < n)%Z ->
     Hoare
-      (fun s : estate => True)
+      (fun s : estate => s.(evm).[x] = Varr arr)
       (assgn_u32_array i al idx x)
       (fun s : estate => True).
   Proof.
+    intros Hidx.
     eapply hoare_assgn with (Rv:=eq (Vword _))
       (Rtr:=eq (Vword _)) (Qerr:=fun _ => False) => /= //.
     { rewrite /truncate_val /= => _ _.
       eapply rhoare_bind with (R:=eq _) (QET:=fun _ : error => False) => /= //.
       { intros ? <-. rewrite /= truncate_word_u //. }
       apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
-    intros ? <-. rewrite /write_lval /= truncate_word_u /=.
+    (* TODO: Is there no lemma to show [write_lval] succeeds? *)
+    intros ? <-.
+    rewrite /write_lval /= truncate_word_u /=.
+    apply rhoare_read with (R:=eq (Varr arr)).
+    { rewrite /get_var /= => s Hs. rewrite Hs /= //. }
+    intros ? <-.
+    apply rhoare_bind_eval with
+      (R:=fun arr' => WArray.set arr al AAscale idx (wrepr U32 5) = ok arr').
+    { intros s Hsx.
+      apply rhoare_ok with (QE:=fun _ : error => False) => _ ->.
+      (* TODO: Is there no lemma to show that [WArray.set] succeeds? *)
+      destruct (WArray.set arr al AAscale idx (wrepr U32 5))
+        as [arr' |] eqn:Hset; auto.
+      Search (WArray.set _ _ _ _ _ = Error _).
+      (* TODO: Is there no lemma to infer from [WArray.set] failing? *)
+      rewrite /WArray.set in Hset.
+      rewrite /write /= in Hset.
+      pose proof WArray.is_align_scale idx U32 as HisAlign.
+      apply is_aligned_if_is_align with (al:=al) in HisAlign.
+      rewrite HisAlign /= in Hset.
+      Search WArray.set8.
+      destruct (WArray.valid8P arr)
+      Search (Result.bind _ _ = ok _).
+      Search is_align.
+      Search (write _ _ _ _ = Error _).
+      (* TODO: Is there no lemma to show that [write] succeeds for arrays? *)
+      rewrite /write /=.
+      Search (is_aligned_if _ _ _).
+      Search (write _ _ _ _ = ok _).
+      destruct (writeV (wrepr U32 5) arr al (idx * mk_scale AAscale U32)%Z).
+      Search (WArray.set _ _ _ _ _ = ok _).
+    }
     intros s _. simpl.
-    Unset Printing Notations.
     rewrite /on_arr_var /=.
     (* Print WArray.set. *)
   (* TODO: need to do the following:
