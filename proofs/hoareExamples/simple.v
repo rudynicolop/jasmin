@@ -165,7 +165,7 @@ Section proofs_hoare.
   (* TODO: how to write this spec? *)
   Lemma hoare_assgn_u32_array i al
     (idx : Z) (x : var_i) (n : positive) (arr : WArray.array n) :
-    (idx < n)%Z ->
+    (0 <= idx < n)%Z ->
     Hoare
       (fun s : estate => s.(evm).[x] = Varr arr)
       (assgn_u32_array i al idx x)
@@ -189,6 +189,26 @@ Section proofs_hoare.
     { intros s Hsx.
       apply rhoare_ok with (QE:=fun _ : error => False) => _ ->.
       (* TODO: Is there no lemma to show that [WArray.set] succeeds? *)
+      rewrite /WArray.set.
+      destruct (validw (Pointer:=WArray.PointerZ) arr al
+                  (idx * mk_scale AAscale U32)%Z U32) eqn:Hvalid.
+      - pose proof writeV (Pointer:=WArray.PointerZ)
+          (wrepr U32 5) arr al (idx * mk_scale AAscale U32)%Z as Hwrite.
+        rewrite Hvalid in Hwrite.
+        apply elimT with (2:=is_true_true) in Hwrite as [arr' Hset].
+        rewrite Hset /= //.
+      - rewrite /validw in Hvalid.
+        rewrite is_aligned_if_is_align ?WArray.is_align_scale // /= in Hvalid.
+        rewrite !Bool.andb_false_iff add_0 /= in Hvalid.
+        rewrite !Z.leb_gt in Hvalid.
+        Search (_ )
+        Search (validw _ _ _ _ = false).
+                 as [[arr' Hok] | H].
+      - rewrite Hok /= //.
+      - Se
+      admit.
+                 rewrite  /write.
+      rewrite is_aligned_if_is_align ?WArray.is_align_scale // /=.
       destruct (WArray.set arr al AAscale idx (wrepr U32 5))
         as [arr' |] eqn:Hset; auto.
       Search (WArray.set _ _ _ _ _ = Error _).
