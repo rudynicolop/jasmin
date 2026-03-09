@@ -1,0 +1,35 @@
+/* Testing read from a "null" pointer? Does Jasmin have "null"?
+
+   The main question: does Jasmin special case address 0 as null, a la C?
+   Or can 0 be a valid address?
+
+   When run from the parent directory, I get the following output:
+   When we run the compiled file, I get the following:
+   [2]    56717 segmentation fault (core dumped)  ./nulltest
+   
+*/
+
+inline fn test() -> reg u64 {
+  /* Attempt at defining "null pointer". */
+  reg u64 null;
+
+  reg u64 r;
+
+  /* Set address of "null pointer" to 0. */
+  null = 0x0000;
+
+  /* Store value at "null pointer". */
+  [null + 0] = 42;
+
+  /* Load from "null pointer" */
+  r = [null + 0];
+
+  return r;
+}
+
+export
+fn main() -> reg u64 {
+  reg u64 r;
+  r = test();
+  return r;
+}
