@@ -1,0 +1,33 @@
+
+/* Experiment to see what occurs when one aliases arrays.
+
+   NOTE: Examening what occurs for stack in this example,
+   not register arrays (reg ptr), since these need to be (explicitly?)
+   allocated somewhere.
+
+*/
+export
+fn main () -> reg u64 {
+   /* Declare arrays. */
+   stack u64[2] a;
+   stack u64[2] b;
+
+
+   /* Assign initial values */
+   a[0] = 1;
+   a[1] = 1;
+   b[0] = 3;
+   b[1] = 3;
+
+   /* Assign b to a. */
+   b = a;
+
+   /* Modify b */
+   b[0] = 2;
+
+   /* Was a[0] modified? */
+   reg u64 x = a[0];
+
+   /* Seems to return 1, meaning a[0] was not modified...? */
+   return x;
+}
