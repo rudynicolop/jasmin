@@ -312,13 +312,15 @@ Section proofs_hoare.
   Lemma store5_in_memory i al x (ℓ : Z) :
     (* Seems like a reasonable assumption, that the address used
        for the pointer to memory is aligned with the 32-bit values? *)
-    is_align (wrepr Uptr ℓ) U32 = true ->
+    (* TODO: do we want this assumption separately from the validity assumption? *)
+    (* is_align (wrepr Uptr ℓ) U32 = true -> *)
     Hoare
-      (fun s : estate => True)
+      (fun s : estate =>
+         validw s.(emem) al (wrepr Uptr ℓ) U32 = true)
       (store_in_memory i al x ℓ 5%Z)
-      (fun s : estate => True).
+      (fun s : estate =>
+         read s.(emem) al (wrepr Uptr ℓ) U32 = ok (wrepr U32 5)).
   Proof.
-    intros Halignℓ.
     eapply hoare_assgn with
       (Rv:= eq (Vword _)) (Rtr:= eq (Vword _)) (Qerr:=fun _ => False) => /= //.
     { rewrite /truncate_val /= => _ _.
@@ -328,30 +330,16 @@ Section proofs_hoare.
       apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
     intros ? <-.
     rewrite /write_lval /= !truncate_word_u /=.
-    eapply rhoare_read.
+    apply rhoare_read with
+      (R:=fun m : low_memory.mem =>
+            read m al (wrepr Uptr ℓ) U32 = ok (wrepr U32 5)).
     { (* NOTE: no good lemmas for [write]. *)
       intros s Hs.
-      enough (validw s.(emem) al (wrepr Uptr ℓ) U32 = true) as Hvalid.
-      { pose proof writeV (wrepr U32 5) s.(emem) al (wrepr Uptr ℓ) as Hwrite.
-        rewrite Hvalid in Hwrite.
-        apply elimT with (2:=is_true_true) in Hwrite as [mem' Hset].
-        rewrite Hset /=.
-        (* TODO: what is the write predicate here? *)
-        admit.
-      }
-      rewrite /validw is_aligned_if_is_align // /=.
-      rewrite ziota_recP /= add_0.
-      rewrite /valid8.
-      rewrite /Memory.CM.
-      (* NOTE: I cannot unfold the memory model? *)
-      Fail rewrite /memory_example.MemoryI.CM.
-      Undo.
-      Undo.
-      Undo.
-      Search valid8.
-      (* TODO: Maybe I should assume validity for the whole range I need? *)
-      admit.
-    }
-  Abort.
-
+      pose proof writeV (wrepr U32 5) s.(emem) al (wrepr Uptr ℓ) as Hwrite.
+      rewrite Hs in Hwrite.
+      apply elimT with (2:=is_true_true) in Hwrite as [mem' Hset].
+      rewrite Hset /=. eapply writeP_eq; eauto. } 
+    intros m Hreadm.
+    apply rhoare_ok with (QE:=fun _ : error => False) => s Hvalid //.
+  Qed.
 End proofs_hoare.
