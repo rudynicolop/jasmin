@@ -1,0 +1,60 @@
+/*
+Linked List library in Jasmin.
+
+Jasmin has no structs, nor null pointers, so how do I define linked lists?
+
+Perhaps every node is an array with the following:
+- At index 0, we have the element.
+- At index 1, we have an address repreneting a pointer to the next node.
+  If the address is [0], this is treated as a "null pointer", meaning
+  there is not in fact another node in the list.
+  Otherwise, it is treated as a valid address/pointer.
+
+NOTE: Currently, compilation fails when I attempt to cast
+the [reg ptr u32[2]] to a [u32], which I do in the while guard 
+to make sure it is "not null":
+```
+"linked_list.jazz", line 36 (17-26):
+typing error: can not implicitly cast u32[2] into u3
+```
+*/
+
+// Null pointer definition
+param u32 NULL = (32u) 0;
+
+/* Compute the length of a linked list.
+   The parameter [l] is a pointer to a linked list. */
+export
+fn list_len (reg ptr u32[2] l) -> reg u32 {
+   // Initialize the length to [0].
+   reg u32 len = 0;
+
+   // Mutable variable representing the current node.
+   reg ptr u32[2] curr_node = l;
+
+   // Iterate while the pointer is "not null".
+   while (((32u) curr_node) != NULL) {
+       // Increment the length.
+       len += 1;
+
+       // Get the next address.
+       reg u32 next_addr = curr_node[1];
+
+       // Assign to the current node for the next iteration
+       curr_node = [next_addr];
+   }
+}
+
+export
+fn main () -> reg u32 {
+   // Empty list.
+   reg ptr u32[2] l = NULL;
+
+   // Get the length.
+   reg u32 len = list_len(l);
+
+   return len;
+}
+
+exec main()
+
