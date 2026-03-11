@@ -41,6 +41,9 @@ Section programs.
 
   (** Assign to array at index.
 
+      For an array stored at variable [x],
+      we assign index [idx] value [v].
+
       We make things simple by just scaling the
       index implicitly with the word size, and we
       use a word size of [U32].
@@ -52,10 +55,30 @@ Section programs.
       to be stored in the array to a word, otherwise
       we get a type error.
    *)
-  Definition assgn_u32_array i al (idx :Z) x : cmd :=
+  Definition assgn_u32_array i al (idx v : Z) x : cmd :=
     [:: MkI i
        (Cassgn (Laset al AAscale U32 x idx) AT_keep (aword U32)
-          (Papp1 (Oword_of_int U32) 5%Z))].
+          (Papp1 (Oword_of_int U32) v))].
+
+  (** Assign to a location in memory.
+
+      We assign memory location [ℓ] value [v].
+      We use 32-bit words.
+
+      NOTE: We need to explicitly cast the address [ℓ]
+      to a word of size [Uptr] (an unknown parameter?),
+      and [v] to a 32-bit word.
+
+      TODO: What is [x] used for?? It seems ignored in [write_lval]
+      for the [Lmem] case...?
+
+   *)
+  Definition store_in_memory `{PointerData} i al x (ℓ v : Z) : cmd := 
+    [:: MkI i
+       (Cassgn
+          (Lmem al U32 x (Papp1 (Oword_of_int Uptr) ℓ))
+          AT_keep (aword U32)
+          (Papp1 (Oword_of_int U32) v))].
 
   (** Load an array from a pointer, then read from the array. *)
   (* TODO: *)
@@ -172,7 +195,7 @@ Section proofs_hoare.
     apply rhoare_ok with (QE:=fun _ : error => False) => s _ /= //.
   Qed.
 
-  Lemma hoare_assgn_u32_array i al
+  Lemma hoare_assgn5_u32_array i al
     (idx : Z) (x : var_i) (n : positive) (arr : WArray.array n) :
     (* Variable needs to have the correct array type. *)
     eval_atype (vtype x.(v_var)) = carr n ->
@@ -182,7 +205,7 @@ Section proofs_hoare.
     (idx * wsize_size U32 + 3 < n)%Z ->
     Hoare
       (fun s : estate => s.(evm).[x] = Varr arr)
-      (assgn_u32_array i al idx x)
+      (assgn_u32_array i al idx 5%Z x)
       (fun s : estate => exists arr',
            (* TODO: but does this show that the rest of [s] is unchanged? *)
            WArray.set arr al AAscale idx (wrepr U32 5) = ok arr'
@@ -230,7 +253,7 @@ Section proofs_hoare.
     intros s Hsx. exists arr'. split; auto.
   Qed.
 
-  Lemma hoare_assgn_clément i al n (arr : WArray.array n) (x : var_i) :
+  Lemma hoare_assgn5_clément i al n (arr : WArray.array n) (x : var_i) :
     (* Variable needs to have the correct array type. *)
     eval_atype (vtype x.(v_var)) = carr n ->
     (* requirement for write to succeed: enough space in array *)
@@ -240,7 +263,7 @@ Section proofs_hoare.
          s.(evm).[x] = Varr arr
          /\ WArray.get al AAscale U32 arr 0%Z = ok (wrepr U32 1%Z)
          /\ WArray.get al AAscale U32 arr 1%Z = ok (wrepr U32 3%Z))
-      (assgn_u32_array i al 1%Z x)
+      (assgn_u32_array i al 1%Z 5%Z x)
       (fun (s : estate) => exists arr' : WArray.array n,
            s.(evm).[x] = Varr arr'
            /\ WArray.get al AAscale U32 arr' 0%Z = ok (wrepr U32 1%Z) 
@@ -284,5 +307,51 @@ Section proofs_hoare.
     intros s (Hsx & Hget0 & Hget1). exists arr'.
     rewrite (WArray.setP_eq Hset) (WArray.setP_neq (p2:=0%Z) _ Hset) //.
   Qed.
+
+  (* TODO: what is the spec? *)
+  Lemma store5_in_memory i al x (ℓ : Z) :
+    (* Seems like a reasonable assumption, that the address used
+       for the pointer to memory is aligned with the 32-bit values? *)
+    is_align (wrepr Uptr ℓ) U32 = true ->
+    Hoare
+      (fun s : estate => True)
+      (store_in_memory i al x ℓ 5%Z)
+      (fun s : estate => True).
+  Proof.
+    intros Halignℓ.
+    eapply hoare_assgn with
+      (Rv:= eq (Vword _)) (Rtr:= eq (Vword _)) (Qerr:=fun _ => False) => /= //.
+    { rewrite /truncate_val /= => _ _.
+      eapply rhoare_bind with
+        (R:=eq _) (QET:=fun _ : error => False) => /= //.
+      { intros ? <-. rewrite /= truncate_word_u //. }
+      apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
+    intros ? <-.
+    rewrite /write_lval /= !truncate_word_u /=.
+    eapply rhoare_read.
+    { (* NOTE: no good lemmas for [write]. *)
+      intros s Hs.
+      enough (validw s.(emem) al (wrepr Uptr ℓ) U32 = true) as Hvalid.
+      { pose proof writeV (wrepr U32 5) s.(emem) al (wrepr Uptr ℓ) as Hwrite.
+        rewrite Hvalid in Hwrite.
+        apply elimT with (2:=is_true_true) in Hwrite as [mem' Hset].
+        rewrite Hset /=.
+        (* TODO: what is the write predicate here? *)
+        admit.
+      }
+      rewrite /validw is_aligned_if_is_align // /=.
+      rewrite ziota_recP /= add_0.
+      rewrite /valid8.
+      rewrite /Memory.CM.
+      (* NOTE: I cannot unfold the memory model? *)
+      Fail rewrite /memory_example.MemoryI.CM.
+      Undo.
+      Undo.
+      Undo.
+      Search valid8.
+      (* TODO: Maybe I should assume validity for the whole range I need? *)
+      admit.
+    }
+  Abort.
 
 End proofs_hoare.
