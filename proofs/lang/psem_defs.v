@@ -65,6 +65,11 @@ Record estate
     evm  : Vm.t
   }.
 
+About mem.
+Set Printing All.
+Print estate.
+About _pd.
+
 Arguments Estate {syscall_state}%_type_scope {ep} _ _ _%_vm_scope.
 
 (* ** Variable map
@@ -225,4 +230,8 @@ Notation "'Let' ( n , t ) ':=' wdb ',' s '.[' v ']' 'in' body" :=
 
 Notation "'Let' ( n , t ) ':=' wdb ',' gd ',' s '.[' v ']' 'in' body" :=
   (@on_arr_var _ (get_gvar wdb gd s.(evm) v) (fun n (t:WArray.array n) => body)) (at level 25, gd at level 0, s at level 0).
+
+Set Printing Implicit.
+Print write_lval.
+Print Memory.CM.
 

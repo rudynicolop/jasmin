@@ -230,4 +230,59 @@ Section proofs_hoare.
     intros s Hsx. exists arr'. split; auto.
   Qed.
 
+  Lemma hoare_assgn_clément i al n (arr : WArray.array n) (x : var_i) :
+    (* Variable needs to have the correct array type. *)
+    eval_atype (vtype x.(v_var)) = carr n ->
+    (* requirement for write to succeed: enough space in array *)
+    (7 < n)%Z ->
+    Hoare
+      (fun (s : estate) =>
+         s.(evm).[x] = Varr arr
+         /\ WArray.get al AAscale U32 arr 0%Z = ok (wrepr U32 1%Z)
+         /\ WArray.get al AAscale U32 arr 1%Z = ok (wrepr U32 3%Z))
+      (assgn_u32_array i al 1%Z x)
+      (fun (s : estate) => exists arr' : WArray.array n,
+           s.(evm).[x] = Varr arr'
+           /\ WArray.get al AAscale U32 arr' 0%Z = ok (wrepr U32 1%Z) 
+           /\ WArray.get al AAscale U32 arr' 1%Z = ok (wrepr U32 5%Z)).
+  Proof.
+    intros Heval_atype Hn7.
+    eapply hoare_assgn with
+      (Rv:=eq (Vword _)) (Rtr:=eq (Vword _)) (Qerr:=fun _ => False) => /= //.
+    { rewrite /truncate_val /= => _ _.
+      eapply rhoare_bind with (R:=eq _) (QET:=fun _ : error => False) => /= //.
+      { intros ? <-. rewrite /= truncate_word_u //. }
+      apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
+    intros ? <-.
+    rewrite /write_lval /= truncate_word_u /=.
+    apply rhoare_read with (R:=eq (Varr arr)).
+    { rewrite /get_var /= => s [Hs [Hget0 Hget1]]. rewrite Hs /= //. }
+    intros ? <-.
+    apply rhoare_bind_eval with
+      (R:=fun arr' => WArray.set arr al AAscale 1%Z (wrepr U32 5) = ok arr').
+    { intros s Hsx.
+      apply rhoare_ok with (QE:=fun _ : error => False) => _ ->.
+      rewrite /WArray.set Z.mul_1_l.
+      enough (validw (Pointer:=WArray.PointerZ) arr al
+                (mk_scale AAscale U32)%Z U32 = true) as Hvalid.
+      { pose proof writeV (Pointer:=WArray.PointerZ)
+          (wrepr U32 5) arr al (mk_scale AAscale U32)%Z as Hwrite.
+        rewrite Hvalid in Hwrite.
+        apply elimT with (2:=is_true_true) in Hwrite as [arr' Hset].
+        rewrite Hset /= //. }
+      rewrite /validw is_aligned_if_is_align ?WArray.is_align_scale // /=.
+      rewrite ziota_recP /= !WArray.addE /WArray.in_bound Z.add_0_r.
+      rewrite !Bool.andb_true_iff /= !Z.leb_le !Z.ltb_lt /wsize_size /=.
+      repeat split; assumption || lia. }
+    intros arr' Hset. rewrite /write_var.
+    apply rhoare_read with (R:=fun t : Vm.t => t.[x] = Varr arr').
+    { intros Hsx.
+      rewrite /set_var /= Heval_atype /= eq_refl /= Vm.setP_eq /=.
+      rewrite Heval_atype eq_refl //. }
+    intros t Ht.
+    apply rhoare_ok with (QE:= fun _ : error => False).
+    intros s (Hsx & Hget0 & Hget1). exists arr'.
+    rewrite (WArray.setP_eq Hset) (WArray.setP_neq (p2:=0%Z) _ Hset) //.
+  Qed.
+
 End proofs_hoare.

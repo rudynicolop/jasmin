@@ -104,6 +104,10 @@ Module MemoryI : MemoryT.
       pointer_into_stack ptr stk_root frames'
     else false (* no stack *).
 
+  Print Mz.t.
+  Print Mz.Map.t.
+  Print Mz.Map.bst.
+
   Record mem_ := {
     data      : Mz.t u8;
     alloc     : Mz.t unit;
