@@ -308,8 +308,11 @@ Section proofs_hoare.
     rewrite (WArray.setP_eq Hset) (WArray.setP_neq (p2:=0%Z) _ Hset) //.
   Qed.
 
-  (* TODO: what is the spec? *)
-  Lemma store5_in_memory i al x (ℓ : Z) :
+  (* NOTE: maybe the following specs would be better using
+     [WArray.in_range] and [is_aligned_if] separately? *)
+  About WArray.validw_in_range.
+
+  Lemma hoare_store_in_memory_too_weak0 i al x (ℓ v : Z) :
     (* Seems like a reasonable assumption, that the address used
        for the pointer to memory is aligned with the 32-bit values? *)
     (* TODO: do we want this assumption separately from the validity assumption? *)
@@ -317,9 +320,9 @@ Section proofs_hoare.
     Hoare
       (fun s : estate =>
          validw s.(emem) al (wrepr Uptr ℓ) U32 = true)
-      (store_in_memory i al x ℓ 5%Z)
+      (store_in_memory i al x ℓ v)
       (fun s : estate =>
-         read s.(emem) al (wrepr Uptr ℓ) U32 = ok (wrepr U32 5)).
+         read s.(emem) al (wrepr Uptr ℓ) U32 = ok (wrepr U32 v)).
   Proof.
     eapply hoare_assgn with
       (Rv:= eq (Vword _)) (Rtr:= eq (Vword _)) (Qerr:=fun _ => False) => /= //.
@@ -332,14 +335,121 @@ Section proofs_hoare.
     rewrite /write_lval /= !truncate_word_u /=.
     apply rhoare_read with
       (R:=fun m : low_memory.mem =>
-            read m al (wrepr Uptr ℓ) U32 = ok (wrepr U32 5)).
+            read m al (wrepr Uptr ℓ) U32 = ok (wrepr U32 v)).
     { (* NOTE: no good lemmas for [write]. *)
       intros s Hs.
-      pose proof writeV (wrepr U32 5) s.(emem) al (wrepr Uptr ℓ) as Hwrite.
+      pose proof writeV (wrepr U32 v) s.(emem) al (wrepr Uptr ℓ) as Hwrite.
       rewrite Hs in Hwrite.
       apply elimT with (2:=is_true_true) in Hwrite as [mem' Hset].
       rewrite Hset /=. eapply writeP_eq; eauto. } 
     intros m Hreadm.
     apply rhoare_ok with (QE:=fun _ : error => False) => s Hvalid //.
+  Qed.
+
+  Lemma hoare_stores_in_memory i1 i2 al x1 x2 (ℓ1 ℓ2 v1 v2 : Z) :
+    Hoare
+      (fun s : estate =>
+         validw s.(emem) al (wrepr Uptr ℓ1) U32 = true
+         /\ validw s.(emem) al (wrepr Uptr ℓ2) U32 = true)
+      (store_in_memory i1 al x1 ℓ1 v1 ++ store_in_memory i2 al x2 ℓ2 v2)
+      (fun s : estate =>
+         read s.(emem) al (wrepr Uptr ℓ1) U32 = ok (wrepr U32 v1)
+         /\ read s.(emem) al (wrepr Uptr ℓ2) U32 = ok (wrepr U32 v2)).
+  Proof.
+    (* NOTE: No frame rule since so SL, so sad. *)
+    rewrite hoareP => s [Hvalid1 Hvalid2].
+    eapply hoare_cons.
+    { eapply hoare_weaken1; last by apply hoare_store_in_memory_too_weak0;
+        progress simpl.
+      - by intros ? ->.
+      - intros ?. apply id. }
+    rewrite hoareP => s' Hread1.
+    eapply hoare_weaken1; last by apply hoare_store_in_memory_too_weak0.
+    { intros ? ->. eapply readV.
+    (* NOTE: we have lost information about how [s'] is related to
+       [s], how can we continue...? *)
+      admit. }
+    intros s'' Hread2. simpl in *.
+    (* NOTE: we have lost information about how all of the states,
+       ([s], [s'], and [s'']) are related to each other.
+       How can we continue...? *)
+    Abort.
+
+  (** For this lemma to be used modularly, we need to expose the
+      state [σ]. *)
+  Lemma hoare_store_in_memory_remember i al x (ℓ v : Z) (σ : estate) :
+    Hoare
+      (fun s : estate =>
+         (* NOTE: We force the precondition state to be equivalent to
+            the exposed state. *)
+         s = σ /\ validw s.(emem) al (wrepr Uptr ℓ) U32 = true)
+      (store_in_memory i al x ℓ v)
+      (fun s : estate =>
+         (* NOTE: We need to remember that the new memory is the result
+            of writing to the old state. *)
+         write σ.(emem) al (wrepr Uptr ℓ) (wrepr U32 v) = ok s.(emem)
+         (* NOTE: The variable map and system call state should be identical. *)
+         /\ s.(evm) = σ.(evm) /\ s.(escs) = σ.(escs)
+         /\ read s.(emem) al (wrepr Uptr ℓ) U32 = ok (wrepr U32 v)).
+  Proof.
+    eapply hoare_assgn with
+      (Rv:= eq (Vword _)) (Rtr:= eq (Vword _)) (Qerr:=fun _ => False) => /= //.
+    { rewrite /truncate_val /= => _ _.
+      eapply rhoare_bind with
+        (R:=eq _) (QET:=fun _ : error => False) => /= //.
+      { intros ? <-. rewrite /= truncate_word_u //. }
+      apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
+    intros ? <-.
+    rewrite /write_lval /= !truncate_word_u /=.
+    apply rhoare_read with
+      (R:=fun m : low_memory.mem =>
+            write σ.(emem) al (wrepr Uptr ℓ) (wrepr U32 v) = ok m).
+    { (* NOTE: no good lemmas for [write]. *)
+      intros s [-> Hs].
+      pose proof writeV (wrepr U32 v) σ.(emem) al (wrepr Uptr ℓ) as Hwrite.
+      rewrite Hs in Hwrite.
+      apply elimT with (2:=is_true_true) in Hwrite as [mem' Hset].
+      rewrite Hset /= //. } 
+    intros m Hwrite.
+    apply rhoare_ok with (QE:=fun _ : error => False) => s [-> Hvalid] /= //.
+    repeat split; auto.
+    eapply writeP_eq; eauto.
+  Qed.
+
+  Lemma hoare_stores_in_memory i1 i2 al x1 x2 (ℓ1 ℓ2 v1 v2 : Z) :
+    (* NOTE: Ya know what would also enforce that the ranges
+       are disjoint: SEPARATION LOGIC! *)
+    CoreMem.disjoint_range (wrepr Uptr ℓ1) U32 (wrepr Uptr ℓ2) U32 ->
+    Hoare
+      (fun s : estate =>
+         validw s.(emem) al (wrepr Uptr ℓ1) U32 = true
+         /\ validw s.(emem) al (wrepr Uptr ℓ2) U32 = true)
+      (store_in_memory i1 al x1 ℓ1 v1 ++ store_in_memory i2 al x2 ℓ2 v2)
+      (fun s : estate =>
+         read s.(emem) al (wrepr Uptr ℓ1) U32 = ok (wrepr U32 v1)
+         /\ read s.(emem) al (wrepr Uptr ℓ2) U32 = ok (wrepr U32 v2)).
+  Proof.
+    intros Hdisj.
+    rewrite hoareP => s [Hvalid1 Hvalid2].
+    eapply hoare_cons.
+    { eapply hoare_weaken1; last by apply hoare_store_in_memory_remember;
+        progress simpl.
+      - by intros ? ->.
+      - intros ?. apply id. }
+    rewrite hoareP => s1 Hwrite1.
+    destruct Hwrite1 as (Hwrite1 & Hevm1 & Hescs1 & Hread1).
+    eapply hoare_weaken1; last by apply hoare_store_in_memory_remember.
+    { intros ? ->. split; first reflexivity.
+      (* NOTE: We now remember exactly how we obtained [s1]! *)
+      (* TODO: seriously, no lemmas about read succeeding!!!??? *)
+      rewrite (write_validw_eq Hwrite1) //. }
+    intros s'' Hwrite2.
+    destruct Hwrite2 as (Hwrite2 & Hevm2 & Hescs2 & Hread2).
+    split; last assumption.
+    rewrite (writeP_neq _ Hwrite2) //.
+    (* TODO: bruh *) Fail symmetry.
+    rewrite /CoreMem.disjoint_range in Hdisj *.
+    intros z1 z2 Hz1 Hz2.
+    symmetry. by apply Hdisj.
   Qed.
 End proofs_hoare.
