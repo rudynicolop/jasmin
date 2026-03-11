@@ -1,0 +1,29 @@
+/* Example showing that Jasmin does not support recursion. */
+
+export
+fn hide(reg u32 n) -> reg u32 {
+       // typing error: unknown function: `factorial'
+       reg u32 result = factorial(n);
+       return result;
+}
+
+/* Recursive factorial implementation. */
+export
+fn factorial (reg u32 n) -> reg u32 {
+    reg u32 result;
+    if (n <= 1) {
+       result = 1;
+    } else {
+      reg u32 rest = hide(n - 1);
+      result = n * rest;
+    }
+    return result;
+}
+
+export
+fn main () -> reg u32 {
+   reg u32 result = factorial(5);
+   return result;
+}
+
+exec main()
