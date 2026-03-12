@@ -56,11 +56,9 @@ fn init_pool(reg ptr u8[limit] memory_pool) -> reg ptr u8[limit] {
    Returns the "address" (index of the memory_pool), and the updated cursor value.
 */
 export
-fn allocate (reg ptr u8[limit] memory_pool, reg usize alloc_size, reg usize cursor) -> reg ptr u8[alloc_size], reg usize {
+fn allocate (reg ptr u8[limit] memory_pool, reg usize alloc_size, reg usize cursor) -> reg usize, reg usize {
    // Get the "address" of the start of the new block.
    reg usize start_of_new_block = cursor;
-
-   reg ptr u8[1] pointer_to_start = memory_pool[cursor:alloc_size];
 
    // Update the cursor.
    cursor += alloc_size;
@@ -75,11 +73,11 @@ fn allocate (reg ptr u8[limit] memory_pool, reg usize alloc_size, reg usize curs
       }
    }
 
-   return (pointer_to_start, cursor);
+   return (start_of_new_block, cursor);
 }
 
 export
-fn main() {
+fn main() -> reg u64 {
    // Declare memory pool as an array on the stack.
    stack u8[limit] memory_pool;
 
@@ -92,6 +90,31 @@ fn main() {
    /* Allocate a "pointer" (index in the memory pool) to one spot for a [u32].
       We want one pointer for a [u32], which is size [4] (is this true?).
    */
-   reg ptr u8[1] my_ptr;
-   my_ptr, cursor = allocate(memory_pool, 1 * 4, cursor);
+   reg usize my_ptr1;
+   my_ptr1, cursor = allocate(memory_pool, 1 * 4, cursor);
+   reg u32 bigu32 = 494967296;
+
+
+   /* The [u32] here tells Jasmin to store a 32-but unsigned integer, despite
+      [memory_pool] being an array of [u32] */
+   memory_pool[:u32 my_ptr1] = bigu32;
+
+   assert("u32 for myptr1 failed", memory_pool[:u32 my_ptr1] == bigu32);
+
+   /* Allocate a "pointer" to a [u64]. */
+   reg usize my_ptr2;
+   my_ptr2, cursor = allocate(memory_pool, 1 * 8, cursor);
+
+   reg u64 bigu64 = 0xFFFFFFFFFFFFFFFF;
+
+   memory_pool[:u64 my_ptr2] = bigu64;
+
+   reg u64 v = memory_pool[:u64 my_ptr2];
+
+   assert("u64 for myptr2 failed", memory_pool[:u64 my_ptr2] == bigu64);
+   assert("u32 for myptr1 was corrupted", memory_pool[:u32 my_ptr1] == bigu32);
+
+   return v;
 }
+
+exec main()
