@@ -1,0 +1,78 @@
+/* Linked List length by Vicent Laporte:
+   <https://formosa-crypto.zulipchat.com/#narrow/channel/368180-Jasmin.3A-general/topic/Recursive.20Data.20Structures/with/578627286>
+
+   A linked list node is encoded as adjacent memory cells where
+   - The first cell contains the value.
+   - The second cell contains an address representing a pointer to the next node.
+     If the address is "null" (0), then this denotes the end of list.
+
+  NOTE: In Jasmin, we may not use the array data type, and instead need plain pointers.
+  Arrays in Jasmin may "only hold bitvectors", and their contents cannot be cast to a pointer,
+  which we require for the second cell in the node.
+*/
+
+// Type synonym for size.
+type usize = u64;
+
+// Distance between offsets.
+param int offset_next = 8;
+
+// Notion of "null pointers".
+param usize NULL = (64u) 0;
+
+/* Accepts [usize] parameter [l] representing an address in memory
+   to a (logical) linked list node.
+
+   NOTE: [l] and [curr_node] do not directly have pointer types,
+   but really are words for a (potential) address in memory. 
+   In the formal semantics for loads (see [sem_pexpr]), the expression for
+   an address in a load, here [curr_node + offset_next], is really an arithmetic
+   expression which then gets cast to a pointer (which is a word of [Uptr]).
+*/
+export
+fn list_length(reg usize l) -> reg usize {
+   // Initially set the length to [0].
+   reg usize length = 0;
+
+   // Initially set the current node to [l].
+   reg usize curr_node = l;
+
+   // Iterate while the remainder of the list is nonempty.
+   while (curr_node != NULL) {
+     // Increment length.
+     length += 1;
+
+     // Set the current node to the pointer to the next node.
+     curr_node = [curr_node + offset_next];
+   }
+
+   return length;
+}
+
+export
+fn main () -> reg usize, reg usize {
+   // Empty list.
+   reg usize empty = NULL;
+
+   // Get the length.
+   reg usize len_empty = list_length(empty);
+
+   // Get length.
+   // typing error: can not implicitly cast u64[2] into u64
+   // reg usize length_single = list_length((64u) single);
+
+   // Singleton list with magic heap memory:
+   reg usize single = 0x1000;
+   // Store value 5 at cell
+   [single] = 5;
+   // Cons with the empty list.
+   [single + offset_next] = empty;
+
+   // Get length
+   reg usize len_single = list_length(single);
+
+   return (len_empty, len_single);
+}
+
+// Set the memory addresses and ranges (in bytes?) for each cell of [single].
+exec main (0x1000 : 8, 0x1008 : 8)
