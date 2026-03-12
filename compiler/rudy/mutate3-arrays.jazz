@@ -1,0 +1,33 @@
+export
+fn mutate3 (
+   reg ptr u32[2] a,
+   reg ptr u32[2] b,
+   reg ptr u32[2] c
+   )
+   ->
+   reg ptr u32[2],
+   reg ptr u32[2],
+   reg ptr u32[2] {
+       a[0] = 1;
+       b[0] = 1;
+       c[0] = 1;
+
+       return (a, b, c);
+   }
+
+export
+fn main () {
+   stack u32[2] a, b, c;
+
+   reg int i;
+
+   // initialize arrays
+   for i = 0 to 2 {
+       a[i] = 0;
+       b[i] = 0;
+       c[i] = 0;
+   }
+
+   a,b,c = mutate3(a, b, c);
+  
+}

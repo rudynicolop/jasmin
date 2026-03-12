@@ -1,0 +1,42 @@
+/* Stab at bumping allocator.
+
+   Based on rust example: <https://rust-hosted-langs.github.io/book/chapter-simple-bump.html>
+
+   We have a ("global") memory pool, which is an array of 8-byte words [u8]. 
+*/
+
+// Type synonym for pointer size.
+type usize = u64;
+
+// Max size of memory pool.
+param int limit = 4096;
+
+/* Bumping allocator.
+
+   [alloc_size] is the number of 8 byte words to allocate.
+   [cursor] is the index of the [memory_pool] with the next available space.
+
+   If the [cursor + alloc_size] is out of bounds, behavior is undefined.
+
+   Returns the "address" (index of the memory_pool), and the updated cursor value.
+*/
+export
+fn allocate (reg ptr u8[limit] memory_pool, reg usize alloc_size, reg usize cursor) -> reg usize, reg usize {
+   // Get the "address" of the start of the new block.
+   reg usize start_of_new_block = cursor;
+
+   // Update the cursor.
+   cursor += alloc_size;
+
+   // Jasmin is dumb: I need to do this cast outside of the comparison.
+   reg usize limit_usize = (64u) limit;
+
+   if (limit_usize < cursor) {
+      // UB: attempting to allocate out of bounds memory.
+      while (true) {
+            assert("hi", true);
+      }
+   }
+
+   return (start_of_new_block, cursor);
+}

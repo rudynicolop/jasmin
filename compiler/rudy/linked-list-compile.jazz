@@ -107,3 +107,6 @@ fn main () -> reg usize {
 
    return sum_double;
 }
+
+// Set the memory addresses and ranges (in bytes?) for each cell of linked lists. 
+exec main (0x1000 : 8, 0x1008 : 8, 0x1040 : 8, 0x1048 : 8)
