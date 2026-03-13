@@ -3,27 +3,6 @@
    Based on rust example: <https://rust-hosted-langs.github.io/book/chapter-simple-bump.html>
 
    We have a ("global") memory pool, which is an array of 8-byte words [u8]. 
-
-   Rudy's attempt failed:
-
-   My questions:
-   - In C, malloc returns a void*, which one can easily cast to whatever pointer type you want.
-     Jasmin does not an equivalent to void*, and casts are heavily restricted.
-   - NOTE: Jasmin does allow casting between word types and words of Uptr (which is a kind of word ofc),
-     but not arrays.
-   - The reason (asserted on zulip) seems to be that declared arrays in Jasmin live in the variable store,
-     not memory.
-   - The typechecker (in [src/pretyping.ml]) checks explicit casts with
-     <https://github.com/jasmin-lang/jasmin/blob/40cca695b5172310f7a918487a2e82a0ac442318/compiler/src/pretyping.ml#L1277>
-
-   - This seems to reflect the strict casting operators in [operators.v],
-     given in [wiop1] and [sop1].
-   - I believe the formal semantics in [sem_sop1_typed] in [sem_op_typed.v]
-
-   - So, tldr I guess, Jasmin does not allow casting of arbitrary data.
-
-   - Jasmin does allow "type punning" between arrays:
-     <https://jasmin-lang.readthedocs.io/en/stable/language/semantics/arrays.html#type-punning>
 */
 
 // Type synonym for pointer size.
@@ -34,7 +13,7 @@ param int limit = 4096;
 
 /* Initialize memory pool to 0 everywhere.
 
-   NOTE: is there a reason not to inline? */
+   TODO: is there a reason not to inline? */
 inline
 fn init_pool(reg ptr u8[limit] memory_pool) -> reg ptr u8[limit] {
    reg int i;
@@ -54,6 +33,10 @@ fn init_pool(reg ptr u8[limit] memory_pool) -> reg ptr u8[limit] {
    If the [cursor + alloc_size] is out of bounds, behavior is undefined.
 
    Returns the "address" (index of the memory_pool), and the updated cursor value.
+
+   NOTE: Yes, this doesn't actually do anything with the [memory_pool] argument.
+   I may modify it to store the cursor at the start, making use of the [memory_pool]
+   argument, and obvioating the need to pass an explicit [cursor] parameter.
 */
 export
 fn allocate (reg ptr u8[limit] memory_pool, reg usize alloc_size, reg usize cursor) -> reg usize, reg usize {
