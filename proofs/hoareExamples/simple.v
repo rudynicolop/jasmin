@@ -156,6 +156,7 @@ Section proofs_hoare.
 
   (** Factor out common section parameters. *)
   Local Notation Hoare := (hoare p ev).
+  Local Notation HoareFunBody := (hoare_f_body p ev).
 
   Lemma hoare_while_true_basic i1 i2 al :
     Hoare (fun _ => True) (while_true i1 i2 al) (fun _ => True).
@@ -577,13 +578,70 @@ Section proofs_hoare.
   End memory_store_direct.
 
   Section funcalls.
+
+
+    (* An identity function parameterized by a type [τ].
+
+      NOTE: Jasmin does not have "return statements", these
+      are actually syntactic sugar. *)
+    Definition idfun_body i τ (y result : var_i) : cmd :=
+      [::
+         (* Write to the result. *)
+         MkI i (Cassgn (Lvar result) AT_keep τ (Pvar (mk_gvar y)))
+      ].
+    (* TODO: I have no idea how to instantiate [f_extra]...? *)
+    Definition idfun_def fi i τ y result extra : _fundef extra_fun_t :=
+      {| f_info := fi;
+        f_tyin := [:: τ];
+        f_params := [:: y];
+        f_body := idfun_body i τ y result;
+        f_tyout := [:: τ];
+        f_res := [:: result];
+        f_extra := extra;
+      |}.
+    (* Program has the identity function for ints. *)
+    Context {idfun : funname} {idfun_info : fun_info}
+      {idfun_assgn_info : instr_info}
+      {idfun_arg idfun_result : var_i} {idfun_extra : extra_fun_t}.
+    Hypothesis idfun_argZ : vtype idfun_arg = aint.
+    Hypothesis idfun_resultZ : vtype idfun_result = aint.
+    Hypothesis has_idfunZ :
+      get_fundef (p_funcs p) idfun =
+        Some (idfun_def idfun_info idfun_assgn_info 
+                aint idfun_arg idfun_result
+                idfun_extra).
+
+    Lemma hoare_f_body_identity_function_int (z : Z) :
+      HoareFunBody
+        (fun _ fs__in => fs__in.(fvals) = [:: Vint z])
+        idfun
+        (fun _ fs__in fs__out => fs__in = fs__out).
+    Proof.
+      apply hoare_fun_body with (Qerr:=fun _ => False).
+      rewrite /hoare_fun_body_hyp.
+      intros fs Hfs. split; first contradiction.
+      rewrite has_idfunZ.
+      (* NOTE: supply pre and post condition of function body. *)
+      exists (fun s => s.(evm).[idfun_arg] = z), (fun s => s.(evm).[idfun_result] = z).
+      constructor.
+      - (* Intialize state for fun call. *)
+        (* NOTE: Nothing to show that initialization for a call suceeds? *)
+        rewrite /initialize_funcall /= => fs__in Hfs__in. 
+        rewrite Hfs__in /= /dc_truncate_val /= /truncate_val /= if_same /=.
+        (* TODO: I don't know what [init_state] does, nor how to show it succeeds. *)
+        assert (Hinit : init_state idfun_extra (p_extra p) ev (estate0 fs__in) = ok (estate0 fs__in)).
+        { admit. }
+        rewrite Hinit /= /write_var /set_var /= /DB /= orbT /=.
+        rewrite idfun_argZ /= Vm.setP_eq idfun_argZ /= //.
+      - 
+    Abort.
     (* Call identity function, and show
        that when invoked it returns the argument.
 
        NOTE: [idfun] is a random variable, and there's nothing
        here binding it to an actual identity function implementation.
      *)
-    Lemma hoare_call_identity_function i (x : var_i) (z : Z) idfun :
+    Lemma hoare_call_identity_function i (x : var_i) (z : Z) :
       vtype x = aint ->
       Hoare
         (fun _ => True)
@@ -615,9 +673,6 @@ Section proofs_hoare.
         apply rhoare_ok with (QE:=fun _ : error => False) => s _.
         rewrite /= //.
     Abort.
-
-    Lemma hoare_f_body_identity_function idfun :
-      hoare_f_body
 
   End funcalls.
 End proofs_hoare.
