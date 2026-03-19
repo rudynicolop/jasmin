@@ -139,6 +139,7 @@ Section proofs_hoare.
       {asm_op: Type}
       {wa: WithAssert}
       {sip : SemInstrParams asm_op syscall_state}
+      (* This [progT] is where [extra_fun_t] comes from... *)
       {pT : progT}
       {wsw : WithSubWord}
       {scP : semCallParams}
@@ -638,15 +639,23 @@ Section proofs_hoare.
         rewrite idfun_argZ /= Vm.setP_eq idfun_argZ /= //.
       - (* Proof for the function body. *)
         rewrite /idfun_def /= /idfun_body /=.
+        rewrite hoareP => s Hs.
         apply hoare_assgn with
           (Rv:=eq (Vint z)) (Rtr:=eq (Vint z)) (Qerr:=fun _ => False) => /= //.
-        { intros s <- => /=. rewrite /get_gvar /= /get_var /=.
-          rewrite /is_defined /=.
-        (* TODO: I should set [DirectCall] to false
-           to allow undefined values to be passed into a function,
-           since I really don't care... *)
-          admit.
-        }
+        { intros ? -> => /=. rewrite /get_gvar /= /get_var /=.
+          rewrite /is_defined /= Hs /= //. }
+        { intros ? -> ? <- => /= //. }
+        intros ? <- ? -> => /=.
+        rewrite /write_var /set_var /= idfun_resultZ /=.
+        rewrite Vm.setP_eq /= idfun_resultZ //.
+      - (* Error case. *)
+        done.
+      - (* NOTE: No lemmas for [finalize_funcall]. *)
+        intros s Hs.
+        rewrite /finalize_funcall /= /get_var Hs /= orbT /=.
+        rewrite /dc_truncate_val /truncate_val /= if_same /=.
+        (* TODO: need some way to show this.
+           What does [finalize] do to the state? *)
     Abort.
     (* Call identity function, and show
        that when invoked it returns the argument.
