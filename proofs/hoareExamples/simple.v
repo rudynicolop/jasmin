@@ -586,8 +586,11 @@ Section proofs_hoare.
       are actually syntactic sugar. *)
     Definition idfun_body i τ (y result : var_i) : cmd :=
       [::
-         (* Write to the result. *)
-         MkI i (Cassgn (Lvar result) AT_keep τ (Pvar (mk_gvar y)))
+         (* Write to the result.
+
+            NOTE: So [mk_lvar] is "lvar" for "local variable", not to be
+            confused with "left value", jeez. *)
+         MkI i (Cassgn (Lvar result) AT_keep τ (Pvar (mk_lvar y)))
       ].
     (* TODO: I have no idea how to instantiate [f_extra]...? *)
     Definition idfun_def fi i τ y result extra : _fundef extra_fun_t :=
@@ -633,7 +636,17 @@ Section proofs_hoare.
         { admit. }
         rewrite Hinit /= /write_var /set_var /= /DB /= orbT /=.
         rewrite idfun_argZ /= Vm.setP_eq idfun_argZ /= //.
-      - 
+      - (* Proof for the function body. *)
+        rewrite /idfun_def /= /idfun_body /=.
+        apply hoare_assgn with
+          (Rv:=eq (Vint z)) (Rtr:=eq (Vint z)) (Qerr:=fun _ => False) => /= //.
+        { intros s <- => /=. rewrite /get_gvar /= /get_var /=.
+          rewrite /is_defined /=.
+        (* TODO: I should set [DirectCall] to false
+           to allow undefined values to be passed into a function,
+           since I really don't care... *)
+          admit.
+        }
     Abort.
     (* Call identity function, and show
        that when invoked it returns the argument.
