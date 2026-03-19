@@ -111,14 +111,6 @@ Section programs.
           (Lmem al U32 x (Papp1 (Oword_of_int Uptr) ℓ))
           AT_keep (aword U32)
           (Papp1 (Oword_of_int U32) v))].
-
-  (** Load an array from a pointer, then read from the array. *)
-  (* TODO: *)
-  (* Definition load_array_then_get i x n al : cmd := *)
-  (*   [:: MkI i *)
-  (*      (Cassgn (Lvar x) AT_keep (aarr U32 n) (Pload al U32)) *)
-  (*   ] *)
-
 End programs.
 
 (** NOTE: To rule out bad behavior, we set the conditions for error
@@ -583,4 +575,49 @@ Section proofs_hoare.
       split;  by eapply writeP_eq; eassumption.
     Qed.
   End memory_store_direct.
+
+  Section funcalls.
+    (* Call identity function, and show
+       that when invoked it returns the argument.
+
+       NOTE: [idfun] is a random variable, and there's nothing
+       here binding it to an actual identity function implementation.
+     *)
+    Lemma hoare_call_identity_function i (x : var_i) (z : Z) idfun :
+      vtype x = aint ->
+      Hoare
+        (fun _ => True)
+        [:: MkI i (Ccall [:: Lvar x] idfun [:: Pconst z]) ]
+        (fun s => s.(evm).[x] = Vint z).
+    Proof.
+      intros Hxtype.
+      eapply hoare_call with
+        (* The arguments passed in are just a single int. *)
+        (Pf:=fun _ fs => fs.(fvals) = [:: Vint z])
+        (* The return value is the same as the input,
+           and the state is unchanged. *)
+        (Qf:=fun _ fs fr => fs = fr)
+        (Qerr:=fun _ => False) => /= //.
+      - (* What is [hoare_f_ii]? There are no lemmas for it...? *)
+        admit.
+      - intros fs fr Hfs <-. 
+        rewrite /upd_estate /= Hfs /=.
+        eapply rhoare_bind with
+          (R:=fun s => s.(evm).[x] = Vint z) (QET:=fun _ => False) => /= //.
+        rewrite /write_var /=.
+        eapply rhoare_read with (R:=fun vm => vm.[x] = z).
+        { rewrite /set_var /= Hxtype /=.
+          (* Is there a better way rather than unfolding everything? *)
+          rewrite /assert /= /DB /= orbT /=.
+          apply rhoare_ok with (QE:=fun _ : error => False) => s _.
+          rewrite Vm.setP_eq Hxtype /= //. }
+        intros vm Hvm => /=.
+        apply rhoare_ok with (QE:=fun _ : error => False) => s _.
+        rewrite /= //.
+    Abort.
+
+    Lemma hoare_f_body_identity_function idfun :
+      hoare_f_body
+
+  End funcalls.
 End proofs_hoare.
