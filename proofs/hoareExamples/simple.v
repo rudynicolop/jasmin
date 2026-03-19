@@ -250,11 +250,10 @@ Section proofs_hoare.
       (Rtr:=eq (Vword _)) (Qerr:=fun _ => False) => /= //.
     { rewrite /truncate_val /= => _ _.
       eapply rhoare_bind with (R:=eq _) (QET:=fun _ : error => False) => /= //.
-      { intros ? <-. rewrite /= truncate_word_u //. }
+      { intros ? <- => /=. rewrite truncate_word_u //. }
       apply rhoare_ok with (QE:=fun _ : error => False) => ? <- //. }
     (* TODO: Is there no lemma to show [write_lval] succeeds? *)
-    intros ? <-.
-    rewrite /write_lval /= truncate_word_u /=.
+    intros ? <-. rewrite /write_lval /= truncate_word_u /=.
     apply rhoare_read with (R:=eq (Varr arr)).
     { rewrite /get_var /= => s Hs. rewrite Hs /= //. }
     intros ? <-.
