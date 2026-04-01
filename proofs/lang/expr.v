@@ -236,8 +236,10 @@ Definition mk_var_i (x : var) :=
     v_info := dummy_var_info;
   |}.
 
+(* What is the [%string] meant to do? The type of [ident] is [Ident.ident]... *)
 Notation vid ident :=
   (mk_var_i {| vtype := aword Uptr; vname := ident%string; |}).
+Fail Check vid "hello".
 
 #[only(eqbOK)] derive
 Variant v_scope := 

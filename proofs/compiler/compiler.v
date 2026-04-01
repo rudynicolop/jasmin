@@ -172,6 +172,7 @@ Record compiler_params
   {asmop : asmOp asm_op}
   (lowering_options : Type) := {
   rename_fd        : instr_info -> funname -> _ufundef -> _ufundef;
+  (* This is some magically function used to generate variable names... *)
   expand_fd        : funname -> _ufundef -> expand_info;
   split_live_ranges_fd : funname -> _ufundef -> _ufundef;
   renaming_fd      : funname -> _ufundef -> _ufundef;

@@ -579,50 +579,77 @@ Section proofs_hoare.
   End memory_store_direct.
 
   Section funcalls.
+    Notation di := dummy_instr_info.
+
+    Axiom VAR : string -> Ident.ident.
+    Definition my_int_var : var := {| vtype:=aint; vname:= (VAR "hello") |}.
 
 
     (* An identity function parameterized by a type [τ].
 
       NOTE: Jasmin does not have "return statements", these
       are actually syntactic sugar. *)
-    Definition idfun_body i τ (y result : var_i) : cmd :=
+    Goal var_i.
+    Proof.
+      constructor.
+      - 
+        constructor; first exact aint.
+        unfold Ident.ident.
+        unfold WrapIdent.t.
+        Global Transparent Cident.t.
+        Print Module Cident.
+        Fail unfold Cident.t.
+    Abort.
+    Definition idfun_body τ (y result : var_i) : cmd :=
       [::
          (* Write to the result.
 
             NOTE: So [mk_lvar] is "lvar" for "local variable", not to be
             confused with "left value", jeez. *)
-         MkI i (Cassgn (Lvar result) AT_keep τ (Pvar (mk_lvar y)))
+         MkI di (Cassgn (Lvar result) AT_keep τ (Pvar (mk_lvar y)))
       ].
     (* TODO: I have no idea how to instantiate [f_extra]...? *)
-    Definition idfun_def fi i τ y result extra : _fundef extra_fun_t :=
+    Definition idfun_def fi τ y result extra : _fundef extra_fun_t :=
       {| f_info := fi;
         f_tyin := [:: τ];
         f_params := [:: y];
-        f_body := idfun_body i τ y result;
+        f_body := idfun_body τ y result;
         f_tyout := [:: τ];
         f_res := [:: result];
         f_extra := extra;
       |}.
     (* Program has the identity function for ints. *)
     Context {idfun : funname} {idfun_info : fun_info}
-      {idfun_assgn_info : instr_info}
       {idfun_arg idfun_result : var_i} {idfun_extra : extra_fun_t}.
     Hypothesis idfun_argZ : vtype idfun_arg = aint.
     Hypothesis idfun_resultZ : vtype idfun_result = aint.
     Hypothesis has_idfunZ :
       get_fundef (p_funcs p) idfun =
-        Some (idfun_def idfun_info idfun_assgn_info 
+        Some (idfun_def idfun_info
                 aint idfun_arg idfun_result
                 idfun_extra).
 
     Lemma hoare_f_body_identity_function_int (z : Z) :
       HoareFunBody
+        (* Precondition: an integer is passed in. *)
         (fun _ fs__in => fs__in.(fvals) = [:: Vint z])
         idfun
+        (* Postcondition: the same integer is passed out, and the state is the same. *)
         (fun _ fs__in fs__out => fs__in = fs__out).
     Proof.
       apply hoare_fun_body with (Qerr:=fun _ => False).
       rewrite /hoare_fun_body_hyp.
+      unfold funname in *.
+      destruct idfun_arg as [idfun_arg_var zam].
+      destruct idfun_arg_var as [ty idfun_arg_name].
+      Fail destruct idfun_arg_name.
+      About Ident.ident.
+      unfold Ident.ident in *.
+      unfold WrapIdent.t in *.
+      Fail unfold Cident.t in *.
+      Import Cident.
+      unfold Cident.t in *.
+      Fail unfold FunName.t in *.
       intros fs Hfs. split; first contradiction.
       rewrite has_idfunZ.
       (* NOTE: supply pre and post condition of function body. *)
@@ -671,6 +698,9 @@ Section proofs_hoare.
         (fun s => s.(evm).[x] = Vint z).
     Proof.
       intros Hxtype.
+      About fun_info.
+      Search "dummy".
+      destruct idfun_info.
       eapply hoare_call with
         (* The arguments passed in are just a single int. *)
         (Pf:=fun _ fs => fs.(fvals) = [:: Vint z])

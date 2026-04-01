@@ -64,6 +64,7 @@ Record varr_info := {
   vi_n : list Ident.ident;
 }.
 
+(* What does each field mean? How are they used?? *)
 Record expand_info := {
   vars : list var;
   arrs : list varr_info;
@@ -77,9 +78,24 @@ Record array_info := {
 }.
 
 Record t := {
-  svars : Sv.t;
-  sarrs : Mvar.t array_info;
+  svars : Sv.t; (* What is this?? *)
+  sarrs : Mvar.t array_info; (* a map from vars to array info *)
 }.
+
+Search Mvar.t.
+Print Mvar.K.t.
+Print CmpVar.t.
+Print var.
+
+Goal t.
+Proof.
+  constructor.
+  - unfold Sv.t.
+    Fail unfold Sv.t_.
+    About Sv.t_.
+    admit.
+  - About Mvar.t.
+Abort.
 
 Definition expd_t := (Mf.t (seq (option (wsize * Z)) * seq (option (wsize * Z)))).
 
@@ -92,14 +108,18 @@ Definition init_array_info (x : varr_info) (svm:Sv.t * Mvar.t array_info) :=
   let (sv,m) := svm in
   let ty := aword x.(vi_s) in
   Let _ :=  assert (~~ Sv.mem x.(vi_v) sv) (reg_ierror_no_var "init_array_info") in
+  (* Ok, but where is his [vi_n] field initialized?? *)
   let vars := map (fun id => {| vtype := ty; vname := id |}) x.(vi_n) in
   Let svelems := foldM init_elems (sv,0%Z) vars in
   let '(sv, len) := svelems in
   Let _ := assert [&& (0 <? len)%Z & convertible (vtype (vi_v x)) (aarr x.(vi_s) (Z.to_pos len))]
              (reg_ierror_no_var "init_array_info") in
+  (* This seems to be the only place where variables for each index are added to
+     the mapping from former array variables to variables for each index. *)
   ok (sv, Mvar.set m x.(vi_v) {| ai_ty := x.(vi_s); ai_len := len; ai_elems := vars |}).
 
 Definition init_map (fi : expand_info) := 
+  (* Why is it passing the identity function? *)
   let svars := sv_of_list (fun x => x) fi.(vars) in
   Let sarrs := foldM init_array_info (svars, Mvar.empty _) fi.(arrs) in
   ok ({| svars := svars; sarrs := sarrs.2 |}, finfo fi).
@@ -179,14 +199,17 @@ Definition expand_lv (m : t) (x : lval)  :=
       Let e := expand_e m e in
       ok (Laset al aa ws x e)
     else 
+      (* Finds the associated list of ("new"?) variables for each index *)
       match Mvar.get m.(sarrs) x, is_const e with
       | Some ai, Some i =>
         Let _ := assert (ai.(ai_ty) == ws) (reg_error x "(the default scale must be used)") in
         Let _ := assert (al == Aligned) (reg_error x "(alignement must be enforced)") in
         Let _ := assert (aa == AAscale) (reg_error x "(the default scale must be used)") in
         Let _ := assert [&& 0 <=? i & i <? ai.(ai_len)]%Z (reg_error x "(index out of bounds)") in
+        (* This chooses the correct variable name for an index in the array. *)
         let v := znth (v_var x) ai.(ai_elems) i in
         ok (Lvar {| v_var := v; v_info := v_info x |})
+      (* How does it ensure indicies are constant? *)
       | _, _ => Error (reg_error x "(the index is not a constant)")
       end
 
@@ -321,6 +344,7 @@ Definition expand_tyv m b s ty v :=
     ok ([:: ty], [:: v], None).
 
 Definition expand_fsig fi (entries : seq funname) (fname: funname) (fd: ufundef) :=
+  (* What is this doing here? *)
   Let x := init_map (fi fname fd) in
   match fd with
   | MkFun _ tyin params c tyout res ef =>
@@ -350,6 +374,7 @@ End FSIGS.
 
 Notation map_cfprog_name_cdata := (map_cfprog_name_gen (fun x => @f_info _ _ _ (fst (fst x)))).
 
+(* What does [fi] mean? In the compiler it's invoked with [cparams.(expand_fd)] *)
 Definition expand_prog (fi : funname -> ufundef -> expand_info) (entries : seq funname) (p: uprog) : cexec uprog :=
   Let step1 := map_cfprog_name (expand_fsig fi entries) (p_funcs p) in
   let fsigs := foldr (fun x y => Mf.set y x.1 x.2.2) (Mf.empty _) step1 in
