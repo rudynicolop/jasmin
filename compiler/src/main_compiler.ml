@@ -214,7 +214,7 @@ let main () =
     (* Check whether to generate source AST in a  Rocq file. *)
     if !rocq_ast_file <> "" then
       (* TODO: if/how should we continue compilation? *)
-      (GenRocqAST.gen_rocq_ast !rocq_ast_file; exit 0);
+      (GenRocqAST.gen_rocq_ast ~filename:!rocq_ast_file ~cprog:cprog; exit 0);
 
     let to_exec = Pretyping.Env.Exec.get env in
     if to_exec <> [] then begin
