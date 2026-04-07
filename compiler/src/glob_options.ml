@@ -34,6 +34,14 @@ let verbosity = ref 1
 
 let linting_level = ref 1
 
+(** Option to generate Rocq file with Program AST.
+    We represent this option as a string for the file name
+    of the ".v" file.
+
+    The default empty string denotes that this option is *NOT*
+    invoked. *)
+let rocq_ast_file = ref ""
+
 let set_linting_level i =
   if 0 <= i && i <= 2 then begin
       linting_level := i;
@@ -243,7 +251,8 @@ let options = [
     "-stack-zero-size",
       Arg.Symbol (List.map fst Annot.ws_strings, set_stack_zero_size),
       " Select stack zeroization size for export functions";
-    "-pliveness", Arg.Set print_liveness, " Print liveness information during register allocation"
+    "-pliveness", Arg.Set print_liveness, " Print liveness information during register allocation";
+    "-rocq-ast", Arg.Set_string rocq_ast_file, " Generate a Rocq file with the source program's AST";
   ] @  List.map print_option Compiler.compiler_step_list @ List.map stop_after_option Compiler.compiler_step_list
 
 let usage_msg = "Usage : jasminc [option] filename"

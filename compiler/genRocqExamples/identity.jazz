@@ -1,0 +1,6 @@
+/* Identity function in Jasmin. */
+
+export
+fn identity (reg u32 x) -> reg u32 {
+    return x;
+}
