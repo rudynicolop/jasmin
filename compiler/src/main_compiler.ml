@@ -71,6 +71,48 @@ module type ArchWithAnalyze = sig
     bool
 end
 
+(** NOTE: cut-copy-pasted out of main. *)
+let do_compile
+      (type reg regx xreg rflag cond asm_op extra_op)
+      (module Arch : Arch_full.Arch
+              with type reg = reg
+               and type regx = regx
+               and type xreg = xreg
+               and type rflag = rflag
+               and type cond = cond
+               and type asm_op = asm_op
+               and type extra_op = extra_op)
+      visit_prog_after_pass env prog cprog =
+  match Compile.compile (module Arch) visit_prog_after_pass prog cprog with
+  | Utils0.Error e ->
+     let e = Conv.error_of_cerror (Printer.pp_err ~debug:!debug) e in
+     raise (HiError e)
+  | Utils0.Ok asm ->
+     if !Glob_options.print_export_info_json then begin
+         Format.printf "%a" (fun fmt ->
+             PrintExportInfo.pp_export_info_json
+               fmt
+               env
+               prog)
+           asm
+       end;
+     if !outfile <> "" then begin
+         BatFile.with_file_out !outfile (fun out ->
+             let fmt = BatFormat.formatter_of_out_channel out in
+             Format.fprintf fmt "%a%!" Arch.pp_asm asm);
+         if !debug then Format.eprintf "assembly listing written@."
+       end else if List.mem Compiler.Assembly !print_list then
+       Format.printf "%a%!" Arch.pp_asm asm
+  | exception Annot.AnnotationError (loc, code) -> hierror ~loc:(Lone loc) ~kind:"annotation error" "%t" code
+
+(* TODO: call this on Rocq program. *)
+let bridge (cprog :'asm Expr._uprog) : unit =
+  let  module C = (val CoreArchFactory.core_arch_x86 ~use_lea:!lea ~use_set0:!set0 !call_conv) in
+  let module Arch = Arch_full.Arch_from_Core_arch (C) in
+  let visit_prog_after_pass ~debug s p =
+    ignore (debug, s, p) in
+  do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
+    (Conv.prog_of_cuprog cprog) cprog
 
 let main () =
 
@@ -248,28 +290,7 @@ let main () =
         List.iter exec to_exec
       end;
 
-    begin match Compile.compile (module Arch) visit_prog_after_pass prog cprog with
-    | Utils0.Error e ->
-      let e = Conv.error_of_cerror (Printer.pp_err ~debug:!debug) e in
-      raise (HiError e)
-    | Utils0.Ok asm ->
-      if !Glob_options.print_export_info_json then begin
-        Format.printf "%a" (fun fmt ->
-          PrintExportInfo.pp_export_info_json
-            fmt
-            env
-            prog)
-            asm
-      end;
-      if !outfile <> "" then begin
-        BatFile.with_file_out !outfile (fun out ->
-          let fmt = BatFormat.formatter_of_out_channel out in
-          Format.fprintf fmt "%a%!" Arch.pp_asm asm);
-          if !debug then Format.eprintf "assembly listing written@."
-      end else if List.mem Compiler.Assembly !print_list then
-          Format.printf "%a%!" Arch.pp_asm asm
-    | exception Annot.AnnotationError (loc, code) -> hierror ~loc:(Lone loc) ~kind:"annotation error" "%t" code
-    end
+    begin  do_compile (module Arch) visit_prog_after_pass env prog cprog   end
   with
 
 
