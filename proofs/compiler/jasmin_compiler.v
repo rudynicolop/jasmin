@@ -9,3 +9,4 @@ Require wint_int.
 
 (** Rudy: Extract my example programs. *)
 Require empty_prog.
+Require empty_prog_with_main.

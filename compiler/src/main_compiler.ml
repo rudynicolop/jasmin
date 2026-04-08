@@ -108,7 +108,14 @@ let do_compile
 (** NOTE:
     Copy-pasted type argumetns and [module Arch] parameter
     since otherwise it would infer the wrong type argument for [cprog]'s
-    ['asm Expr._uprog]'s unification var ['asm]. *)
+    ['asm Expr._uprog]'s unification var ['asm].
+
+    [cprog] is a parameterized Jasmin program with the following parameters,
+    which [bridge] must supply:
+    - ['asm Sopn.asmOp] type argument for assembly operations.
+    - [string -> Jasmin.Var0.FunName.t] generate function identifiers.
+
+ *)
 let bridge
       (type reg regx xreg rflag cond asm_op extra_op)
       (module Arch : Arch_full.Arch
@@ -119,11 +126,22 @@ let bridge
                and type cond = cond
                and type asm_op = asm_op
                and type extra_op = extra_op)
-      (cprog : _ Expr._uprog) : unit =
+      (cprog : Arch.extended_op Sopn.asmOp -> (string -> Jasmin.Var0.FunName.t) -> Arch.extended_op Expr._uprog) : unit =
+
+  (* Dummy argument for [do_compile] *)
   let visit_prog_after_pass ~debug s p =
     ignore (debug, s, p) in
+
+  (* Generate function idientifiers *)
+  let mk_funname (f : string) : Jasmin.Var0.FunName.t =
+    (* NOTE: The underlying type [t] of [Jasmin.Var0.FunName.t]
+       seems hidden, and I literally don't care anymore. *)
+    Obj.magic (CoreIdent.F.mk f) in
+
+  (* "Rocq prog" *)
+  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname in
   do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
-    (Conv.prog_of_cuprog cprog) cprog
+    (Conv.prog_of_cuprog rprog) rprog
 
 let main () =
 
@@ -269,17 +287,13 @@ let main () =
       (* TODO: if/how should we continue compilation? *)
       (GenRocqAST.gen_rocq_ast ~filename:!rocq_ast_file ~cprog:cprog; exit 0);
 
-    (* Rudy: compile a file defined with a Rocq AST. *)
-    begin
+    (* Rudy: compile a file defined with a Rocq AST.
+       NOTE: need to manually set which program is compiled. *)
     if !bridge_rocq then
       begin
-        bridge (module Arch) (Empty_prog.empty_prog Arch.asmOp);
+        bridge (module Arch) Empty_prog_with_main.empty_prog;
         exit 0
-      end
-    else
-      (* bridge (module Arch) cprog *)
-      ()
-    end;
+      end;
 
     let to_exec = Pretyping.Env.Exec.get env in
     if to_exec <> [] then begin
