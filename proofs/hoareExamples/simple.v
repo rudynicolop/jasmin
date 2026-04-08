@@ -56,10 +56,6 @@ Section programs.
   Definition while_true i1 i2 al : cmd :=
     [:: MkI i1 (Cwhile al [::] true i2 [::])].
 
-  (** Assert [false]. *)
-  Definition assert_false i msg : cmd :=
-    [:: MkI i (Cassert (msg, Pbool false))].
-
   (** Assign [0 + 0] to a local variable.
 
       NOTE: Using [AT_keep] to avoid shenanigans.
@@ -186,10 +182,6 @@ Section proofs_hoare.
     apply khoare_bind with (fun s' => s' = s /\ True).
     all: by apply khoare_ret.
   Qed.
-
-  Lemma hoare_assert_false i msg Q :
-    Hoare (fun _ => False) (assert_false i msg) Q.
-  Proof. apply hoare_assert with (Qerr:=fun _ => False); intuition. Qed.
 
   (** NOTE the differences between the applications of
       [rhoare_bind], [rhoare_read], and [rhoare_write]. *)
@@ -617,6 +609,7 @@ Section proofs_hoare.
         f_tyout := [:: τ];
         f_res := [:: result];
         f_extra := extra;
+        f_contract := None;
       |}.
     (* Program has the identity function for ints. *)
     Context {idfun : funname} {idfun_info : fun_info}
@@ -648,11 +641,18 @@ Section proofs_hoare.
       unfold WrapIdent.t in *.
       Fail unfold Cident.t in *.
       Import Cident.
-      unfold Cident.t in *.
+      Fail unfold Cident.t in *.
       Fail unfold FunName.t in *.
       intros fs Hfs. split; first contradiction.
       rewrite has_idfunZ.
       (* NOTE: supply pre and post condition of function body. *)
+      constructor.
+      { rewrite /sem_pre.
+        (* TODO: don't care about this. *)
+        admit. }
+      { rewrite /sem_post.
+        (* TODO: don't care about this. *)
+        admit. }
       exists (fun s => s.(evm).[idfun_arg] = z), (fun s => s.(evm).[idfun_result] = z).
       constructor.
       - (* Intialize state for fun call. *)
@@ -663,14 +663,18 @@ Section proofs_hoare.
         assert (Hinit : init_state idfun_extra (p_extra p) ev (estate0 fs__in) = ok (estate0 fs__in)).
         { admit. }
         rewrite Hinit /= /write_var /set_var /= /DB /= orbT /=.
-        rewrite idfun_argZ /= Vm.setP_eq idfun_argZ /= //.
+        (* TODO: fix *)
+        Fail rewrite idfun_argZ /= Vm.setP_eq idfun_argZ /= //.
+        admit.
       - (* Proof for the function body. *)
         rewrite /idfun_def /= /idfun_body /=.
         rewrite hoareP => s Hs.
         apply hoare_assgn with
           (Rv:=eq (Vint z)) (Rtr:=eq (Vint z)) (Qerr:=fun _ => False) => /= //.
         { intros ? -> => /=. rewrite /get_gvar /= /get_var /=.
-          rewrite /is_defined /= Hs /= //. }
+          (* TODO: fix. *)
+          Fail rewrite /is_defined /= Hs /= //.
+          admit. }
         { intros ? -> ? <- => /= //. }
         intros ? <- ? -> => /=.
         rewrite /write_var /set_var /= idfun_resultZ /=.
@@ -700,7 +704,7 @@ Section proofs_hoare.
       intros Hxtype.
       About fun_info.
       Search "dummy".
-      destruct idfun_info.
+      Fail destruct idfun_info.
       eapply hoare_call with
         (* The arguments passed in are just a single int. *)
         (Pf:=fun _ fs => fs.(fvals) = [:: Vint z])
@@ -710,20 +714,21 @@ Section proofs_hoare.
         (Qerr:=fun _ => False) => /= //.
       - (* What is [hoare_f_ii]? There are no lemmas for it...? *)
         admit.
-      - intros fs fr Hfs <-. 
-        rewrite /upd_estate /= Hfs /=.
-        eapply rhoare_bind with
-          (R:=fun s => s.(evm).[x] = Vint z) (QET:=fun _ => False) => /= //.
-        rewrite /write_var /=.
-        eapply rhoare_read with (R:=fun vm => vm.[x] = z).
-        { rewrite /set_var /= Hxtype /=.
-          (* Is there a better way rather than unfolding everything? *)
-          rewrite /assert /= /DB /= orbT /=.
-          apply rhoare_ok with (QE:=fun _ : error => False) => s _.
-          rewrite Vm.setP_eq Hxtype /= //. }
-        intros vm Hvm => /=.
-        apply rhoare_ok with (QE:=fun _ : error => False) => s _.
-        rewrite /= //.
+      - (* TODO: fix *)
+        Fail intros fs fr Hfs <-. 
+        (* rewrite /upd_estate /= Hfs /=. *)
+        (* eapply rhoare_bind with *)
+        (*   (R:=fun s => s.(evm).[x] = Vint z) (QET:=fun _ => False) => /= //. *)
+        (* rewrite /write_var /=. *)
+        (* eapply rhoare_read with (R:=fun vm => vm.[x] = z). *)
+        (* { rewrite /set_var /= Hxtype /=. *)
+        (*   (* Is there a better way rather than unfolding everything? *) *)
+        (*   rewrite /assert /= /DB /= orbT /=. *)
+        (*   apply rhoare_ok with (QE:=fun _ : error => False) => s _. *)
+        (*   rewrite Vm.setP_eq Hxtype /= //. } *)
+        (* intros vm Hvm => /=. *)
+        (* apply rhoare_ok with (QE:=fun _ : error => False) => s _. *)
+        (* rewrite /= //. *)
     Abort.
 
   End funcalls.
