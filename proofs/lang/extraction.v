@@ -84,4 +84,8 @@ Separate Extraction
   riscv_extra
   riscv_params
   compiler
-  wint_int.
+  wint_int
+
+  (* Rudy's examples  *)
+  empty_prog
+.

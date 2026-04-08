@@ -42,6 +42,9 @@ let linting_level = ref 1
     invoked. *)
 let rocq_ast_file = ref ""
 
+(** Option to do "Bridge" thing and compile source written in Rocq.  *)
+let bridge_rocq = ref false
+
 let set_linting_level i =
   if 0 <= i && i <= 2 then begin
       linting_level := i;
@@ -253,6 +256,7 @@ let options = [
       " Select stack zeroization size for export functions";
     "-pliveness", Arg.Set print_liveness, " Print liveness information during register allocation";
     "-rocq-ast", Arg.Set_string rocq_ast_file, " Generate a Rocq file with the source program's AST";
+    "-bridge-rocq", Arg.Set bridge_rocq, "Compile from source rocq file";
   ] @  List.map print_option Compiler.compiler_step_list @ List.map stop_after_option Compiler.compiler_step_list
 
 let usage_msg = "Usage : jasminc [option] filename"

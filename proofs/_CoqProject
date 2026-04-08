@@ -202,6 +202,10 @@ lang/warray_.v
 lang/word.v
 lang/wsize.v
 
-# Rudy's examples examples
+# Rudy's examples
+lang/empty_prog.v
+
+# Rudy's examples
 hoareExamples/simple.v
 hoareExamples/identity.v
+hoareExamples/empty.v

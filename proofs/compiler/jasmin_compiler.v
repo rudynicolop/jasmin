@@ -6,3 +6,6 @@ Require x86_params.
 Require riscv_params.
 Require sem_params_of_arch_extra.
 Require wint_int.
+
+(** Rudy: Extract my example programs. *)
+Require empty_prog.

@@ -106,9 +106,17 @@ let do_compile
   | exception Annot.AnnotationError (loc, code) -> hierror ~loc:(Lone loc) ~kind:"annotation error" "%t" code
 
 (* TODO: call this on Rocq program. *)
-let bridge (cprog :'asm Expr._uprog) : unit =
-  let  module C = (val CoreArchFactory.core_arch_x86 ~use_lea:!lea ~use_set0:!set0 !call_conv) in
-  let module Arch = Arch_full.Arch_from_Core_arch (C) in
+let bridge
+      (type reg regx xreg rflag cond asm_op extra_op)
+      (module Arch : Arch_full.Arch
+              with type reg = reg
+               and type regx = regx
+               and type xreg = xreg
+               and type rflag = rflag
+               and type cond = cond
+               and type asm_op = asm_op
+               and type extra_op = extra_op)
+      (cprog : _ Expr._uprog) : unit =
   let visit_prog_after_pass ~debug s p =
     ignore (debug, s, p) in
   do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
@@ -253,10 +261,22 @@ let main () =
 
     if !debug then Printf.eprintf "translated to coq \n%!";
 
-    (* Check whether to generate source AST in a  Rocq file. *)
+    (* Rudy: Check whether to generate source AST in a  Rocq file. *)
     if !rocq_ast_file <> "" then
       (* TODO: if/how should we continue compilation? *)
       (GenRocqAST.gen_rocq_ast ~filename:!rocq_ast_file ~cprog:cprog; exit 0);
+
+    (* Rudy: compile a file defined with a Rocq AST. *)
+    begin
+    if !bridge_rocq then
+      begin
+        bridge (module Arch) (Empty_prog.empty_prog Arch.asmOp);
+        exit 0
+      end
+    else
+      (* bridge (module Arch) cprog *)
+      ()
+    end;
 
     let to_exec = Pretyping.Env.Exec.get env in
     if to_exec <> [] then begin
