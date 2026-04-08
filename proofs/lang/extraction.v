@@ -43,6 +43,21 @@ Extract Constant var.FunName.t   => "CoreIdent.funname".
 Extract Constant var.funname     => "CoreIdent.funname".
 Extract Constant var.FunName.tag => "CoreIdent.funname_tag".
 
+(** Extracting [FunInfo.t]
+
+    NOTE: How are they not already doing this??
+
+ *)
+Extract Constant expr.FunInfo.t => "FInfo.t".
+
+(** Extracting [FunInfo.witness].
+
+    TODO: should the Rocq side have a function to speficy [FInfo.call_conv]?
+
+ *)
+Extract Constant expr.FunInfo.witness =>
+  "( Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy }) )".
+
 (* Module Cident *)
 
 Extract Constant ident.Cident.t       => "CoreIdent.Cident.t".

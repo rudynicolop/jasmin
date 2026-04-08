@@ -6,6 +6,8 @@ From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
 
 Require Import Stdlib.micromega.Lia.
 
+Definition FInfo_witness : fun_info := FunInfo.witness.
+
 Section prog.
   Context {pd: PointerData} `{asmop:asmOp}.
 
@@ -13,7 +15,7 @@ Section prog.
   Context (to_funname : string -> FunName.t).
 
   Definition main_def : _fundef unit :=
-    {| f_info := FunInfo.witness
+    {| f_info := (FInfo_witness : fun_info)
     (* Ignore contracts. *)
     ; f_contract := None
     (* No arguments. *)
