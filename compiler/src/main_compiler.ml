@@ -105,7 +105,10 @@ let do_compile
        Format.printf "%a%!" Arch.pp_asm asm
   | exception Annot.AnnotationError (loc, code) -> hierror ~loc:(Lone loc) ~kind:"annotation error" "%t" code
 
-(* TODO: call this on Rocq program. *)
+(** NOTE:
+    Copy-pasted type argumetns and [module Arch] parameter
+    since otherwise it would infer the wrong type argument for [cprog]'s
+    ['asm Expr._uprog]'s unification var ['asm]. *)
 let bridge
       (type reg regx xreg rflag cond asm_op extra_op)
       (module Arch : Arch_full.Arch
