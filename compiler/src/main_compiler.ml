@@ -105,15 +105,17 @@ let do_compile
        Format.printf "%a%!" Arch.pp_asm asm
   | exception Annot.AnnotationError (loc, code) -> hierror ~loc:(Lone loc) ~kind:"annotation error" "%t" code
 
-(** NOTE:
-    Copy-pasted type argumetns and [module Arch] parameter
+(** Copy-pasted type argumetns and [module Arch] parameter
     since otherwise it would infer the wrong type argument for [cprog]'s
     ['asm Expr._uprog]'s unification var ['asm].
 
     [cprog] is a parameterized Jasmin program with the following parameters,
     which [bridge] must supply:
     - ['asm Sopn.asmOp] type argument for assembly operations.
-    - [string -> Jasmin.Var0.FunName.t] generate function identifiers.
+    - [string -> Jasmin.Var0.funname] generate function identifiers.
+      NOTE: It's critical that we use [Jasmin.Var0.funname] here, NOT [Jasmin.Var0.FunName.t]
+      which is hidden!
+    - [FInfo.t] function info corresponding to [FunInfo.t].
 
  *)
 let bridge
@@ -126,20 +128,26 @@ let bridge
                and type cond = cond
                and type asm_op = asm_op
                and type extra_op = extra_op)
-      (cprog : Arch.extended_op Sopn.asmOp -> (string -> Jasmin.Var0.FunName.t) -> Arch.extended_op Expr._uprog) : unit =
+      (cprog :
+         Arch.extended_op Sopn.asmOp ->
+         (string -> Jasmin.Var0.funname) ->
+         FInfo.t ->
+         Arch.extended_op Expr._uprog) : unit =
 
   (* Dummy argument for [do_compile] *)
   let visit_prog_after_pass ~debug s p =
     ignore (debug, s, p) in
 
+  (* Dummy [fun_info] witness: *)
+  let fun_info_dummy : FInfo.t = 
+    (Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy })) in
+
   (* Generate function idientifiers *)
-  let mk_funname (f : string) : Jasmin.Var0.FunName.t =
-    (* NOTE: The underlying type [t] of [Jasmin.Var0.FunName.t]
-       seems hidden, and I literally don't care anymore. *)
-    Obj.magic (CoreIdent.F.mk f) in
+  let mk_funname (f : string) : Jasmin.Var0.funname =
+    CoreIdent.F.mk f in
 
   (* "Rocq prog" *)
-  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname in
+  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname fun_info_dummy in
   do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
     (Conv.prog_of_cuprog rprog) rprog
 

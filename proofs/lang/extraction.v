@@ -46,15 +46,14 @@ Extract Constant var.FunName.tag => "CoreIdent.funname_tag".
 (** Extracting [FunInfo.t]
 
     NOTE: How are they not already doing this??
-
- *)
+    Probably becuase OCaml cannot see that the hidden
+    [FunInfo.t] is the same as [FInfo.t] and [fun_info]. *)
 Extract Constant expr.FunInfo.t => "FInfo.t".
 
 (** Extracting [FunInfo.witness].
 
-    TODO: should the Rocq side have a function to speficy [FInfo.call_conv]?
-
- *)
+    NOTE: this is useless, see above.
+    TODO: should the Rocq side have a function to speficy [FInfo.call_conv]? *)
 Extract Constant expr.FunInfo.witness =>
   "( Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy }) )".
 
