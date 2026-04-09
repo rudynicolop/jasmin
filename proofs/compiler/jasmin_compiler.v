@@ -11,3 +11,4 @@ Require wint_int.
 Require empty_prog.
 Require empty_prog_with_main.
 Require identity_with_main.
+Require main_succ_prog.

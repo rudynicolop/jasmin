@@ -79,10 +79,9 @@ Section prog.
       map (MkI dummy_instr_info)
         [::
          (** Call identity with [0%Z]. *)
-           Ccall [:: Lvar tempz] (to_funname "identity") [:: Pconst 0%Z]
-         (* ; *)
-         (* (** Assign to return var. *) *)
-         (* Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy) *)
+         Ccall [:: Lvar tempy] (to_funname "identity") [:: Pconst 0%Z];
+         (** Assign to return var. *)
+         Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy)
         ].
 
     Definition main_def : _fundef unit :=

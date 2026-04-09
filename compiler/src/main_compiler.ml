@@ -321,7 +321,7 @@ let main () =
        NOTE: need to manually set which program is compiled. *)
     if !bridge_rocq then
       begin
-        bridge (module Arch) Identity_with_main.call_identity_prog;
+        bridge (module Arch) Main_succ_prog.prog;
         exit 0
       end;
 
