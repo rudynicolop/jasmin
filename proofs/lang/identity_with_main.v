@@ -70,13 +70,19 @@ Section prog.
     Definition tempz : var_i :=
       mk_var_i (Var aint (to_ident "z" (Reg (Normal, Direct)) aint)).
 
+    (** TODO: on OCaml side, when we try to compile this,
+        we get the error:
+        "internal compilation error in function main:
+         make reference arguments: unknown function"
+     *)
     Definition main_body : cmd :=
       map (MkI dummy_instr_info)
         [::
          (** Call identity with [0%Z]. *)
-         Ccall [:: Lvar tempy] (to_funname "identity") [:: Pconst 0%Z];
-         (** Assign to return var. *)
-         Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy)
+           Ccall [:: Lvar tempz] (to_funname "identity") [:: Pconst 0%Z]
+         (* ; *)
+         (* (** Assign to return var. *) *)
+         (* Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy) *)
         ].
 
     Definition main_def : _fundef unit :=
@@ -98,7 +104,7 @@ Section prog.
   End main.
 
   Definition call_identity_prog : _uprog :=
-    {| p_funcs := [:: identity_decl ; main_decl];
+    {| p_funcs := [:: main_decl ; identity_decl ];
       (* No globals *)
       p_globs := [::];
       p_extra := tt;
