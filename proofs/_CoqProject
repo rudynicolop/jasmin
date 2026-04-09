@@ -205,6 +205,7 @@ lang/wsize.v
 # Rudy's examples
 lang/empty_prog.v
 lang/empty_prog_with_main.v
+lang/identity_with_main.v
 
 # Rudy's examples
 hoareExamples/simple.v

@@ -103,4 +103,5 @@ Separate Extraction
   (* Rudy's examples  *)
   empty_prog
   empty_prog_with_main
+  identity_with_main
 .
