@@ -148,10 +148,14 @@ let bridge
   let mk_funname (f : string) : Jasmin.Var0.funname =
     CoreIdent.F.mk f in
 
-  (* Generate variable identifiers *)
+  (* Generate variable identifiers.
+     TODO: Rocq side needs to supply a type (again), and the [v_kind].
+   *)
   let mk_ident (x : string) : Ident.Ident.ident =
-    ignore x;
-    failwith "TODO" in
+    GV.mk x (failwith "Rocq needs to give v_kind!") 
+      (failwith "Rocq needs to give type!")
+      Location._dummy []
+  in
 
   (* "Rocq prog" *)
   let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname fun_info_dummy mk_ident in
