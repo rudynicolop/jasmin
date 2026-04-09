@@ -7,9 +7,8 @@ From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
 Require Import Stdlib.micromega.Lia.
 
 Section prog.
-  Context {pd: PointerData} `{asmop:asmOp}.
-
   Context
+    {pd: PointerData} `{asmop:asmOp}
 
     (** Get function name identifiers.
         NOTE: It is *CRITICAL* that we use [funname] here, no
@@ -23,16 +22,29 @@ Section prog.
         type [fun_info = FInfo.t], not [fun_info = FunInfo.t]... yikes... *)
     (fun_info_dummy : fun_info)
 
-    (** Get variable identifiers. *)
-    (to_ident : string -> Ident.ident)
+    (** Get variable identifiers.
+        NOTE: The OCaml type for identifiers [CoreIdent.Cident.t] also
+        requires:
+        - redundant type information.
+        - the "kind" of variable (register, stack, constant, etc)
+     *)
+    (to_ident : string -> v_kind -> atype -> Ident.ident)
   .
 
-  (** Identity function for integers. *)
-  Definition tempx : var_i := mk_var_i (Var aint (to_ident "x")).
-  Definition tempr : var_i := mk_var_i (Var aint (to_ident "r")).
+  Section identity.
+
+    (** ** Identity function for integers. *)
+
+    (** Variables. *)
+    Definition tempx : var_i :=
+      mk_var_i (Var aint (to_ident "x" (Reg (Normal, Direct)) aint)).
+    Definition tempr : var_i :=
+      mk_var_i (Var aint (to_ident "r" (Reg (Normal, Direct)) aint)).
+
   Definition identity_body : cmd :=
     [:: MkI dummy_instr_info
        (Cassgn (Lvar tempr) AT_keep aint (mk_lvar tempx))].
+
   Definition identity_def : _fundef unit :=
     {| f_info := fun_info_dummy
     (* Ignore contracts. *)
@@ -44,35 +56,46 @@ Section prog.
     ; f_res := [:: tempr]
     ; f_extra := tt
     |}.
+
   Definition identity_decl : _fun_decl unit :=
     (to_funname "identity", identity_def).
+  End identity.
 
-  (** Main function. *)
-  Definition tempy : var_i := mk_var_i (Var aint (to_ident "y")).
-  Definition tempz : var_i := mk_var_i (Var aint (to_ident "z")).
-  Definition main_body : cmd :=
-    map (MkI dummy_instr_info)
-      [::
-        (** Call identity with [0%Z]. *)
-        Ccall [:: Lvar tempy] (to_funname "identity") [:: Pconst 0%Z];
-        (** Assign to return var. *)
-        Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy)
-      ].
-  Definition main_def : _fundef unit :=
-    {| f_info := fun_info_dummy
-    (* Ignore contracts. *)
-    ; f_contract := None
-    (* No arguments. *)
-    ; f_tyin := [::]
-    ; f_params := [::]
-    ; f_body := main_body
-    (* Returns result of identity. *)
-    ; f_tyout := [:: aint]
-    ; f_res := [:: tempz]
-    ; f_extra := tt
-    |}.
-  Definition main_decl : _fun_decl unit :=
-    (to_funname "main", main_def).
+  Section main.
+    (** ** Main. *)
+
+    (** Variables. *)
+    Definition tempy : var_i :=
+      mk_var_i (Var aint (to_ident "y" (Reg (Normal, Direct)) aint)).
+    Definition tempz : var_i :=
+      mk_var_i (Var aint (to_ident "z" (Reg (Normal, Direct)) aint)).
+
+    Definition main_body : cmd :=
+      map (MkI dummy_instr_info)
+        [::
+         (** Call identity with [0%Z]. *)
+         Ccall [:: Lvar tempy] (to_funname "identity") [:: Pconst 0%Z];
+         (** Assign to return var. *)
+         Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy)
+        ].
+
+    Definition main_def : _fundef unit :=
+      {| f_info := fun_info_dummy
+      (* Ignore contracts. *)
+      ; f_contract := None
+      (* No arguments. *)
+      ; f_tyin := [::]
+      ; f_params := [::]
+      ; f_body := main_body
+      (* Returns result of identity. *)
+      ; f_tyout := [:: aint]
+      ; f_res := [:: tempz]
+      ; f_extra := tt
+      |}.
+
+    Definition main_decl : _fun_decl unit :=
+      (to_funname "main", main_def).
+  End main.
 
   Definition call_identity_prog : _uprog :=
     {| p_funcs := [:: identity_decl ; main_decl];

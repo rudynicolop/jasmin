@@ -105,6 +105,17 @@ let do_compile
        Format.printf "%a%!" Arch.pp_asm asm
   | exception Annot.AnnotationError (loc, code) -> hierror ~loc:(Lone loc) ~kind:"annotation error" "%t" code
 
+(** Convert a Rocq [atype] into an identifier type [int gty].
+    NOTE: We use [int] specifically because this is what [var] uses.
+
+    TODO: Does this function already exist?
+ *)
+let gty_of_atype : Type.atype -> int gty = function
+  | Type.Coq_abool -> Bty Bool
+  | Type.Coq_aint -> Bty Int
+  | Type.Coq_aword ws -> Bty (U ws)
+  | Type.Coq_aarr (ws, n) -> Arr (ws, Conv.int_of_pos n)
+
 (** Copy-pasted type argumetns and [module Arch] parameter
     since otherwise it would infer the wrong type argument for [cprog]'s
     ['asm Expr._uprog]'s unification var ['asm].
@@ -116,7 +127,9 @@ let do_compile
       NOTE: It's critical that we use [Jasmin.Var0.funname] here, NOT [Jasmin.Var0.FunName.t]
       which is hidden!
     - [FInfo.t] function info corresponding to [FunInfo.t].
-    - [string -> Ident.Ident.ident] generate variable identifiers.
+    - [string -> v_kind -> atype -> Ident.Ident.ident] generate variable identifiers.
+      Jasmin has redundant type information in variables, which the Rocq side needs to
+      supply twice.
 
  *)
 let bridge
@@ -133,7 +146,7 @@ let bridge
          Arch.extended_op Sopn.asmOp ->
          (string -> Jasmin.Var0.funname) ->
          FInfo.t ->
-         (string -> Ident.Ident.ident) ->
+         (string -> Wsize.v_kind -> Type.atype -> Ident.Ident.ident) ->
          Arch.extended_op Expr._uprog) : unit =
 
   (* Dummy argument for [do_compile] *)
@@ -151,10 +164,8 @@ let bridge
   (* Generate variable identifiers.
      TODO: Rocq side needs to supply a type (again), and the [v_kind].
    *)
-  let mk_ident (x : string) : Ident.Ident.ident =
-    GV.mk x (failwith "Rocq needs to give v_kind!") 
-      (failwith "Rocq needs to give type!")
-      Location._dummy []
+  let mk_ident (x : string) (k : Wsize.v_kind) (t : Type.atype) : Ident.Ident.ident =
+    GV.mk x k (gty_of_atype t) Location._dummy []
   in
 
   (* "Rocq prog" *)
