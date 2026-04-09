@@ -207,6 +207,7 @@ lang/empty_prog.v
 lang/empty_prog_with_main.v
 lang/identity_with_main.v
 lang/main_succ_prog.v
+lang/ininout_prog.v
 
 # Rudy's examples
 hoareExamples/simple.v

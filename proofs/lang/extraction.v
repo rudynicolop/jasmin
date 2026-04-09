@@ -105,4 +105,5 @@ Separate Extraction
   empty_prog_with_main
   identity_with_main
   main_succ_prog
+  ininout_prog
 .
