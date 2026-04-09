@@ -116,6 +116,7 @@ let do_compile
       NOTE: It's critical that we use [Jasmin.Var0.funname] here, NOT [Jasmin.Var0.FunName.t]
       which is hidden!
     - [FInfo.t] function info corresponding to [FunInfo.t].
+    - [string -> Ident.Ident.ident] generate variable identifiers.
 
  *)
 let bridge
@@ -132,6 +133,7 @@ let bridge
          Arch.extended_op Sopn.asmOp ->
          (string -> Jasmin.Var0.funname) ->
          FInfo.t ->
+         (string -> Ident.Ident.ident) ->
          Arch.extended_op Expr._uprog) : unit =
 
   (* Dummy argument for [do_compile] *)
@@ -146,8 +148,13 @@ let bridge
   let mk_funname (f : string) : Jasmin.Var0.funname =
     CoreIdent.F.mk f in
 
+  (* Generate variable identifiers *)
+  let mk_ident (x : string) : Ident.Ident.ident =
+    ignore x;
+    failwith "TODO" in
+
   (* "Rocq prog" *)
-  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname fun_info_dummy in
+  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname fun_info_dummy mk_ident in
   do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
     (Conv.prog_of_cuprog rprog) rprog
 
@@ -299,7 +306,7 @@ let main () =
        NOTE: need to manually set which program is compiled. *)
     if !bridge_rocq then
       begin
-        bridge (module Arch) Empty_prog_with_main.empty_prog;
+        bridge (module Arch) Identity_with_main.call_identity_prog;
         exit 0
       end;
 
