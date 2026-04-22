@@ -83,6 +83,7 @@ let do_compile
                and type asm_op = asm_op
                and type extra_op = extra_op)
       visit_prog_after_pass env prog cprog =
+  (** TODO: how is [env] in compilation? *)
   match Compile.compile (module Arch) visit_prog_after_pass prog cprog with
   | Utils0.Error e ->
      let e = Conv.error_of_cerror (Printer.pp_err ~debug:!debug) e in
@@ -223,6 +224,7 @@ let main () =
         | Some conf -> SafetyConfig.load_config conf
         | None -> () in
 
+    (** NOTE: This procedure invokes [Pretyping.tt_program]. *)
     let env, pprog, _ast =
       try Compile.parse_file Arch.arch_info ~idirs:!Glob_options.idirs infile
       with
@@ -307,7 +309,10 @@ let main () =
       | Some strategy -> AutoSpill.doit strategy prog
     in
 
-    (* Now call the coq compiler *)
+    (** Now call the coq compiler.
+
+        NOTE: the [Env.t] [env] is not needed here!
+     *)
     let cprog = Conv.cuprog_of_prog prog in
 
     if !debug then Printf.eprintf "translated to coq \n%!";

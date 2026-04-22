@@ -23,6 +23,7 @@ let get_jasminpath () =
   warning Always Location.i_dummy "ill-formed value for the JASMINPATH environment variable";
   []
 
+(** QUESTION: Why does pretyping need an [Env.t] for an argument in addition to generating one? *)
 let parse_file arch_info ?(idirs=[]) fname =
   let idirs = idirs @ get_jasminpath () in
   let env = List.fold_left Pretyping.Env.add_from Pretyping.Env.empty idirs in

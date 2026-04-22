@@ -1,0 +1,10 @@
+/* Simple program, which returns the result of an unitialized
+   but declared register variable. */
+
+export
+fn main () -> reg u32 {
+   reg u32 x;
+   // Emits a warning.
+   // Returns 232, is this random?
+   return x;
+}
