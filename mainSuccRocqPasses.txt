@@ -1,0 +1,557 @@
+to bridge
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove logical assertion */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  z.174 = 1 +32u y.173; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After replace wint by word */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  z.174 = 1 +32u y.173; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After add renaming assignments at export function boundaries */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  y.175 = y.175; /* u32 */
+  z.174 = 1 +32u y.173; /* u32 */
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After array copy */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  y.175 = y.175; /* u32 */
+  z.174 = 1 +32u y.173; /* u32 */
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After add array initialisation */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  y.175 = y.175; /* u32 */
+  z.174 = 1 +32u y.173; /* u32 */
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After lower spill/unspill instructions */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  y.175 = y.175; /* u32 */
+  z.174 = 1 +32u y.173; /* u32 */
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After inlining */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  y.175 = y.175; /* u32 */
+  z.174 = 1 +32u y.173; /* u32 */
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove unused function */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 y.173;
+  reg u32 z.174;
+  
+  y.175 = y.175; /* u32 */
+  z.174 = 1 +32u y.173; /* u32 */
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After unrolling */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove unused function */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  
+  z.172 = z.172; /* u32 */
+  return (z.172);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After liverange splitting */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After variable renaming to remove copies */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove phi nodes introduced by splitting */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After dead code after variable renaming to remove copies */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove array initialisation */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After add assignments before and after call to ensure that arguments and results are ref ptr */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After expansion of register arrays */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.184;
+  
+  z.184 = z.172; /* u32 */
+  return (z.184);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After liverange splitting */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = z.172; /* u32 */
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After variable renaming to remove copies */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = z.172; /* u32 */
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove phi nodes introduced by splitting */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = z.172; /* u32 */
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After dead code after variable renaming to remove copies */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = z.172; /* u32 */
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After remove globals variables */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = z.172; /* u32 */
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After introduce registers for constants appearing in conditions (RISC-V only) */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = z.172; /* u32 */
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After lowering of instructions */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = #MOV_32(z.172);
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After propagate inline variables */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = #MOV_32(z.172);
+  return (z.185);
+}
+
+
+running visit prog
+/* -------------------------------------------------------------------- */
+/* After lowering of selective load hardening instructions */
+
+
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = #MOV_32(z.172);
+  return (z.185);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = #MOV_32(z.172);
+  return (z.185);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of complex addressing modes (RISC-V only) */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = #MOV_32(z.172);
+  return (z.185);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused returned values */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u32 y.175) -> (reg u32) {
+  reg u32 z.172;
+  reg u32 z.185;
+  
+  z.185 = #MOV_32(z.172);
+  return (z.185);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 RDI.59) -> (reg u64) {
+  reg u64 RAX.66;
+  
+  RAX.66 = #MOV_32(RAX.66);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 RDI.59) -> (reg u64) {
+  reg u64 RAX.66;
+  
+  
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After linearization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn main (reg u64 RDI) -> (u32) {
+  
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack zeroization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn main (reg u64 RDI) -> (u32) {
+  
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After tunneling */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn main (reg u64 RDI) -> (u32) {
+  
+  return RAX
+}
+
+
+	.att_syntax
+	.text
+	.p2align	5
+	.global	main
+	.type	main, %function
+main:
+	ret
+	.ident	"Jasmin Compiler @VERSION@"
+	.section	".note.GNU-stack", "", %progbits

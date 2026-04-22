@@ -188,7 +188,10 @@ let bridge
 
   (* Dummy argument for [do_compile] *)
   let visit_prog_after_pass ~debug s p =
-    ignore (debug, s, p) in
+    set_all_print ();
+    print_endline "running visit prog";
+        eprint s (Printer.pp_prog ~debug Arch.pointer_data Arch.msf_size Arch.asmOp) p
+  in
 
   (* "Rocq prog" *)
   let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp main_oracles in
@@ -198,7 +201,6 @@ let bridge
 let main () =
 
   try
-    let infile = parse() in
 
     let (module P : ArchWithAnalyze) =
       match !target_arch with
@@ -227,6 +229,22 @@ let main () =
           end)
     in
     let module Arch = P.A in
+
+    (* Rudy: compile a file defined with a Rocq AST.
+       NOTE: need to manually set which program is compiled. *)
+    if !bridge_rocq then
+      begin
+        print_endline "to bridge";
+        bridge (module Arch) Main_succ_prog.prog;
+        exit 0
+      end
+    else
+      print_endline "no bridge"
+    ;
+
+    print_endline "before parse";
+
+    let infile = parse() in
 
     if !safety_makeconfigdoc <> None
     then (
@@ -342,14 +360,6 @@ let main () =
     if !rocq_ast_file <> "" then
       (* TODO: if/how should we continue compilation? *)
       (GenRocqAST.gen_rocq_ast ~filename:!rocq_ast_file ~cprog:cprog; exit 0);
-
-    (* Rudy: compile a file defined with a Rocq AST.
-       NOTE: need to manually set which program is compiled. *)
-    if !bridge_rocq then
-      begin
-        bridge (module Arch) Main_succ_prog.prog;
-        exit 0
-      end;
 
     let to_exec = Pretyping.Env.Exec.get env in
     if to_exec <> [] then begin

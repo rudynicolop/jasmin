@@ -9,18 +9,20 @@ Section prog.
 
   (** ** Main. *)
 
+  Notation aword32 := (aword U32).
+
   (** Variables. *)
   Definition tempy : var_i :=
-    mk_var_i (Var aint (orc.(to_ident) "y" (Reg (Normal, Direct)) aint)).
+    mk_var_i (Var aword32 (orc.(to_ident) "y" (Reg (Normal, Direct)) aword32)).
   Definition tempz : var_i :=
-    mk_var_i (Var aint (orc.(to_ident) "z" (Reg (Normal, Direct)) aint)).
+    mk_var_i (Var aword32 (orc.(to_ident) "z" (Reg (Normal, Direct)) aword32)).
 
   Definition main_body : cmd :=
     map (MkI dummy_instr_info)
       [::
          (** Perform succession. *)
-         Cassgn (Lvar tempz) AT_keep aint
-         (Papp2 (Oadd Op_int) 1%Z (mk_lvar tempy))
+         Cassgn (Lvar tempz) AT_none aword32
+         (Papp2 (Oadd (Op_w U32)) 1%Z (mk_lvar tempy))
       ].
 
   (** Return the successor of the input value. *)
@@ -29,11 +31,11 @@ Section prog.
     (* Ignore contracts. *)
     ; f_contract := None
     (* No arguments. *)
-    ; f_tyin := [:: aint]
+    ; f_tyin := [:: aword32]
     ; f_params := [:: tempy]
     ; f_body := main_body
     (* Returns result of identity. *)
-    ; f_tyout := [:: aint]
+    ; f_tyout := [:: aword32]
     ; f_res := [:: tempz]
     ; f_extra := tt
     |}.

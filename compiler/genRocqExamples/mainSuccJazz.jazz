@@ -1,0 +1,5 @@
+export
+fn main (reg u32 y) -> reg u32 {
+   reg u32 z = 1 + y;
+   return z;
+}
