@@ -141,13 +141,13 @@ let mk_annotations (num : int) : Annotations.annotations =
 
 (** Generate "dummy" [return_info] based on the number of return vars.
     TODO: is this correct, how I generate list of lists? *)
-let mk_return_info (num_rets : int) : FInfo.return_info =
-  FInfo.{ ret_annot = BatList.make num_rets [];
+let mk_return_info (num_rets : Datatypes.nat) : FInfo.return_info =
+  FInfo.{ ret_annot = BatList.make (Conv.int_of_nat num_rets) [];
           ret_loc = Location._dummy; }
 
-(** Dummy [fun_info] witness: *)
-let mk_fun_info : FInfo.t = 
-  (Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy }))
+(** Generate dummy [fun_info] witness: *)
+let mk_fun_info (num_rets : Datatypes.nat) : FInfo.t = 
+  (Location._dummy , FInfo.f_annot_empty , FInfo.Export , mk_return_info num_rets)
 
 (** Generate function idientifiers *)
 let mk_funname (f : string) : Jasmin.Var0.funname =
@@ -162,7 +162,7 @@ let mk_ident (x : string) (k : Wsize.v_kind) (t : Type.atype) : Ident.Ident.iden
 let main_oracles : Oracles.oracles = {
     Oracles.to_ident = mk_ident;
     Oracles.to_funname = mk_funname;
-    Oracles.fun_info_dummy = mk_return_info
+    Oracles.to_fun_info = mk_fun_info
   }
 
 (** Copy-pasted type argumetns and [module Arch] parameter
