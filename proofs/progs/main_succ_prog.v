@@ -25,7 +25,7 @@ Section prog.
 
   (** Return the successor of the input value. *)
   Definition main_def : _fundef unit :=
-    {| f_info := orc.(fun_info_dummy)
+    {| f_info := orc.(to_fun_info) 1
     (* Ignore contracts. *)
     ; f_contract := None
     (* No arguments. *)

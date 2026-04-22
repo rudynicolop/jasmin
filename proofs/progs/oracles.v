@@ -22,8 +22,9 @@ Structure oracles := Oracles {
           encode information specific to the function.
           Specifically, the number of annotations in the return info needs
           to equal the length of return variables.
+          TODO: is this correct?
      *)
-    fun_info_dummy : fun_info;
+    to_fun_info : nat -> fun_info;
 
     (** Get variable identifiers.
         NOTE: The OCaml type for identifiers [CoreIdent.Cident.t] also

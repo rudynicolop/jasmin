@@ -7,7 +7,7 @@ Section prog.
   Context (orc : oracles).
 
   Definition main_def : _fundef unit :=
-    {| f_info := orc.(fun_info_dummy)
+    {| f_info := orc.(to_fun_info) 0
     (* Ignore contracts. *)
     ; f_contract := None
     (* No arguments. *)

@@ -21,7 +21,7 @@ Section prog.
        (Cassgn (Lvar tempr) AT_keep aint (mk_lvar tempx))].
 
   Definition identity_def : _fundef unit :=
-    {| f_info := orc.(fun_info_dummy)
+    {| f_info := orc.(to_fun_info) 1
     (* Ignore contracts. *)
     ; f_contract := None
     ; f_tyin := [:: aint]
@@ -60,7 +60,7 @@ Section prog.
         ].
 
     Definition main_def : _fundef unit :=
-      {| f_info := orc.(fun_info_dummy)
+      {| f_info := orc.(to_fun_info) 1
       (* Ignore contracts. *)
       ; f_contract := None
       (* No arguments. *)

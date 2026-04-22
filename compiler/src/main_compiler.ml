@@ -131,11 +131,19 @@ let gty_of_atype : Type.atype -> int gty = function
 let pident_dummy : Annotations.pident =
   Location.{ pl_loc = Location._dummy; pl_desc = "" }
 
-(** Generate "dummy" [return_info] based on the number of return vars. *)
+(** Dummy [Annotations.annotation] *)
+let dummy_annot : Annotations.annotation =
+  (pident_dummy, None)
+
+(** Generate a list of dummy annotations. *)
+let mk_annotations (num : int) : Annotations.annotations =
+  BatList.make num dummy_annot
+
+(** Generate "dummy" [return_info] based on the number of return vars.
+    TODO: is this correct, how I generate list of lists? *)
 let mk_return_info (num_rets : int) : FInfo.return_info =
-  FInfo.{ ret_annot = BatList.make num_rets (pident_dummy, None);
-          ret_loc = Location._dummy
-  }
+  FInfo.{ ret_annot = BatList.make num_rets [];
+          ret_loc = Location._dummy; }
 
 (** Dummy [fun_info] witness: *)
 let mk_fun_info : FInfo.t = 
@@ -154,7 +162,7 @@ let mk_ident (x : string) (k : Wsize.v_kind) (t : Type.atype) : Ident.Ident.iden
 let main_oracles : Oracles.oracles = {
     Oracles.to_ident = mk_ident;
     Oracles.to_funname = mk_funname;
-    Oracles.fun_info_dummy = fun_info_dummy
+    Oracles.fun_info_dummy = mk_return_info
   }
 
 (** Copy-pasted type argumetns and [module Arch] parameter
