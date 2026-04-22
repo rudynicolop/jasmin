@@ -83,7 +83,7 @@ let do_compile
                and type asm_op = asm_op
                and type extra_op = extra_op)
       visit_prog_after_pass env prog cprog =
-  (** TODO: how is [env] in compilation? *)
+  (* TODO: how is [env] in compilation? *)
   match Compile.compile (module Arch) visit_prog_after_pass prog cprog with
   | Utils0.Error e ->
      let e = Conv.error_of_cerror (Printer.pp_err ~debug:!debug) e in
@@ -121,18 +121,8 @@ let gty_of_atype : Type.atype -> int gty = function
     since otherwise it would infer the wrong type argument for [cprog]'s
     ['asm Expr._uprog]'s unification var ['asm].
 
-    [cprog] is a parameterized Jasmin program with the following parameters,
-    which [bridge] must supply:
-    - ['asm Sopn.asmOp] type argument for assembly operations.
-    - [string -> Jasmin.Var0.funname] generate function identifiers.
-      NOTE: It's critical that we use [Jasmin.Var0.funname] here, NOT [Jasmin.Var0.FunName.t]
-      which is hidden!
-    - [FInfo.t] function info corresponding to [FunInfo.t].
-    - [string -> v_kind -> atype -> Ident.Ident.ident] generate variable identifiers.
-      Jasmin has redundant type information in variables, which the Rocq side needs to
-      supply twice.
-
- *)
+    [cprog] is a Jasmin program parameterized by orales for
+    generating data opaque in Rocq. *)
 let bridge
       (type reg regx xreg rflag cond asm_op extra_op)
       (module Arch : Arch_full.Arch
@@ -145,9 +135,7 @@ let bridge
                and type extra_op = extra_op)
       (cprog :
          Arch.extended_op Sopn.asmOp ->
-         (string -> Jasmin.Var0.funname) ->
-         FInfo.t ->
-         (string -> Wsize.v_kind -> Type.atype -> Ident.Ident.ident) ->
+         Oracles.oracles ->
          Arch.extended_op Expr._uprog) : unit =
 
   (* Dummy argument for [do_compile] *)
@@ -169,8 +157,14 @@ let bridge
     GV.mk x k (gty_of_atype t) Location._dummy []
   in
 
+  let orc : Oracles.oracles =
+    { Oracles.to_ident = mk_ident;
+      Oracles.to_funname = mk_funname;
+      Oracles.fun_info_dummy = fun_info_dummy
+    } in
+
   (* "Rocq prog" *)
-  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp mk_funname fun_info_dummy mk_ident in
+  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp orc in
   do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
     (Conv.prog_of_cuprog rprog) rprog
 
@@ -224,7 +218,7 @@ let main () =
         | Some conf -> SafetyConfig.load_config conf
         | None -> () in
 
-    (** NOTE: This procedure invokes [Pretyping.tt_program]. *)
+    (* NOTE: This procedure invokes [Pretyping.tt_program]. *)
     let env, pprog, _ast =
       try Compile.parse_file Arch.arch_info ~idirs:!Glob_options.idirs infile
       with
@@ -309,7 +303,7 @@ let main () =
       | Some strategy -> AutoSpill.doit strategy prog
     in
 
-    (** Now call the coq compiler.
+    (* Now call the coq compiler.
 
         NOTE: the [Env.t] [env] is not needed here!
      *)
@@ -326,7 +320,7 @@ let main () =
        NOTE: need to manually set which program is compiled. *)
     if !bridge_rocq then
       begin
-        bridge (module Arch) Ininout_prog.prog;
+        bridge (module Arch) Empty_prog_with_main.empty_prog;
         exit 0
       end;
 

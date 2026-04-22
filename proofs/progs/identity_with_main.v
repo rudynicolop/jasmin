@@ -1,35 +1,10 @@
-From Jasmin Require Export hoare_logic.
-From Jasmin Require Import it_sems_core core_logics.
-From Jasmin Require Import expr oseq psem_core.
-
-From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
-
-Require Import Stdlib.micromega.Lia.
+From Jasmin Require Export oracles.
 
 Section prog.
-  Context
-    {pd: PointerData} `{asmop:asmOp}
+  Context {pd: PointerData} `{asmop:asmOp}.
 
-    (** Get function name identifiers.
-        NOTE: It is *CRITICAL* that we use [funname] here, no
-        [FunName.t], which is hidden after extraction! *)
-    (to_funname : string -> funname)
-
-    (** Dummy function info
-        Yes, [FunInfo.witness] is completely useless, since
-        extraction hides the type [t] of extracted [FunInfo.t] under a
-        module signature, OCaml expects parameter [f_info] to have
-        type [fun_info = FInfo.t], not [fun_info = FunInfo.t]... yikes... *)
-    (fun_info_dummy : fun_info)
-
-    (** Get variable identifiers.
-        NOTE: The OCaml type for identifiers [CoreIdent.Cident.t] also
-        requires:
-        - redundant type information.
-        - the "kind" of variable (register, stack, constant, etc)
-     *)
-    (to_ident : string -> v_kind -> atype -> Ident.ident)
-  .
+  (** Extraction oracles. *)
+  Context (orc : oracles).
 
   Section identity.
 
@@ -37,16 +12,16 @@ Section prog.
 
     (** Variables. *)
     Definition tempx : var_i :=
-      mk_var_i (Var aint (to_ident "x" (Reg (Normal, Direct)) aint)).
+      mk_var_i (Var aint (orc.(to_ident) "x" (Reg (Normal, Direct)) aint)).
     Definition tempr : var_i :=
-      mk_var_i (Var aint (to_ident "r" (Reg (Normal, Direct)) aint)).
+      mk_var_i (Var aint (orc.(to_ident) "r" (Reg (Normal, Direct)) aint)).
 
   Definition identity_body : cmd :=
     [:: MkI dummy_instr_info
        (Cassgn (Lvar tempr) AT_keep aint (mk_lvar tempx))].
 
   Definition identity_def : _fundef unit :=
-    {| f_info := fun_info_dummy
+    {| f_info := orc.(fun_info_dummy)
     (* Ignore contracts. *)
     ; f_contract := None
     ; f_tyin := [:: aint]
@@ -58,7 +33,7 @@ Section prog.
     |}.
 
   Definition identity_decl : _fun_decl unit :=
-    (to_funname "identity", identity_def).
+    (orc.(to_funname) "identity", identity_def).
   End identity.
 
   Section main.
@@ -66,9 +41,9 @@ Section prog.
 
     (** Variables. *)
     Definition tempy : var_i :=
-      mk_var_i (Var aint (to_ident "y" (Reg (Normal, Direct)) aint)).
+      mk_var_i (Var aint (orc.(to_ident) "y" (Reg (Normal, Direct)) aint)).
     Definition tempz : var_i :=
-      mk_var_i (Var aint (to_ident "z" (Reg (Normal, Direct)) aint)).
+      mk_var_i (Var aint (orc.(to_ident) "z" (Reg (Normal, Direct)) aint)).
 
     (** TODO: on OCaml side, when we try to compile this,
         we get the error:
@@ -79,13 +54,13 @@ Section prog.
       map (MkI dummy_instr_info)
         [::
          (** Call identity with [0%Z]. *)
-         Ccall [:: Lvar tempy] (to_funname "identity") [:: Pconst 0%Z];
+         Ccall [:: Lvar tempy] (orc.(to_funname) "identity") [:: Pconst 0%Z];
          (** Assign to return var. *)
          Cassgn (Lvar tempz) AT_keep aint (mk_lvar tempy)
         ].
 
     Definition main_def : _fundef unit :=
-      {| f_info := fun_info_dummy
+      {| f_info := orc.(fun_info_dummy)
       (* Ignore contracts. *)
       ; f_contract := None
       (* No arguments. *)
@@ -99,7 +74,7 @@ Section prog.
       |}.
 
     Definition main_decl : _fun_decl unit :=
-      (to_funname "main", main_def).
+      (orc.(to_funname) "main", main_def).
   End main.
 
   Definition call_identity_prog : _uprog :=

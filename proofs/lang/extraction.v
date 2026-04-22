@@ -101,6 +101,7 @@ Separate Extraction
   wint_int
 
   (* Rudy's examples  *)
+  oracles
   empty_prog
   empty_prog_with_main
   identity_with_main
