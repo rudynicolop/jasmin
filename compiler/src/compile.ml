@@ -115,10 +115,19 @@ let do_wint_int
   in
   let restore_sig fdi fdo =
     { fdo with
-      f_tyin = List.map2 restore_ty fdi.f_tyin fdo.f_tyin;
-      f_tyout = List.map2 restore_ty fdi.f_tyout fdo.f_tyout;
+      f_tyin =
+        begin try List.map2 restore_ty fdi.f_tyin fdo.f_tyin with
+              | _ -> failwith "restore_sig f_tyin failed"
+        end;
+      f_tyout =
+        begin try List.map2 restore_ty fdi.f_tyout fdo.f_tyout with
+              | _ -> failwith "restore_sig f_tyout failed"
+        end;
     } in
-  let fds = List.map2 restore_sig fdsi fdso in
+  let fds =
+    begin try List.map2 restore_sig fdsi fdso with
+          | _ -> failwith "List.map2 restore_sig fdsi fdso failed"
+    end in
   (gd, fds)
 
 
@@ -257,7 +266,10 @@ let compile (type reg regx xreg rflag cond asm_op extra_op)
         let (_, va) = Hv.find harrs (L.unloc x) in
         List.init (Array.length va) (fun _ -> [])
       with Not_found -> [a] in
-    let ret_annot = List.flatten (List.map2 do_outannot fd.f_ret fd.f_ret_info.ret_annot) in
+    let ret_annot =
+      List.flatten
+        (try List.map2 do_outannot fd.f_ret fd.f_ret_info.ret_annot with
+         | _ -> failwith "ret_annot failed") in
     let finfo = fd.f_loc, fd.f_annot, fd.f_cc, { fd.f_ret_info with ret_annot } in
     { Array_expansion.vars; arrs = !arrs; finfo }
   in

@@ -117,6 +117,28 @@ let gty_of_atype : Type.atype -> int gty = function
   | Type.Coq_aword ws -> Bty (U ws)
   | Type.Coq_aarr (ws, n) -> Arr (ws, Conv.int_of_pos n)
 
+(** * Oracles: *)
+
+(** Dummy [fun_info] witness: *)
+let fun_info_dummy : FInfo.t = 
+  (Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy }))
+
+(** Generate function idientifiers *)
+let mk_funname (f : string) : Jasmin.Var0.funname =
+  CoreIdent.F.mk f
+
+(** Generate variable identifiers.
+   TODO: Rocq side needs to supply a type (again), and the [v_kind].
+ *)
+let mk_ident (x : string) (k : Wsize.v_kind) (t : Type.atype) : Ident.Ident.ident =
+  GV.mk x k (gty_of_atype t) Location._dummy []
+
+let main_oracles : Oracles.oracles = {
+    Oracles.to_ident = mk_ident;
+    Oracles.to_funname = mk_funname;
+    Oracles.fun_info_dummy = fun_info_dummy
+  }
+
 (** Copy-pasted type argumetns and [module Arch] parameter
     since otherwise it would infer the wrong type argument for [cprog]'s
     ['asm Expr._uprog]'s unification var ['asm].
@@ -142,29 +164,8 @@ let bridge
   let visit_prog_after_pass ~debug s p =
     ignore (debug, s, p) in
 
-  (* Dummy [fun_info] witness: *)
-  let fun_info_dummy : FInfo.t = 
-    (Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy })) in
-
-  (* Generate function idientifiers *)
-  let mk_funname (f : string) : Jasmin.Var0.funname =
-    CoreIdent.F.mk f in
-
-  (* Generate variable identifiers.
-     TODO: Rocq side needs to supply a type (again), and the [v_kind].
-   *)
-  let mk_ident (x : string) (k : Wsize.v_kind) (t : Type.atype) : Ident.Ident.ident =
-    GV.mk x k (gty_of_atype t) Location._dummy []
-  in
-
-  let orc : Oracles.oracles =
-    { Oracles.to_ident = mk_ident;
-      Oracles.to_funname = mk_funname;
-      Oracles.fun_info_dummy = fun_info_dummy
-    } in
-
   (* "Rocq prog" *)
-  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp orc in
+  let rprog : Arch.extended_op Expr._uprog = cprog Arch.asmOp main_oracles in
   do_compile (module Arch) visit_prog_after_pass Pretyping.Env.empty
     (Conv.prog_of_cuprog rprog) rprog
 
@@ -320,7 +321,7 @@ let main () =
        NOTE: need to manually set which program is compiled. *)
     if !bridge_rocq then
       begin
-        bridge (module Arch) Empty_prog_with_main.empty_prog;
+        bridge (module Arch) Main_succ_prog.prog;
         exit 0
       end;
 
