@@ -120,6 +120,13 @@ let gty_of_atype : Type.atype -> int gty = function
 (** * Oracles: *)
 
 (** Dummy [fun_info] witness: *)
+(* FIXME: I need the length of [ret_annot] to match the [f_ret] list
+   in the overall function definition.
+   I need to modify [oracles]!
+   This may need to be parameterized by a list of
+   return values, at least the length if I can use dummy
+   annotatons.
+ *)
 let fun_info_dummy : FInfo.t = 
   (Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy }))
 
