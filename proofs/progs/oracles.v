@@ -13,11 +13,16 @@ Structure oracles := Oracles {
         [FunName.t], which is hidden after extraction! *)
     to_funname : string -> funname;
 
-    (** Dummy function info
-        Yes, [FunInfo.witness] is completely useless, since
-        extraction hides the type [t] of extracted [FunInfo.t] under a
-        module signature, OCaml expects parameter [f_info] to have
-        type [fun_info = FInfo.t], not [fun_info = FunInfo.t]... yikes... *)
+    (** Generate function info
+        Yes, [FunInfo.witness] is completely useless, since:
+        - extraction hides the type [t] of extracted [FunInfo.t] under a
+          module signature, OCaml expects parameter [f_info] to have
+          type [fun_info = FInfo.t], not [fun_info = FunInfo.t]... yikes...
+        - A general dummy value does not work, since the [fun_info] needs to
+          encode information specific to the function.
+          Specifically, the number of annotations in the return info needs
+          to equal the length of return variables.
+     *)
     fun_info_dummy : fun_info;
 
     (** Get variable identifiers.

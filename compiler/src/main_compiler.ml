@@ -119,7 +119,6 @@ let gty_of_atype : Type.atype -> int gty = function
 
 (** * Oracles: *)
 
-(** Dummy [fun_info] witness: *)
 (* FIXME: I need the length of [ret_annot] to match the [f_ret] list
    in the overall function definition.
    I need to modify [oracles]!
@@ -127,7 +126,19 @@ let gty_of_atype : Type.atype -> int gty = function
    return values, at least the length if I can use dummy
    annotatons.
  *)
-let fun_info_dummy : FInfo.t = 
+
+(** Dummy [pident] value. *)
+let pident_dummy : Annotations.pident =
+  Location.{ pl_loc = Location._dummy; pl_desc = "" }
+
+(** Generate "dummy" [return_info] based on the number of return vars. *)
+let mk_return_info (num_rets : int) : FInfo.return_info =
+  FInfo.{ ret_annot = BatList.make num_rets (pident_dummy, None);
+          ret_loc = Location._dummy
+  }
+
+(** Dummy [fun_info] witness: *)
+let mk_fun_info : FInfo.t = 
   (Location._dummy , FInfo.f_annot_empty , FInfo.Export , FInfo.({ ret_annot = [] ; ret_loc = Location._dummy }))
 
 (** Generate function idientifiers *)
