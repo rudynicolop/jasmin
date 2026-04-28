@@ -97,6 +97,7 @@ let do_compile
                prog)
            asm
        end;
+     Format.printf "outfile is %s" !outfile;
      if !outfile <> "" then begin
          BatFile.with_file_out !outfile (fun out ->
              let fmt = BatFormat.formatter_of_out_channel out in
@@ -188,9 +189,10 @@ let bridge
 
   (* Dummy argument for [do_compile] *)
   let visit_prog_after_pass ~debug s p =
-    set_all_print ();
-    print_endline "running visit prog";
-        eprint s (Printer.pp_prog ~debug Arch.pointer_data Arch.msf_size Arch.asmOp) p
+    (* set_all_print (); *)
+    (* print_endline "running visit prog"; *)
+    (*     eprint s (Printer.pp_prog ~debug Arch.pointer_data Arch.msf_size Arch.asmOp) p *)
+    ignore (debug, s, p)
   in
 
   (* "Rocq prog" *)
