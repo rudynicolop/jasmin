@@ -1,5 +1,17 @@
+/* For main functions to actually be usable when I run the binary,
+   I need to provide it a:
+   - [argc]: the number of arguments, in this case should be exactly [2],
+     where the first is implicit in invoking the binary
+    - [argv]: the array of arguments. Note that this is an array *in memory*,
+      not a value array, so [argv] is really an address in memory. Zam.
+*/
 export
-fn main (reg u32 y) -> reg u32 {
-   reg u32 z = 1 + y;
+fn main (reg u64 argc argv) -> reg u8 {
+   /* For simplicity of generated code, we forgo safety
+      checks, and just get the argument, assuming it
+      has an element at the proper address. */
+   // Add 8 bytes because u64.
+   reg u8 y = [argv + 8];
+   reg u8 z = 1 + y;
    return z;
 }

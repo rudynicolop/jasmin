@@ -1,0 +1,681 @@
+no bridge
+before parse
+/* -------------------------------------------------------------------- */
+/* After typing */
+
+export
+fn main (reg u64 argc, reg u64 argv) -> (reg u8) {
+  reg u8 y;
+  y = [:u64 argv +64u (64u) 8]; /* u8 */
+  reg u8 z;
+  z = (8u) 1 +8u y; /* u8 */
+  return z;
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After param expansion */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove logical assertion */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After replace wint by word */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After add renaming assignments at export function boundaries */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argc.187 = argc.187; /* u64 */
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After array copy */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argc.187 = argc.187; /* u64 */
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After add array initialisation */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argc.187 = argc.187; /* u64 */
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lower spill/unspill instructions */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argc.187 = argc.187; /* u64 */
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After inlining */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argc.187 = argc.187; /* u64 */
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused function */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argc.187 = argc.187; /* u64 */
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After unrolling */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused function */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u8 z.189;
+  reg u8 y.190;
+  
+  argv.188 = argv.188; /* u64 */
+  y.190 = [:u64 argv.188 +64u (64u) 8]; /* u8 */
+  z.189 = (8u) 1 +8u y.190; /* u8 */
+  z.189 = z.189; /* u8 */
+  return (z.189);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After liverange splitting */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After variable renaming to remove copies */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove phi nodes introduced by splitting */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after variable renaming to remove copies */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove array initialisation */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After add assignments before and after call to ensure that arguments and results are ref ptr */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After expansion of register arrays */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.198;
+  reg u8 y.199;
+  reg u8 z.200;
+  reg u8 z.201;
+  
+  argv.198 = argv.188; /* u64 */
+  y.199 = [:u64 argv.198 +64u (64u) 8]; /* u8 */
+  z.200 = (8u) 1 +8u y.199; /* u8 */
+  z.201 = z.200; /* u8 */
+  return (z.201);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After liverange splitting */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = argv.188; /* u64 */
+  y.203 = [:u64 argv.202 +64u (64u) 8]; /* u8 */
+  z.204 = (8u) 1 +8u y.203; /* u8 */
+  z.205 = z.204; /* u8 */
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After variable renaming to remove copies */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = argv.188; /* u64 */
+  y.203 = [:u64 argv.202 +64u (64u) 8]; /* u8 */
+  z.204 = (8u) 1 +8u y.203; /* u8 */
+  z.205 = z.204; /* u8 */
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove phi nodes introduced by splitting */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = argv.188; /* u64 */
+  y.203 = [:u64 argv.202 +64u (64u) 8]; /* u8 */
+  z.204 = (8u) 1 +8u y.203; /* u8 */
+  z.205 = z.204; /* u8 */
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after variable renaming to remove copies */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = argv.188; /* u64 */
+  y.203 = [:u64 argv.202 +64u (64u) 8]; /* u8 */
+  z.204 = (8u) 1 +8u y.203; /* u8 */
+  z.205 = z.204; /* u8 */
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove globals variables */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = argv.188; /* u64 */
+  y.203 = [:u64 argv.202 +64u (64u) 8]; /* u8 */
+  z.204 = (8u) 1 +8u y.203; /* u8 */
+  z.205 = z.204; /* u8 */
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After introduce registers for constants appearing in conditions (RISC-V only) */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = argv.188; /* u64 */
+  y.203 = [:u64 argv.202 +64u (64u) 8]; /* u8 */
+  z.204 = (8u) 1 +8u y.203; /* u8 */
+  z.205 = z.204; /* u8 */
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of instructions */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = #MOV_64(argv.188);
+  y.203 = #MOV_8([:u64 argv.202 +64u (64u) 8]);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.204 =
+    #INC_8(y.203);
+  z.205 = #MOV_8(z.204);
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After propagate inline variables */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = #MOV_64(argv.188);
+  y.203 = #MOV_8([:u64 argv.202 +64u (64u) 8]);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.204 =
+    #INC_8(y.203);
+  z.205 = #MOV_8(z.204);
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of selective load hardening instructions */
+
+
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = #MOV_64(argv.188);
+  y.203 = #MOV_8([:u64 argv.202 +64u (64u) 8]);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.204 =
+    #INC_8(y.203);
+  z.205 = #MOV_8(z.204);
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8, 8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = #MOV_64(argv.188);
+  y.203 = #MOV_8([:u64 argv.202 +64u (64u) 8]);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.204 =
+    #INC_8(y.203);
+  z.205 = #MOV_8(z.204);
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of complex addressing modes (RISC-V only) */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8, 8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = #MOV_64(argv.188);
+  y.203 = #MOV_8([:u64 argv.202 +64u (64u) 8]);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.204 =
+    #INC_8(y.203);
+  z.205 = #MOV_8(z.204);
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused returned values */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8, 8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 argc.187, reg u64 argv.188) -> (reg u8) {
+  reg u64 argv.202;
+  reg u8 y.203;
+  reg u8 z.204;
+  reg u8 z.205;
+  
+  argv.202 = #MOV_64(argv.188);
+  y.203 = #MOV_8([:u64 argv.202 +64u (64u) 8]);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.204 =
+    #INC_8(y.203);
+  z.205 = #MOV_8(z.204);
+  return (z.205);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8, 8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 RDI.59, reg u64 RSI.60) -> (reg u64) {
+  reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  
+  RSI.60 = #MOV_64(RSI.60);
+  RAX.66 = #MOV_8([:u64 RSI.60 +64u (64u) 8]);
+  OF.91, SF.92, PF.94, ZF.93, RAX.66 = #INC_8(RAX.66);
+  RAX.66 = #MOV_8(RAX.66);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8, 8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn main (reg u64 RDI.59, reg u64 RSI.60) -> (reg u64) {
+  reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  
+  RAX.66 = #MOV_8([:u64 RSI.60 +64u (64u) 8]);
+  OF.91, SF.92, PF.94, ZF.93, RAX.66 = #INC_8(RAX.66);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After linearization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn main (reg u64 RDI, reg u64 RSI) -> (u8) {
+  RAX = MOV_8([:u64 RSI +64u (64u) 8]);
+  OF, SF, PF, ZF, RAX = INC_8(RAX)
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack zeroization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn main (reg u64 RDI, reg u64 RSI) -> (u8) {
+  RAX = MOV_8([:u64 RSI +64u (64u) 8]);
+  OF, SF, PF, ZF, RAX = INC_8(RAX)
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After tunneling */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn main (reg u64 RDI, reg u64 RSI) -> (u8) {
+  RAX = MOV_8([:u64 RSI +64u (64u) 8]);
+  OF, SF, PF, ZF, RAX = INC_8(RAX)
+  return RAX
+}
+
+
