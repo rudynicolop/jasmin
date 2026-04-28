@@ -6,12 +6,14 @@
       not a value array, so [argv] is really an address in memory. Zam.
 */
 export
-fn main (reg u64 argc argv) -> reg u8 {
+fn main (reg u64 argc argv) -> reg u64 {
    /* For simplicity of generated code, we forgo safety
       checks, and just get the argument, assuming it
       has an element at the proper address. */
    // Add 8 bytes because u64.
-   reg u8 y = [argv + 8];
-   reg u8 z = 1 + y;
+   reg u64 input = [argv + 8];
+   // Second deference to get value.
+   reg u64 y = [input];
+   reg u64 z = 1 + y;
    return z;
 }
