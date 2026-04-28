@@ -17,7 +17,7 @@ Section prog.
       [::
          (** Perform succession. *)
          Cassgn (Lvar tempz) AT_none aword32
-         (Papp2 (Oadd (Op_w U32)) 1%Z (mk_lvar tempy))
+         (Papp2 (Oadd (Op_w U32)) (Papp1 (Oword_of_int U32) 1%Z) (mk_lvar tempy))
       ].
 
   (** Return the successor of the input value. *)
