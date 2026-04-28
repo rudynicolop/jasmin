@@ -5,13 +5,11 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  z.174 = 1 +32u y.173; /* u32 */
-  return (z.172);
+  z.173 = 1 +32u y.172; /* u32 */
+  return (z.173);
 }
 
 
@@ -21,13 +19,11 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  z.174 = 1 +32u y.173; /* u32 */
-  return (z.172);
+  z.173 = 1 +32u y.172; /* u32 */
+  return (z.173);
 }
 
 
@@ -37,15 +33,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  y.175 = y.175; /* u32 */
-  z.174 = 1 +32u y.173; /* u32 */
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -55,15 +49,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  y.175 = y.175; /* u32 */
-  z.174 = 1 +32u y.173; /* u32 */
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -73,15 +65,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  y.175 = y.175; /* u32 */
-  z.174 = 1 +32u y.173; /* u32 */
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -91,15 +81,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  y.175 = y.175; /* u32 */
-  z.174 = 1 +32u y.173; /* u32 */
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -109,15 +97,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  y.175 = y.175; /* u32 */
-  z.174 = 1 +32u y.173; /* u32 */
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -127,15 +113,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 y.173;
-  reg u32 z.174;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  y.175 = y.175; /* u32 */
-  z.174 = 1 +32u y.173; /* u32 */
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -145,11 +129,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -159,11 +145,13 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 z.173;
   
-  z.172 = z.172; /* u32 */
-  return (z.172);
+  y.172 = y.172; /* u32 */
+  z.173 = 1 +32u y.172; /* u32 */
+  z.173 = z.173; /* u32 */
+  return (z.173);
 }
 
 
@@ -173,11 +161,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -188,11 +179,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -203,11 +197,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -218,11 +215,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -233,11 +233,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -248,11 +251,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -263,11 +269,14 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.182;
+  reg u32 z.183;
   reg u32 z.184;
   
-  z.184 = z.172; /* u32 */
+  y.182 = y.172; /* u32 */
+  z.183 = 1 +32u y.182; /* u32 */
+  z.184 = z.183; /* u32 */
   return (z.184);
 }
 
@@ -278,12 +287,15 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = z.172; /* u32 */
-  return (z.185);
+  y.185 = y.172; /* u32 */
+  z.186 = 1 +32u y.185; /* u32 */
+  z.187 = z.186; /* u32 */
+  return (z.187);
 }
 
 
@@ -293,12 +305,15 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = z.172; /* u32 */
-  return (z.185);
+  y.185 = y.172; /* u32 */
+  z.186 = 1 +32u y.185; /* u32 */
+  z.187 = z.186; /* u32 */
+  return (z.187);
 }
 
 
@@ -308,12 +323,15 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = z.172; /* u32 */
-  return (z.185);
+  y.185 = y.172; /* u32 */
+  z.186 = 1 +32u y.185; /* u32 */
+  z.187 = z.186; /* u32 */
+  return (z.187);
 }
 
 
@@ -323,12 +341,15 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = z.172; /* u32 */
-  return (z.185);
+  y.185 = y.172; /* u32 */
+  z.186 = 1 +32u y.185; /* u32 */
+  z.187 = z.186; /* u32 */
+  return (z.187);
 }
 
 
@@ -338,12 +359,15 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = z.172; /* u32 */
-  return (z.185);
+  y.185 = y.172; /* u32 */
+  z.186 = 1 +32u y.185; /* u32 */
+  z.187 = z.186; /* u32 */
+  return (z.187);
 }
 
 
@@ -353,12 +377,15 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = z.172; /* u32 */
-  return (z.185);
+  y.185 = y.172; /* u32 */
+  z.186 = 1 +32u y.185; /* u32 */
+  z.187 = z.186; /* u32 */
+  return (z.187);
 }
 
 
@@ -368,12 +395,16 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = #MOV_32(z.172);
-  return (z.185);
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #ADD_32(1, y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
 }
 
 
@@ -383,12 +414,16 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = #MOV_32(z.172);
-  return (z.185);
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #ADD_32(1, y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
 }
 
 
@@ -398,12 +433,16 @@ running visit prog
 
 
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = #MOV_32(z.172);
-  return (z.185);
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #ADD_32(1, y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
 }
 
 
@@ -419,12 +458,16 @@ global data:
    saved stack = none;
    return_addr = _ *)
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = #MOV_32(z.172);
-  return (z.185);
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #ADD_32(1, y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
 }
 
 
@@ -440,12 +483,16 @@ global data:
    saved stack = none;
    return_addr = _ *)
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = #MOV_32(z.172);
-  return (z.185);
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #ADD_32(1, y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
 }
 
 
@@ -461,12 +508,16 @@ global data:
    saved stack = none;
    return_addr = _ *)
 export
-fn main (reg u32 y.175) -> (reg u32) {
-  reg u32 z.172;
-  reg u32 z.185;
+fn main (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
   
-  z.185 = #MOV_32(z.172);
-  return (z.185);
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #ADD_32(1, y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
 }
 
 
@@ -484,7 +535,14 @@ global data:
 export
 fn main (reg u64 RDI.59) -> (reg u64) {
   reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  reg bool CF.95;
   
+  RDI.59 = #MOV_32(RDI.59);
+  OF.91, CF.95, SF.92, PF.94, ZF.93, RAX.66 = #ADD_32(1, RDI.59);
   RAX.66 = #MOV_32(RAX.66);
   return (RAX.66);
 }
@@ -504,8 +562,13 @@ global data:
 export
 fn main (reg u64 RDI.59) -> (reg u64) {
   reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  reg bool CF.95;
   
-  
+  OF.91, CF.95, SF.92, PF.94, ZF.93, RAX.66 = #ADD_32(1, RDI.59);
   return (RAX.66);
 }
 
@@ -517,7 +580,7 @@ fn main (reg u64 RDI.59) -> (reg u64) {
 
 (* maximal stack usage: 0, alignment = u8 *)
 fn main (reg u64 RDI) -> (u32) {
-  
+  OF, CF, SF, PF, ZF, RAX = ADD_32(1, RDI)
   return RAX
 }
 
@@ -529,7 +592,7 @@ fn main (reg u64 RDI) -> (u32) {
 
 (* maximal stack usage: 0, alignment = u8 *)
 fn main (reg u64 RDI) -> (u32) {
-  
+  OF, CF, SF, PF, ZF, RAX = ADD_32(1, RDI)
   return RAX
 }
 
@@ -541,17 +604,8 @@ fn main (reg u64 RDI) -> (u32) {
 
 (* maximal stack usage: 0, alignment = u8 *)
 fn main (reg u64 RDI) -> (u32) {
-  
+  OF, CF, SF, PF, ZF, RAX = ADD_32(1, RDI)
   return RAX
 }
 
 
-	.att_syntax
-	.text
-	.p2align	5
-	.global	main
-	.type	main, %function
-main:
-	ret
-	.ident	"Jasmin Compiler @VERSION@"
-	.section	".note.GNU-stack", "", %progbits

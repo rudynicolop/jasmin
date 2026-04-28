@@ -11,13 +11,8 @@ Section prog.
 
   Notation aword32 := (aword U32).
 
-  (** Variables. *)
-  Definition tempy : var_i :=
-    mk_var_i (Var aword32 (orc.(to_ident) "y" (Reg (Normal, Direct)) aword32)).
-  Definition tempz : var_i :=
-    mk_var_i (Var aword32 (orc.(to_ident) "z" (Reg (Normal, Direct)) aword32)).
-
-  Definition main_body : cmd :=
+  (* NOTE: have [main_def] "generate" and pass in variables *)
+  Definition main_body (tempy tempz : var_i) : cmd :=
     map (MkI dummy_instr_info)
       [::
          (** Perform succession. *)
@@ -27,13 +22,16 @@ Section prog.
 
   (** Return the successor of the input value. *)
   Definition main_def : _fundef unit :=
+    (* NOTE: make sure variables are only "generated once": *)
+    let tempy : var_i := mk_var_i (Var aword32 (orc.(to_ident) "y" (Reg (Normal, Direct)) aword32)) in
+    let tempz : var_i := mk_var_i (Var aword32 (orc.(to_ident) "z" (Reg (Normal, Direct)) aword32)) in
     {| f_info := orc.(to_fun_info) 1
     (* Ignore contracts. *)
     ; f_contract := None
     (* No arguments. *)
     ; f_tyin := [:: aword32]
     ; f_params := [:: tempy]
-    ; f_body := main_body
+    ; f_body := main_body tempy tempz
     (* Returns result of identity. *)
     ; f_tyout := [:: aword32]
     ; f_res := [:: tempz]
