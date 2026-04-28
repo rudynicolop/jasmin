@@ -22,6 +22,14 @@ let parse () =
     | Always -> true
     | Never -> false
   in
+  (* Don't need to check arguments for an "in file" if we "bridge_rocq" *)
+  begin
+  if !bridge_rocq then
+    begin
+    print_endline "In parse: going to bridge Rocq!";
+    ""
+    end
+  else begin
   if c then enable_colors ();
   match !infiles with
   | [] ->
@@ -33,6 +41,8 @@ let parse () =
     check_infile infile;
     infile
   | infile :: s :: _ -> raise CLI_errors.(CLIerror (RedundantInputFile (infile, s)))
+  end
+  end
 
 (* -------------------------------------------------------------------- *)
 let check_safety_p pd msf_size asmOp analyze s (p : (_, 'asm) Prog.prog) source_p =
@@ -97,8 +107,11 @@ let do_compile
                prog)
            asm
        end;
-     Format.printf "outfile is %s" !outfile;
+     if !outfile = "" then begin
+         print_endline "Outfile is empty?"
+         end;
      if !outfile <> "" then begin
+         Format.printf "outfile is %s @." !outfile;
          BatFile.with_file_out !outfile (fun out ->
              let fmt = BatFormat.formatter_of_out_channel out in
              Format.fprintf fmt "%a%!" Arch.pp_asm asm);
@@ -202,6 +215,8 @@ let bridge
 
 let main () =
 
+  let infile = parse() in
+
   try
 
     let (module P : ArchWithAnalyze) =
@@ -245,8 +260,6 @@ let main () =
     ;
 
     print_endline "before parse";
-
-    let infile = parse() in
 
     if !safety_makeconfigdoc <> None
     then (

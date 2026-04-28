@@ -43,7 +43,7 @@ let linting_level = ref 1
 let rocq_ast_file = ref ""
 
 (** Option to do "Bridge" thing and compile source written in Rocq.  *)
-let bridge_rocq = ref true
+let bridge_rocq = ref false
 
 let set_linting_level i =
   if 0 <= i && i <= 2 then begin
