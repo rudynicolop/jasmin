@@ -108,4 +108,5 @@ Separate Extraction
   main_succ_prog
   ininout_prog
   identity_prog
+  succ_prog
 .

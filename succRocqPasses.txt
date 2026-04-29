@@ -1,0 +1,168 @@
+In parse: going to bridge Rocq!
+to bridge
+/* -------------------------------------------------------------------- */
+/* After stack allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
+  
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #INC_32(y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of complex addressing modes (RISC-V only) */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
+  
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #INC_32(y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused returned values */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u32 y.172) -> (reg u32) {
+  reg u32 y.185;
+  reg u32 z.186;
+  reg u32 z.187;
+  
+  y.185 = #MOV_32(y.172);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.186 =
+    #INC_32(y.185);
+  z.187 = #MOV_32(z.186);
+  return (z.187);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u64 RDI.59) -> (reg u64) {
+  reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  
+  RDI.59 = #MOV_32(RDI.59);
+  OF.91, SF.92, PF.94, ZF.93, RDI.59 = #INC_32(RDI.59);
+  RAX.66 = #MOV_32(RDI.59);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u64 RDI.59) -> (reg u64) {
+  reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  
+  OF.91, SF.92, PF.94, ZF.93, RDI.59 = #INC_32(RDI.59);
+  RAX.66 = #MOV_32(RDI.59);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After linearization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn successor (reg u64 RDI) -> (u32) {
+  OF, SF, PF, ZF, RDI = INC_32(RDI);
+  RAX = MOV_32(RDI)
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack zeroization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn successor (reg u64 RDI) -> (u32) {
+  OF, SF, PF, ZF, RDI = INC_32(RDI);
+  RAX = MOV_32(RDI)
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After tunneling */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn successor (reg u64 RDI) -> (u32) {
+  OF, SF, PF, ZF, RDI = INC_32(RDI);
+  RAX = MOV_32(RDI)
+  return RAX
+}
+
+
+outfile is succRocq.s 

@@ -15,3 +15,4 @@ Require identity_with_main.
 Require main_succ_prog.
 Require ininout_prog.
 Require identity_prog.
+Require succ_prog.

@@ -1,0 +1,613 @@
+no bridge
+before parse
+/* -------------------------------------------------------------------- */
+/* After typing */
+
+export
+fn successor (reg u32 y) -> (reg u32) {
+  reg u32 z;
+  z = (32u) 1 +32u y; /* u32 */
+  return z;
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After param expansion */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove logical assertion */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After replace wint by word */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After add renaming assignments at export function boundaries */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After array copy */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After add array initialisation */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lower spill/unspill instructions */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After inlining */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused function */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After unrolling */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused function */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 z.184;
+  
+  y.183 = y.183; /* u32 */
+  z.184 = (32u) 1 +32u y.183; /* u32 */
+  z.184 = z.184; /* u32 */
+  return (z.184);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After liverange splitting */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After variable renaming to remove copies */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove phi nodes introduced by splitting */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after variable renaming to remove copies */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove array initialisation */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After add assignments before and after call to ensure that arguments and results are ref ptr */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After expansion of register arrays */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.192;
+  reg u32 z.193;
+  reg u32 z.194;
+  
+  y.192 = y.183; /* u32 */
+  z.193 = (32u) 1 +32u y.192; /* u32 */
+  z.194 = z.193; /* u32 */
+  return (z.194);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After liverange splitting */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = y.183; /* u32 */
+  z.196 = (32u) 1 +32u y.195; /* u32 */
+  z.197 = z.196; /* u32 */
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After variable renaming to remove copies */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = y.183; /* u32 */
+  z.196 = (32u) 1 +32u y.195; /* u32 */
+  z.197 = z.196; /* u32 */
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove phi nodes introduced by splitting */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = y.183; /* u32 */
+  z.196 = (32u) 1 +32u y.195; /* u32 */
+  z.197 = z.196; /* u32 */
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after variable renaming to remove copies */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = y.183; /* u32 */
+  z.196 = (32u) 1 +32u y.195; /* u32 */
+  z.197 = z.196; /* u32 */
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove globals variables */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = y.183; /* u32 */
+  z.196 = (32u) 1 +32u y.195; /* u32 */
+  z.197 = z.196; /* u32 */
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After introduce registers for constants appearing in conditions (RISC-V only) */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = y.183; /* u32 */
+  z.196 = (32u) 1 +32u y.195; /* u32 */
+  z.197 = z.196; /* u32 */
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of instructions */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = #MOV_32(y.183);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.196 =
+    #INC_32(y.195);
+  z.197 = #MOV_32(z.196);
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After propagate inline variables */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = #MOV_32(y.183);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.196 =
+    #INC_32(y.195);
+  z.197 = #MOV_32(z.196);
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of selective load hardening instructions */
+
+
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = #MOV_32(y.183);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.196 =
+    #INC_32(y.195);
+  z.197 = #MOV_32(z.196);
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = #MOV_32(y.183);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.196 =
+    #INC_32(y.195);
+  z.197 = #MOV_32(z.196);
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After lowering of complex addressing modes (RISC-V only) */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = #MOV_32(y.183);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.196 =
+    #INC_32(y.195);
+  z.197 = #MOV_32(z.196);
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After remove unused returned values */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u32 y.183) -> (reg u32) {
+  reg u32 y.195;
+  reg u32 z.196;
+  reg u32 z.197;
+  
+  y.195 = #MOV_32(y.183);
+  _ /* bool */, _ /* bool */, _ /* bool */, _ /* bool */, z.196 =
+    #INC_32(y.195);
+  z.197 = #MOV_32(z.196);
+  return (z.197);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u64 RDI.59) -> (reg u64) {
+  reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  
+  RDI.59 = #MOV_32(RDI.59);
+  OF.91, SF.92, PF.94, ZF.93, RDI.59 = #INC_32(RDI.59);
+  RAX.66 = #MOV_32(RDI.59);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After dead code after register allocation */
+
+global data:
+   
+(* alignment = u8; argument alignment = [8];
+   stack size = 0 + 0; max stack size = 0;
+   max call depth = 1;
+   saved register = ;
+   saved stack = none;
+   return_addr = _ *)
+export
+fn successor (reg u64 RDI.59) -> (reg u64) {
+  reg u64 RAX.66;
+  reg bool OF.91;
+  reg bool SF.92;
+  reg bool ZF.93;
+  reg bool PF.94;
+  
+  OF.91, SF.92, PF.94, ZF.93, RDI.59 = #INC_32(RDI.59);
+  RAX.66 = #MOV_32(RDI.59);
+  return (RAX.66);
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After linearization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn successor (reg u64 RDI) -> (u32) {
+  OF, SF, PF, ZF, RDI = INC_32(RDI);
+  RAX = MOV_32(RDI)
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After stack zeroization */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn successor (reg u64 RDI) -> (u32) {
+  OF, SF, PF, ZF, RDI = INC_32(RDI);
+  RAX = MOV_32(RDI)
+  return RAX
+}
+
+
+/* -------------------------------------------------------------------- */
+/* After tunneling */
+
+
+
+(* maximal stack usage: 0, alignment = u8 *)
+fn successor (reg u64 RDI) -> (u32) {
+  OF, SF, PF, ZF, RDI = INC_32(RDI);
+  RAX = MOV_32(RDI)
+  return RAX
+}
+
+
+outfile is succJazz.s 
