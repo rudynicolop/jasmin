@@ -252,7 +252,7 @@ let main () =
     if !bridge_rocq then
       begin
         print_endline "to bridge";
-        bridge (module Arch) Main_succ_prog.prog;
+        bridge (module Arch) Identity_prog.prog ;
         exit 0
       end
     else

@@ -212,6 +212,7 @@ progs/empty_prog_with_main.v
 progs/identity_with_main.v
 progs/main_succ_prog.v
 progs/ininout_prog.v
+progs/identity_prog.v
 
 # Rudy's examples
 hoareExamples/simple.v
