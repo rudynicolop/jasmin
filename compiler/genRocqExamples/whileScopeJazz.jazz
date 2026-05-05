@@ -1,0 +1,12 @@
+export
+fn main () -> reg u32 {
+   reg u32 local = -1;
+   reg u32 i = 0;
+
+   while (i < 5) {
+       reg u32 local = i;
+       i += 1;
+   }
+
+   return local;
+}
