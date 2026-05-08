@@ -49,7 +49,7 @@ let cleanup_artifacts vfile =
   let base = Filename.remove_extension vfile in
   List.iter (fun ext ->
     try Sys.remove (base ^ ext) with _ -> ()
-  ) [".v"; ".vo"; ".vos"; ".vok"; ".glob"]
+  ) [".vo"; ".vos"; ".vok"; ".glob"; ".aux"]
 
 let load_and_print n name =
   Format.printf "File %s: " name;
