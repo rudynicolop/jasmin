@@ -45,6 +45,10 @@ module type Core_arch = sig
   val is_doit_asm_extra : extra_op -> bool
 
   val internal_call_conv : (reg, regx, xreg, rflag, cond) internal_calling_convention
+
+  val pp_asm_op_for_rocq : Format.formatter -> asm_op -> unit
+  val pp_extra_op_for_rocq : Format.formatter -> extra_op -> unit
+
 end
 
 module type Arch = sig
@@ -84,6 +88,8 @@ module type Arch = sig
   val is_ct_sopn : ?doit:bool -> extended_op -> bool
 
   val internal_call_conv : (var, var, var, var, cond) internal_calling_convention
+
+  val pp_extended_op_for_rocq : Format.formatter -> extended_op -> unit
 end
 
 module Arch_from_Core_arch (A : Core_arch) :
@@ -222,4 +228,13 @@ module Arch_from_Core_arch (A : Core_arch) :
     ; icall_xreg  = List.map var_of_xreg internal_call_conv.icall_xreg
     ; icall_rflag = List.map var_of_flag internal_call_conv.icall_rflag
     }
+
+  let pp_extended_op_for_rocq fmt (o : extended_op) =
+    match o with
+    | BaseOp (msb, op) ->
+      Format.fprintf fmt "(BaseOp (%a, %a))"
+        (ToRocq.pp_option ToRocq.pp_wsize) msb pp_asm_op_for_rocq op
+    | ExtOp op ->
+      Format.fprintf fmt "(ExtOp %a)" pp_extra_op_for_rocq op
+
 end

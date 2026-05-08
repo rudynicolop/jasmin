@@ -99,6 +99,97 @@ module Arm_core = struct
     | Oarm_add_large_imm -> true
     | (Osmart_li _ | Osmart_li_cc _) -> true (* emit MOVT *)
 
+  let pp_shift_kind fmt = function
+    | Shift_kind.SLSL -> ToRocq.pp_bare "SLSL" fmt
+    | Shift_kind.SLSR -> ToRocq.pp_bare "SLSR" fmt
+    | Shift_kind.SASR -> ToRocq.pp_bare "SASR" fmt
+    | Shift_kind.SROR -> ToRocq.pp_bare "SROR" fmt
+
+  let pp_arm_options fmt (o : Arm_instr_decl.arm_options) =
+    Format.fprintf fmt "{| set_flags := %b; is_conditional := %b; has_shift := %a |}"
+      o.set_flags o.is_conditional
+      (ToRocq.pp_option pp_shift_kind)
+      o.has_shift
+
+  let pp_halfword fmt = function
+    | Arm_instr_decl.HWB -> ToRocq.pp_bare "HWB" fmt
+    | Arm_instr_decl.HWT -> ToRocq.pp_bare "HWT" fmt
+
+  let pp_hw2 name fmt (h1, h2) =
+    Format.fprintf fmt "(%s %a %a)" name pp_halfword h1 pp_halfword h2
+
+  let pp_hw name fmt h =
+    Format.fprintf fmt "(%s %a)" name pp_halfword h
+
+  let pp_arm_mnemonic fmt (m : Arm_instr_decl.arm_mnemonic) =
+    let open Arm_instr_decl in
+    match m with
+    | ADD -> ToRocq.pp_bare "ADD" fmt
+    | ADC -> ToRocq.pp_bare "ADC" fmt
+    | MUL -> ToRocq.pp_bare "MUL" fmt
+    | MLA -> ToRocq.pp_bare "MLA" fmt
+    | MLS -> ToRocq.pp_bare "MLS" fmt
+    | SDIV -> ToRocq.pp_bare "SDIV" fmt
+    | SUB -> ToRocq.pp_bare "SUB" fmt
+    | SBC -> ToRocq.pp_bare "SBC" fmt
+    | RSB -> ToRocq.pp_bare "RSB" fmt
+    | UDIV -> ToRocq.pp_bare "UDIV" fmt
+    | UMULL -> ToRocq.pp_bare "UMULL" fmt
+    | UMAAL -> ToRocq.pp_bare "UMAAL" fmt
+    | UMLAL -> ToRocq.pp_bare "UMLAL" fmt
+    | SMULL -> ToRocq.pp_bare "SMULL" fmt
+    | SMLAL -> ToRocq.pp_bare "SMLAL" fmt
+    | SMMUL -> ToRocq.pp_bare "SMMUL" fmt
+    | SMMULR -> ToRocq.pp_bare "SMMULR" fmt
+    | SMUL_hw (h1, h2) -> pp_hw2 "SMUL_hw" fmt (h1, h2)
+    | SMLA_hw (h1, h2) -> pp_hw2 "SMLA_hw" fmt (h1, h2)
+    | SMULW_hw h -> pp_hw "SMULW_hw" fmt h
+    | AND -> ToRocq.pp_bare "AND" fmt
+    | BFC -> ToRocq.pp_bare "BFC" fmt
+    | BFI -> ToRocq.pp_bare "BFI" fmt
+    | BIC -> ToRocq.pp_bare "BIC" fmt
+    | EOR -> ToRocq.pp_bare "EOR" fmt
+    | MVN -> ToRocq.pp_bare "MVN" fmt
+    | ORR -> ToRocq.pp_bare "ORR" fmt
+    | ASR -> ToRocq.pp_bare "ASR" fmt
+    | LSL -> ToRocq.pp_bare "LSL" fmt
+    | LSR -> ToRocq.pp_bare "LSR" fmt
+    | ROR -> ToRocq.pp_bare "ROR" fmt
+    | REV -> ToRocq.pp_bare "REV" fmt
+    | REV16 -> ToRocq.pp_bare "REV16" fmt
+    | REVSH -> ToRocq.pp_bare "REVSH" fmt
+    | ADR -> ToRocq.pp_bare "ADR" fmt
+    | MOV -> ToRocq.pp_bare "MOV" fmt
+    | MOVT -> ToRocq.pp_bare "MOVT" fmt
+    | UBFX -> ToRocq.pp_bare "UBFX" fmt
+    | UXTB -> ToRocq.pp_bare "UXTB" fmt
+    | UXTH -> ToRocq.pp_bare "UXTH" fmt
+    | SBFX -> ToRocq.pp_bare "SBFX" fmt
+    | CLZ -> ToRocq.pp_bare "CLZ" fmt
+    | CMP -> ToRocq.pp_bare "CMP" fmt
+    | TST -> ToRocq.pp_bare "TST" fmt
+    | CMN -> ToRocq.pp_bare "CMN" fmt
+    | LDR -> ToRocq.pp_bare "LDR" fmt
+    | LDRB -> ToRocq.pp_bare "LDRB" fmt
+    | LDRH -> ToRocq.pp_bare "LDRH" fmt
+    | LDRSB -> ToRocq.pp_bare "LDRSB" fmt
+    | LDRSH -> ToRocq.pp_bare "LDRSH" fmt
+    | STR -> ToRocq.pp_bare "STR" fmt
+    | STRB -> ToRocq.pp_bare "STRB" fmt
+    | STRH -> ToRocq.pp_bare "STRH" fmt
+
+  let pp_asm_op_for_rocq fmt (o : asm_op) =
+    let Arm_instr_decl.ARM_op (m, opts) = o in
+    Format.fprintf fmt "(ARM_op %a %a)" pp_arm_mnemonic m pp_arm_options opts
+
+  let pp_extra_op_for_rocq fmt (o : extra_op) =
+    let open Arm_extra in
+    match o with
+    | Oarm_swap ws -> ToRocq.pp_ws "Oarm_swap" fmt ws
+    | Oarm_add_large_imm -> ToRocq.pp_bare "Oarm_add_large_imm" fmt
+    | Osmart_li ws -> ToRocq.pp_ws "Osmart_li" fmt ws
+    | Osmart_li_cc ws -> ToRocq.pp_ws "Osmart_li_cc" fmt ws
+
 end
 
 module Arm (Lowering_params : Arm_input) : Arch_full.Core_arch

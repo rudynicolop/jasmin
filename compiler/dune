@@ -33,4 +33,11 @@
  (modules jasmin2ec)
  (modes byte exe)
  (libraries commonCLI))
+
+(executable
+ (public_name jasmin2rocq)
+ (name jasmin2rocq)
+ (modules jasmin2rocq)
+ (modes byte exe)
+ (libraries commonCLI))
 )

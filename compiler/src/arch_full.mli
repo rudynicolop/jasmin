@@ -47,6 +47,10 @@ module type Core_arch = sig
   val is_doit_asm_extra : extra_op -> bool
 
   val internal_call_conv : (reg, regx, xreg, rflag, cond) internal_calling_convention
+
+  val pp_asm_op_for_rocq : Format.formatter -> asm_op -> unit
+  val pp_extra_op_for_rocq : Format.formatter -> extra_op -> unit
+
 end
 
 module type Arch = sig
@@ -86,6 +90,8 @@ module type Arch = sig
   val is_ct_sopn : ?doit:bool -> extended_op -> bool
 
   val internal_call_conv : (var, var, var, var, cond) internal_calling_convention
+
+  val pp_extended_op_for_rocq : Format.formatter -> extended_op -> unit
 end
 
 module Arch_from_Core_arch (A : Core_arch) : Arch

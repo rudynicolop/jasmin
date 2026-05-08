@@ -18,7 +18,11 @@ let call_conv =
   let alts =
     [ ("linux", Glob_options.Linux); ("windows", Glob_options.Windows) ]
   in
-  let doc = Format.asprintf "Undocumented (%s)" (Arg.doc_alts_enum alts) in
+  (* TODO Is this related to printing? Otherwise move to a separate PR *)
+  let doc =
+    Format.asprintf "The calling convention, determined by the target OS (%s)"
+      (Arg.doc_alts_enum alts)
+  in
   let call_conv = Arg.enum alts in
   Arg.(
     value

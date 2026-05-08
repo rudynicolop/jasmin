@@ -205,6 +205,177 @@ module X86_core = struct
     | XCHG _ -> false (* Not DOIT *)
     | XOR _ -> true
 
+  (* -------------------------------------------------------------------- *)
+  (* Rocq printing for x86 asm ops *)
+
+  let pp_asm_op_for_rocq fmt (o : asm_op) =
+    let open X86_instr_decl in
+    match o with
+    | MOV ws -> ToRocq.pp_ws "MOV" fmt ws
+    | MOVSX (ws1, ws2) -> ToRocq.pp_ws2 "MOVSX" fmt (ws1, ws2)
+    | MOVZX (ws1, ws2) -> ToRocq.pp_ws2 "MOVZX" fmt (ws1, ws2)
+    | CMOVcc ws -> ToRocq.pp_ws "CMOVcc" fmt ws
+    | XCHG ws -> ToRocq.pp_ws "XCHG" fmt ws
+    | ADD ws -> ToRocq.pp_ws "ADD" fmt ws
+    | SUB ws -> ToRocq.pp_ws "SUB" fmt ws
+    | MUL ws -> ToRocq.pp_ws "MUL" fmt ws
+    | IMUL ws -> ToRocq.pp_ws "IMUL" fmt ws
+    | IMULr ws -> ToRocq.pp_ws "IMULr" fmt ws
+    | IMULri ws -> ToRocq.pp_ws "IMULri" fmt ws
+    | DIV ws -> ToRocq.pp_ws "DIV" fmt ws
+    | IDIV ws -> ToRocq.pp_ws "IDIV" fmt ws
+    | CQO ws -> ToRocq.pp_ws "CQO" fmt ws
+    | ADC ws -> ToRocq.pp_ws "ADC" fmt ws
+    | SBB ws -> ToRocq.pp_ws "SBB" fmt ws
+    | NEG ws -> ToRocq.pp_ws "NEG" fmt ws
+    | INC ws -> ToRocq.pp_ws "INC" fmt ws
+    | DEC ws -> ToRocq.pp_ws "DEC" fmt ws
+    | LZCNT ws -> ToRocq.pp_ws "LZCNT" fmt ws
+    | TZCNT ws -> ToRocq.pp_ws "TZCNT" fmt ws
+    | BSR ws -> ToRocq.pp_ws "BSR" fmt ws
+    | SETcc -> ToRocq.pp_bare "SETcc" fmt
+    | BT ws -> ToRocq.pp_ws "BT" fmt ws
+    | CLC -> ToRocq.pp_bare "CLC" fmt
+    | STC -> ToRocq.pp_bare "STC" fmt
+    | LEA ws -> ToRocq.pp_ws "LEA" fmt ws
+    | TEST ws -> ToRocq.pp_ws "TEST" fmt ws
+    | CMP ws -> ToRocq.pp_ws "CMP" fmt ws
+    | AND ws -> ToRocq.pp_ws "AND" fmt ws
+    | ANDN ws -> ToRocq.pp_ws "ANDN" fmt ws
+    | OR ws -> ToRocq.pp_ws "OR" fmt ws
+    | XOR ws -> ToRocq.pp_ws "XOR" fmt ws
+    | NOT ws -> ToRocq.pp_ws "NOT" fmt ws
+    | ROR ws -> ToRocq.pp_ws "ROR" fmt ws
+    | ROL ws -> ToRocq.pp_ws "ROL" fmt ws
+    | RCR ws -> ToRocq.pp_ws "RCR" fmt ws
+    | RCL ws -> ToRocq.pp_ws "RCL" fmt ws
+    | SHL ws -> ToRocq.pp_ws "SHL" fmt ws
+    | SHR ws -> ToRocq.pp_ws "SHR" fmt ws
+    | SAL ws -> ToRocq.pp_ws "SAL" fmt ws
+    | SAR ws -> ToRocq.pp_ws "SAR" fmt ws
+    | SHLD ws -> ToRocq.pp_ws "SHLD" fmt ws
+    | SHRD ws -> ToRocq.pp_ws "SHRD" fmt ws
+    | RORX ws -> ToRocq.pp_ws "RORX" fmt ws
+    | SARX ws -> ToRocq.pp_ws "SARX" fmt ws
+    | SHRX ws -> ToRocq.pp_ws "SHRX" fmt ws
+    | SHLX ws -> ToRocq.pp_ws "SHLX" fmt ws
+    | MULX_lo_hi ws -> ToRocq.pp_ws "MULX_lo_hi" fmt ws
+    | ADCX ws -> ToRocq.pp_ws "ADCX" fmt ws
+    | ADOX ws -> ToRocq.pp_ws "ADOX" fmt ws
+    | BSWAP ws -> ToRocq.pp_ws "BSWAP" fmt ws
+    | POPCNT ws -> ToRocq.pp_ws "POPCNT" fmt ws
+    | BTR ws -> ToRocq.pp_ws "BTR" fmt ws
+    | BTS ws -> ToRocq.pp_ws "BTS" fmt ws
+    | PEXT ws -> ToRocq.pp_ws "PEXT" fmt ws
+    | PDEP ws -> ToRocq.pp_ws "PDEP" fmt ws
+    | MOVX ws -> ToRocq.pp_ws "MOVX" fmt ws
+    | POR -> ToRocq.pp_bare "POR" fmt
+    | PADD (ve, ws) -> ToRocq.pp_ve_ws "PADD" fmt (ve, ws)
+    | MOVD ws -> ToRocq.pp_ws "MOVD" fmt ws
+    | MOVV ws -> ToRocq.pp_ws "MOVV" fmt ws
+    | VMOV ws -> ToRocq.pp_ws "VMOV" fmt ws
+    | VMOVDQA ws -> ToRocq.pp_ws "VMOVDQA" fmt ws
+    | VMOVDQU ws -> ToRocq.pp_ws "VMOVDQU" fmt ws
+    | VPMOVSX (v1, w1, v2, w2) -> ToRocq.pp_ve_ws_ve_ws "VPMOVSX" fmt (v1, w1, v2, w2)
+    | VPMOVZX (v1, w1, v2, w2) -> ToRocq.pp_ve_ws_ve_ws "VPMOVZX" fmt (v1, w1, v2, w2)
+    | VPAND ws -> ToRocq.pp_ws "VPAND" fmt ws
+    | VPANDN ws -> ToRocq.pp_ws "VPANDN" fmt ws
+    | VPOR ws -> ToRocq.pp_ws "VPOR" fmt ws
+    | VPXOR ws -> ToRocq.pp_ws "VPXOR" fmt ws
+    | VPADD (v, w) -> ToRocq.pp_ve_ws "VPADD" fmt (v, w)
+    | VPSUB (v, w) -> ToRocq.pp_ve_ws "VPSUB" fmt (v, w)
+    | VPAVG (v, w) -> ToRocq.pp_ve_ws "VPAVG" fmt (v, w)
+    | VPMULL (v, w) -> ToRocq.pp_ve_ws "VPMULL" fmt (v, w)
+    | VPMULH ws -> ToRocq.pp_ws "VPMULH" fmt ws
+    | VPMULHU ws -> ToRocq.pp_ws "VPMULHU" fmt ws
+    | VPMULHRS ws -> ToRocq.pp_ws "VPMULHRS" fmt ws
+    | VPMUL ws -> ToRocq.pp_ws "VPMUL" fmt ws
+    | VPMULU ws -> ToRocq.pp_ws "VPMULU" fmt ws
+    | VPEXTR ws -> ToRocq.pp_ws "VPEXTR" fmt ws
+    | VPINSR ve -> ToRocq.pp_ve "VPINSR" fmt ve
+    | VPSLL (v, w) -> ToRocq.pp_ve_ws "VPSLL" fmt (v, w)
+    | VPSRL (v, w) -> ToRocq.pp_ve_ws "VPSRL" fmt (v, w)
+    | VPSRA (v, w) -> ToRocq.pp_ve_ws "VPSRA" fmt (v, w)
+    | VPSLLV (v, w) -> ToRocq.pp_ve_ws "VPSLLV" fmt (v, w)
+    | VPSRLV (v, w) -> ToRocq.pp_ve_ws "VPSRLV" fmt (v, w)
+    | VPSLLDQ ws -> ToRocq.pp_ws "VPSLLDQ" fmt ws
+    | VPSRLDQ ws -> ToRocq.pp_ws "VPSRLDQ" fmt ws
+    | VPSHUFB ws -> ToRocq.pp_ws "VPSHUFB" fmt ws
+    | VPSHUFD ws -> ToRocq.pp_ws "VPSHUFD" fmt ws
+    | VPSHUFHW ws -> ToRocq.pp_ws "VPSHUFHW" fmt ws
+    | VPSHUFLW ws -> ToRocq.pp_ws "VPSHUFLW" fmt ws
+    | VPBLEND (v, w) -> ToRocq.pp_ve_ws "VPBLEND" fmt (v, w)
+    | BLENDV (v, w) -> ToRocq.pp_ve_ws "BLENDV" fmt (v, w)
+    | VPACKUS (v, w) -> ToRocq.pp_ve_ws "VPACKUS" fmt (v, w)
+    | VPACKSS (v, w) -> ToRocq.pp_ve_ws "VPACKSS" fmt (v, w)
+    | VSHUFPS ws -> ToRocq.pp_ws "VSHUFPS" fmt ws
+    | VPBROADCAST (v, w) -> ToRocq.pp_ve_ws "VPBROADCAST" fmt (v, w)
+    | VMOVSHDUP ws -> ToRocq.pp_ws "VMOVSHDUP" fmt ws
+    | VMOVSLDUP ws -> ToRocq.pp_ws "VMOVSLDUP" fmt ws
+    | VPALIGNR ws -> ToRocq.pp_ws "VPALIGNR" fmt ws
+    | VBROADCASTI128 -> ToRocq.pp_bare "VBROADCASTI128" fmt
+    | VPUNPCKH (v, w) -> ToRocq.pp_ve_ws "VPUNPCKH" fmt (v, w)
+    | VPUNPCKL (v, w) -> ToRocq.pp_ve_ws "VPUNPCKL" fmt (v, w)
+    | VEXTRACTI128 -> ToRocq.pp_bare "VEXTRACTI128" fmt
+    | VINSERTI128 -> ToRocq.pp_bare "VINSERTI128" fmt
+    | VPERM2I128 -> ToRocq.pp_bare "VPERM2I128" fmt
+    | VPERMD -> ToRocq.pp_bare "VPERMD" fmt
+    | VPERMQ -> ToRocq.pp_bare "VPERMQ" fmt
+    | MOVEMASK (v, w) -> ToRocq.pp_ve_ws "MOVEMASK" fmt (v, w)
+    | VPCMPEQ (v, w) -> ToRocq.pp_ve_ws "VPCMPEQ" fmt (v, w)
+    | VPCMPGT (v, w) -> ToRocq.pp_ve_ws "VPCMPGT" fmt (v, w)
+    | VPSIGN (v, w) -> ToRocq.pp_ve_ws "VPSIGN" fmt (v, w)
+    | VPMADDUBSW ws -> ToRocq.pp_ws "VPMADDUBSW" fmt ws
+    | VPMADDWD ws -> ToRocq.pp_ws "VPMADDWD" fmt ws
+    | VMOVLPD -> ToRocq.pp_bare "VMOVLPD" fmt
+    | VMOVHPD -> ToRocq.pp_bare "VMOVHPD" fmt
+    | VPMINU (v, w) -> ToRocq.pp_ve_ws "VPMINU" fmt (v, w)
+    | VPMINS (v, w) -> ToRocq.pp_ve_ws "VPMINS" fmt (v, w)
+    | VPMAXU (v, w) -> ToRocq.pp_ve_ws "VPMAXU" fmt (v, w)
+    | VPMAXS (v, w) -> ToRocq.pp_ve_ws "VPMAXS" fmt (v, w)
+    | VPABS (v, w) -> ToRocq.pp_ve_ws "VPABS" fmt (v, w)
+    | VPTEST ws -> ToRocq.pp_ws "VPTEST" fmt ws
+    | CLFLUSH -> ToRocq.pp_bare "CLFLUSH" fmt
+    | PREFETCHT0 -> ToRocq.pp_bare "PREFETCHT0" fmt
+    | PREFETCHT1 -> ToRocq.pp_bare "PREFETCHT1" fmt
+    | PREFETCHT2 -> ToRocq.pp_bare "PREFETCHT2" fmt
+    | PREFETCHNTA -> ToRocq.pp_bare "PREFETCHNTA" fmt
+    | LFENCE -> ToRocq.pp_bare "LFENCE" fmt
+    | MFENCE -> ToRocq.pp_bare "MFENCE" fmt
+    | SFENCE -> ToRocq.pp_bare "SFENCE" fmt
+    | RDTSC ws -> ToRocq.pp_ws "RDTSC" fmt ws
+    | RDTSCP ws -> ToRocq.pp_ws "RDTSCP" fmt ws
+    | AESDEC -> ToRocq.pp_bare "AESDEC" fmt
+    | VAESDEC ws -> ToRocq.pp_ws "VAESDEC" fmt ws
+    | AESDECLAST -> ToRocq.pp_bare "AESDECLAST" fmt
+    | VAESDECLAST ws -> ToRocq.pp_ws "VAESDECLAST" fmt ws
+    | AESENC -> ToRocq.pp_bare "AESENC" fmt
+    | VAESENC ws -> ToRocq.pp_ws "VAESENC" fmt ws
+    | AESENCLAST -> ToRocq.pp_bare "AESENCLAST" fmt
+    | VAESENCLAST ws -> ToRocq.pp_ws "VAESENCLAST" fmt ws
+    | AESIMC -> ToRocq.pp_bare "AESIMC" fmt
+    | VAESIMC -> ToRocq.pp_bare "VAESIMC" fmt
+    | AESKEYGENASSIST -> ToRocq.pp_bare "AESKEYGENASSIST" fmt
+    | VAESKEYGENASSIST -> ToRocq.pp_bare "VAESKEYGENASSIST" fmt
+    | PCLMULQDQ -> ToRocq.pp_bare "PCLMULQDQ" fmt
+    | VPCLMULQDQ ws -> ToRocq.pp_ws "VPCLMULQDQ" fmt ws
+    | SHA256RNDS2 -> ToRocq.pp_bare "SHA256RNDS2" fmt
+    | SHA256MSG1 -> ToRocq.pp_bare "SHA256MSG1" fmt
+    | SHA256MSG2 -> ToRocq.pp_bare "SHA256MSG2" fmt
+
+  let pp_extra_op_for_rocq fmt (o : extra_op) =
+    let open X86_extra in
+    match o with
+    | Oset0 ws -> ToRocq.pp_ws "Oset0" fmt ws
+    | Oconcat128 -> ToRocq.pp_bare "Oconcat128" fmt
+    | Ox86MOVZX32 -> ToRocq.pp_bare "Ox86MOVZX32" fmt
+    | Ox86MULX ws -> ToRocq.pp_ws "Ox86MULX" fmt ws
+    | Ox86MULX_hi ws -> ToRocq.pp_ws "Ox86MULX_hi" fmt ws
+    | Ox86SLHinit -> ToRocq.pp_bare "Ox86SLHinit" fmt
+    | Ox86SLHupdate -> ToRocq.pp_bare "Ox86SLHupdate" fmt
+    | Ox86SLHmove -> ToRocq.pp_bare "Ox86SLHmove" fmt
+    | Ox86SLHprotect (rk, ws) -> ToRocq.pp_rk_ws "Ox86SLHprotect" fmt (rk, ws)
+
   (* All of the extra ops compile into CT instructions (no DIV). *)
   let is_ct_asm_extra (_o : extra_op) = true
 
