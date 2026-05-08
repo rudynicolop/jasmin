@@ -65,7 +65,7 @@ module Riscv_core = struct
     | NOT -> ToRocq.pp_bare "NOT" fmt
     | NEG -> ToRocq.pp_bare "NEG" fmt
     | LOAD (s, ws) -> ToRocq.pp_s_ws "LOAD" fmt (s, ws)
-    | STORE ws -> ToRocq.pp_ws "STORE" fmt ws
+    | STORE ws -> ToRocq.pp_with_ws "STORE" fmt ws
     | MUL -> ToRocq.pp_bare "MUL" fmt
     | MULH -> ToRocq.pp_bare "MULH" fmt
     | MULHU -> ToRocq.pp_bare "MULHU" fmt
@@ -78,7 +78,7 @@ module Riscv_core = struct
   let pp_extra_op_for_rocq fmt (o : extra_op) =
     let open Riscv_extra in
     match o with
-    | SWAP ws -> ToRocq.pp_ws "SWAP" fmt ws
+    | SWAP ws -> ToRocq.pp_with_ws "SWAP" fmt ws
     | Oriscv_add_large_imm -> ToRocq.pp_bare "Oriscv_add_large_imm" fmt
 
 end

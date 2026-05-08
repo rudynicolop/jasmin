@@ -155,10 +155,10 @@ let pp_velem fmt = function
 
 let pp_bare name fmt = F.fprintf fmt "%s" name
 
-let pp_ws name fmt ws =
+let pp_with_ws name fmt ws =
   F.fprintf fmt "(%s %a)" name pp_wsize ws
 
-let pp_ws2 name fmt (ws1, ws2) =
+let pp_with_ws2 name fmt (ws1, ws2) =
   F.fprintf fmt "(%s %a %a)" name pp_wsize ws1 pp_wsize ws2
 
 let pp_ve name fmt ve =
@@ -478,7 +478,7 @@ and pp_stmt pp_asm_op fmt c =
 let pp_define_vars fmt =
   let pp_k fmt k = F.fprintf fmt "%s" (if k = Global then "mk_gvar" else "mk_lvar") in
   Sv.iter (fun v ->
-    F.fprintf fmt "Definition %a := %a (mk_var_i (mkvar %a (mkident %s))).@ "
+    F.fprintf fmt "Definition %a := %a (mk_var_i (Var %a (mkident %s))).@ "
       pp_var v
       pp_k v.v_kind
       pp_atype v.v_ty
@@ -510,7 +510,7 @@ let pp_fds pp_asm_op fmt =
   List.iter (fun fd ->
     pp_define_fname fmt fd.f_name;
     pp_define_vars fmt (vars_fc fd);
-    F.fprintf fmt "Definition %a :=@ %a.@ @ "
+    F.fprintf fmt "Definition fd_%a :=@ %a.@ @ "
       pp_fn fd.f_name
       (pp_fd pp_asm_op) fd
   )
@@ -549,38 +549,64 @@ let pp_glob fmt (x, gd) =
     ) bytes;
     F.fprintf fmt "@ |}))@]"
 
-let pp_globs fmt globs =
-  List.iter (fun glob ->
-    pp_glob fmt glob;
-    F.fprintf fmt "@ @ "
-  ) globs
+let globs_name name = Format.sprintf "%s_gds" (sanitize_s name)
 
-let pp_imports fmt =
-  F.fprintf fmt "From mathcomp Require Import ssreflect.@ ";
-  F.fprintf fmt "From Coq Require Import ZArith.@ ";
-  F.fprintf fmt "Require Import expr ident var type global warray_ pseudo_operator sopn arch_extra.@ ";
-  F.fprintf fmt "Require Import x86_decl x86_instr_decl x86_extra.@ "; (* TODO make this depend on the arch? *)
-  F.fprintf fmt "Axiom mkident : Z -> ident.@ ";
-  F.fprintf fmt "Axiom mkfunname : Z -> funname.@ ";
-  F.fprintf fmt "Axiom atoI : arch_toIdent.@ "; (* TODO instantiate *)
-  F.fprintf fmt "#[local] Existing Instance atoI.@ "
+let pp_globs fmt name globs =
+  F.fprintf fmt "Definition %s : glob_decls := @[<v 0>%a@].@ "
+    (globs_name name)
+    (pp_list pp_glob) globs
 
-let pp_prog fmt name ((gd, funcs) : (unit, _) prog) =
+(* -------------------------------------------------------------------------- *)
+(* Programs *)
+
+let pp_prog fmt name funcs =
   let pp_fd_pair fmt fd =
     F.fprintf fmt "(%a, %a)" pp_fn fd.f_name pp_fd_name fd.f_name
   in
-  F.fprintf fmt "Definition %s :=@ " (sanitize_s name);
-  F.fprintf fmt "@[<v 0>{|@ ";
-  F.fprintf fmt "  p_globs :=@ @[<v 0>%a@];@ " pp_globs gd;
-  F.fprintf fmt "  p_funcs := %a;@ " (pp_list pp_fd_pair) funcs;
-  F.fprintf fmt "|}@]"
+  F.fprintf fmt "Definition %s : uprog :=@ @[<v 0>" (sanitize_s name);
+  F.fprintf fmt "  {|@ ";
+  F.fprintf fmt "    p_globs := %s;@ " (globs_name name);
+  F.fprintf fmt "    p_funcs := %a;@ " (pp_list pp_fd_pair) funcs;
+  F.fprintf fmt "    p_extra := tt;@ "; (* TODO where to get extra from? *)
+  F.fprintf fmt "  |}.@]"
 
-(* -------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+(* Imports *)
+
+let pp_arch_imports fmt = function
+  | X86_64 ->
+    F.fprintf fmt "Require Import x86_decl x86_instr_decl x86_extra.@ ";
+    F.fprintf fmt "Axiom atoI : arch_toIdent.@ "; (* TODO instantiate *)
+    F.fprintf fmt "#[local] Existing Instance atoI.@ "
+  | ARM_M4 -> assert false (* TODO *)
+  | RISCV -> assert false (* TODO *)
+
+let pp_imports fmt arch =
+  F.fprintf fmt "From Coq Require Import ZArith.@ ";
+  F.fprintf fmt "From mathcomp Require Import ssreflect.@ ";
+  F.fprintf fmt "@ ";
+  F.fprintf fmt "Require Import expr ident var type global pseudo_operator sopn arch_extra.@ ";
+  F.fprintf fmt "Axiom mkident : Z -> Ident.ident.@ ";
+  F.fprintf fmt "Axiom mkfunname : Z -> funname.@ ";
+  F.fprintf fmt "@ ";
+  (* TODO isn't this coercion defined somewhere? *)
+  F.fprintf fmt "Coercion gv : gvar >-> var_i.";
+  F.fprintf fmt "@ ";
+  pp_arch_imports fmt arch
+
+
+(* -------------------------------------------------------------------------- *)
 (* Entry point *)
 
-let extract pp_asm_op fmt name ((gd, funcs) : _ prog)=
+let extract ?(imports=true) ?(split=false)
+    arch _pd _msfsz _asmOp pp_asm_op (gd, funcs) name fmt =
+  ignore imports; ignore split;
   F.fprintf fmt "@[<v 0>";
-  pp_imports fmt;
+  pp_imports fmt arch;
+  F.fprintf fmt "@ ";
   pp_fds pp_asm_op fmt (List.rev funcs);
-  pp_prog fmt name (gd, funcs);
+  F.fprintf fmt "@ ";
+  pp_globs fmt name gd;
+  F.fprintf fmt "@ ";
+  pp_prog fmt name funcs;
   F.fprintf fmt "@]"

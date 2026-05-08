@@ -185,10 +185,10 @@ module Arm_core = struct
   let pp_extra_op_for_rocq fmt (o : extra_op) =
     let open Arm_extra in
     match o with
-    | Oarm_swap ws -> ToRocq.pp_ws "Oarm_swap" fmt ws
+    | Oarm_swap ws -> ToRocq.pp_with_ws "Oarm_swap" fmt ws
     | Oarm_add_large_imm -> ToRocq.pp_bare "Oarm_add_large_imm" fmt
-    | Osmart_li ws -> ToRocq.pp_ws "Osmart_li" fmt ws
-    | Osmart_li_cc ws -> ToRocq.pp_ws "Osmart_li_cc" fmt ws
+    | Osmart_li ws -> ToRocq.pp_with_ws "Osmart_li" fmt ws
+    | Osmart_li_cc ws -> ToRocq.pp_with_ws "Osmart_li_cc" fmt ws
 
 end
 
