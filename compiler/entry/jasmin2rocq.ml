@@ -66,8 +66,8 @@ let parse_and_extract arch call_conv idirs =
           (fmt, fun () -> close_out out)
     in
     (try
-       ToRocq.extract ~imports ~split prog arch A.reg_size A.msf_size A.asmOp
-         A.pp_extended_op_for_rocq fmt;
+       ToRocq.extract ~imports ~split arch A.reg_size A.msf_size A.asmOp
+         A.pp_extended_op_for_rocq prog "p" fmt;
        close ()
      with e ->
        BatPervasives.ignore_exceptions (fun () -> close ()) ();

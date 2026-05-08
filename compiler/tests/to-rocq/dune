@@ -1,0 +1,12 @@
+(library
+  (name common_to_rocq)
+  (wrapped false)
+  (libraries jasmin.jasmin)
+  (modules common))
+
+(tests
+  (libraries jasmin.jasmin common_to_rocq)
+  (deps
+    (glob_files success/*))
+  (modules accept)
+  (names accept))
