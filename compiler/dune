@@ -41,3 +41,8 @@
  (modes byte exe)
  (libraries commonCLI))
 )
+
+(rule
+ (target jasminc)
+ (deps entry/jasminc.exe)
+ (action (run ln -sf %{deps} %{target})))
