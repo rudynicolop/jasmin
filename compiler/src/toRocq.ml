@@ -568,32 +568,29 @@ let pp_prog fmt name funcs =
   F.fprintf fmt "    p_globs := %s;@ " (globs_name name);
   F.fprintf fmt "    p_funcs := %a;@ " (pp_list pp_fd_pair) funcs;
   F.fprintf fmt "    p_extra := tt;@ "; (* TODO where to get extra from? *)
-  F.fprintf fmt "  |}.@]"
+  F.fprintf fmt "  |}.@]@ "
 
 (* -------------------------------------------------------------------------- *)
 (* Imports *)
 
+let pp_imports fmt =
+  F.fprintf fmt "From Coq Require Import ZArith.@ ";
+  F.fprintf fmt "From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.@ ";
+  F.fprintf fmt "@ ";
+  F.fprintf fmt "Require Import expr ident var type global pseudo_operator sopn arch_extra.@ "
+
+let pp_oracles fmt =
+  F.fprintf fmt "Require Import jasmin_printing.@ ";
+  F.fprintf fmt "Axiom IdO : IdentOracles.@ ";
+  F.fprintf fmt "Existing Instance IdO.@ "
+
+(* Needs ident oracles *)
 let pp_arch_imports fmt = function
   | X86_64 ->
     F.fprintf fmt "Require Import x86_decl x86_instr_decl x86_extra.@ ";
-    F.fprintf fmt "Axiom atoI : arch_toIdent.@ "; (* TODO instantiate *)
-    F.fprintf fmt "#[local] Existing Instance atoI.@ "
+    F.fprintf fmt "Existing Instance x86_atoI.@ "
   | ARM_M4 -> assert false (* TODO *)
   | RISCV -> assert false (* TODO *)
-
-let pp_imports fmt arch =
-  F.fprintf fmt "From Coq Require Import ZArith.@ ";
-  F.fprintf fmt "From mathcomp Require Import ssreflect.@ ";
-  F.fprintf fmt "@ ";
-  F.fprintf fmt "Require Import expr ident var type global pseudo_operator sopn arch_extra.@ ";
-  F.fprintf fmt "Axiom mkident : Z -> Ident.ident.@ ";
-  F.fprintf fmt "Axiom mkfunname : Z -> funname.@ ";
-  F.fprintf fmt "@ ";
-  (* TODO isn't this coercion defined somewhere? *)
-  F.fprintf fmt "Coercion gv : gvar >-> var_i.";
-  F.fprintf fmt "@ ";
-  pp_arch_imports fmt arch
-
 
 (* -------------------------------------------------------------------------- *)
 (* Entry point *)
@@ -602,8 +599,17 @@ let extract ?(imports=true) ?(split=false)
     arch _pd _msfsz _asmOp pp_asm_op (gd, funcs) name fmt =
   ignore imports; ignore split;
   F.fprintf fmt "@[<v 0>";
-  pp_imports fmt arch;
+  pp_imports fmt;
   F.fprintf fmt "@ ";
+  pp_oracles fmt;
+  F.fprintf fmt "@ ";
+  pp_arch_imports fmt arch;
+  F.fprintf fmt "@ ";
+  (* ------------------------------------------------ *)
+  (* TODO isn't this coercion defined somewhere? *)
+  F.fprintf fmt "Coercion gv : gvar >-> var_i.";
+  F.fprintf fmt "@ ";
+  (* ------------------------------------------------ *)
   pp_fds pp_asm_op fmt (List.rev funcs);
   F.fprintf fmt "@ ";
   pp_globs fmt name gd;

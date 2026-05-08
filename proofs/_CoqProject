@@ -25,6 +25,8 @@
 -R ssrmisc Jasmin
 -R itrees Jasmin
 
+compiler/jasmin_printing.v
+
 ssrmisc/oseq.v
 ssrmisc/seq_extra.v
 3rdparty/ssrring.v
