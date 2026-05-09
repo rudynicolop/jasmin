@@ -108,7 +108,7 @@ module Arm_core = struct
   let pp_arm_options fmt (o : Arm_instr_decl.arm_options) =
     Format.fprintf fmt "{| set_flags := %b; is_conditional := %b; has_shift := %a |}"
       o.set_flags o.is_conditional
-      (ToRocq.pp_option pp_shift_kind)
+      (ToRocq.pp_rocq_option pp_shift_kind)
       o.has_shift
 
   let pp_halfword fmt = function

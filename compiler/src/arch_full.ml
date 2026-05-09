@@ -233,7 +233,7 @@ module Arch_from_Core_arch (A : Core_arch) :
     match o with
     | BaseOp (msb, op) ->
       Format.fprintf fmt "(BaseOp (%a, %a))"
-        (ToRocq.pp_option ToRocq.pp_wsize) msb pp_asm_op_for_rocq op
+        (ToRocq.pp_rocq_option ToRocq.pp_wsize) msb pp_asm_op_for_rocq op
     | ExtOp op ->
       Format.fprintf fmt "(ExtOp %a)" pp_extra_op_for_rocq op
 
