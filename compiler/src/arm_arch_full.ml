@@ -101,9 +101,9 @@ module Arm_core = struct
 
   let pp_shift_kind fmt = function
     | Shift_kind.SLSL -> ToRocq.pp_bare "SLSL" fmt
-    | Shift_kind.SLSR -> ToRocq.pp_bare "SLSR" fmt
-    | Shift_kind.SASR -> ToRocq.pp_bare "SASR" fmt
-    | Shift_kind.SROR -> ToRocq.pp_bare "SROR" fmt
+    | SLSR -> ToRocq.pp_bare "SLSR" fmt
+    | SASR -> ToRocq.pp_bare "SASR" fmt
+    | SROR -> ToRocq.pp_bare "SROR" fmt
 
   let pp_arm_options fmt (o : Arm_instr_decl.arm_options) =
     Format.fprintf fmt "{| set_flags := %b; is_conditional := %b; has_shift := %a |}"
@@ -113,7 +113,7 @@ module Arm_core = struct
 
   let pp_halfword fmt = function
     | Arm_instr_decl.HWB -> ToRocq.pp_bare "HWB" fmt
-    | Arm_instr_decl.HWT -> ToRocq.pp_bare "HWT" fmt
+    | HWT -> ToRocq.pp_bare "HWT" fmt
 
   let pp_hw2 name fmt (h1, h2) =
     Format.fprintf fmt "(%s %a %a)" name pp_halfword h1 pp_halfword h2

@@ -36,7 +36,10 @@ Definition crandombytes
   (lv : lval) (ws : wsize) (n : positive) (e : pexpr) : instr :=
   mki (Csyscall [:: lv ] (RandomBytes ws n) [:: e ]).
 
-Definition cassert (a : assertion) : instr := mki (Cassert a).
+Definition cassert (l : assertion_label) (e : eassert) : instr :=
+  mki (Cassert (l, e)).
+
+#[global] Arguments cassert _%_string.
 
 Definition cif (e : pexpr) (c1 c2 : cmd) : instr :=
   mki (Cif e c1 c2).
