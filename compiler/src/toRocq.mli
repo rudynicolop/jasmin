@@ -1,3 +1,5 @@
+val rocq_sanitize_s : string -> string
+
 val pp_rocq_option :
   (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a option -> unit
 
