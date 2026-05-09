@@ -1,7 +1,26 @@
 open Jasmin
 open Common
 
-let path = "../success/x86-64"
+let rec find_named_dirs base target =
+  if not (Sys.file_exists base && Sys.is_directory base) then []
+  else
+    Sys.readdir base |> Array.to_list
+    |> List.concat_map (fun entry ->
+           let path = Filename.concat base entry in
+           if Sys.is_directory path then
+             if entry = target then [ path ]
+             else find_named_dirs path target
+           else [])
+
+let make_out_name dir name =
+  let path_parts p =
+    String.split_on_char '/' p
+    |> List.filter (fun s -> s <> ".." && s <> "." && s <> "")
+  in
+  let key =
+    String.concat "_" (path_parts dir @ [ Filename.remove_extension name ])
+  in
+  (ToRocq.rocq_sanitize_s key) ^ ".v"
 
 let find_proofs_dir () =
   let rec walk dir =
@@ -81,11 +100,10 @@ let release () =
   Condition.signal active_cond;
   Mutex.unlock active_mutex
 
-let generate name =
-  let p = load_file (Filename.concat path name) in
-  let out_name =
-    (Filename.remove_extension name |> ToRocq.rocq_sanitize_s) ^ ".v"
-  in
+let generate (dir, name) =
+  let full_path = Filename.concat dir name in
+  let p = load_file full_path in
+  let out_name = make_out_name dir name in
   let oc = open_out out_name in
   let fmt = Format.formatter_of_out_channel oc in
   match
@@ -95,44 +113,60 @@ let generate name =
   | () ->
       Format.pp_print_flush fmt ();
       close_out oc;
-      Some out_name
+      Some (full_path, out_name)
   | exception e ->
       close_out_noerr oc;
       cleanup_artifacts out_name;
       Mutex.lock print_mutex;
-      Format.eprintf "File %s: extraction failed: %s@." name
+      Format.eprintf "File %s: extraction failed: %s@." full_path
         (Printexc.to_string e);
       Mutex.unlock print_mutex;
       None
 
-let check name out_name =
+let check full_path out_name =
   let rc, errors = rocq_check out_name in
   cleanup_artifacts out_name;
   Mutex.lock print_mutex;
-  Format.printf "File %s: %s@." name (if rc = 0 then "OK" else "rocq failed");
+  Format.printf "File %s: %s@." full_path (if rc = 0 then "OK" else "rocq failed");
   List.iter prerr_endline errors;
   Mutex.unlock print_mutex;
   rc
 
 let () =
-  let cases = Sys.readdir path in
-  Array.sort String.compare cases;
+  let dirs =
+    find_named_dirs "../../examples" "x86-64"
+    @ find_named_dirs "../success" "x86-64"
+    @ find_named_dirs "../success" "common"
+    |> List.sort_uniq String.compare
+  in
+  let cases =
+    dirs
+    |> List.concat_map (fun dir ->
+           Sys.readdir dir |> Array.to_list
+           |> List.filter_map (fun name ->
+                  let full = Filename.concat dir name in
+                  if (not (Sys.is_directory full)) && Filename.check_suffix name ".jazz"
+                  then Some (dir, name)
+                  else None))
+    |> List.sort compare
+  in
   let jobs =
-    Array.to_list cases
-    |> List.filter_map (fun name ->
-        match generate name with
-        | Some out_name -> Some (name, out_name)
+    List.filter_map
+      (fun file ->
+        match generate file with
+        | Some r -> Some r
         | None -> None)
+      cases
   in
   let threads =
     List.map
-      (fun (name, out_name) ->
+      (fun (full_path, out_name) ->
         let result = ref 1 in
         let t =
           Thread.create
             (fun () ->
               acquire ();
-              let rc = check name out_name in
+              let rc = check full_path out_name in
               release ();
               result := rc;
               if rc <> 0 then exit rc)
