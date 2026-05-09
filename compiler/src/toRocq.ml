@@ -16,13 +16,15 @@ let is_ident_c c =
   || (c >= '0' && c <= '9')
   || c = '_'
 
-let sanitize_c c = if is_ident_c c then c else '_'
-let sanitize_s = String.map sanitize_c
-let sanitize_v v = sanitize_s (v.v_name ^ "_" ^ string_of_uid v.v_id)
-let sanitize_fn fn = sanitize_s (fn.fn_name ^ "_" ^ string_of_uid fn.fn_id)
+let rocq_sanitize_c c = if is_ident_c c then c else '_'
+let rocq_sanitize_s = String.map rocq_sanitize_c
+let rocq_sanitize_v v = rocq_sanitize_s (v.v_name ^ "_" ^ string_of_uid v.v_id)
+
+let rocq_sanitize_fn fn =
+  rocq_sanitize_s (fn.fn_name ^ "_" ^ string_of_uid fn.fn_id)
 
 (* Print the name of a [var], [var_i], [gvar] (they all print the same). *)
-let pp_var fmt v = F.fprintf fmt "%s" (sanitize_v v)
+let pp_var fmt v = F.fprintf fmt "%s" (rocq_sanitize_v v)
 let pp_var_i fmt v = pp_var fmt (L.unloc v)
 let pp_gvar fmt v = pp_var_i fmt v.gv
 
@@ -33,7 +35,7 @@ let pp_gv_var_i fmt v = F.fprintf fmt "%a.(gv)" pp_var_i v
 let pp_v_var_var fmt v = F.fprintf fmt "%a.(gv).(v_var)" pp_var v
 
 (* Function names. *)
-let pp_fn fmt fn = F.fprintf fmt "%s" (sanitize_fn fn)
+let pp_fn fmt fn = F.fprintf fmt "%s" (rocq_sanitize_fn fn)
 
 (* -------------------------------------------------------------------------- *)
 (* Printing helpers *)
@@ -105,7 +107,7 @@ let pp_atype fmt = function
   | Bty Bool -> F.fprintf fmt "abool"
   | Bty Int -> F.fprintf fmt "aint"
   | Bty (U ws) -> F.fprintf fmt "aword %a" pp_wsize ws
-  | Arr (ws, n) -> F.fprintf fmt "aarr %a %d" pp_wsize ws n
+  | Arr (ws, n) -> F.fprintf fmt "aarr %a (%d)" pp_wsize ws n
 
 let pp_aligned fmt = function
   | Memory_model.Aligned -> F.fprintf fmt "Aligned"
@@ -314,13 +316,13 @@ let pp_sopn pp_asm_op fmt = function
 let rec pp_expr fmt = function
   | Pconst z -> F.fprintf fmt "Pconst %a" pp_rocq_z z
   | Pbool b -> F.fprintf fmt "Pbool %a" pp_rocq_bool b
-  | Parr_init (ws, n) -> F.fprintf fmt "Parr_init %a %d" pp_wsize ws n
+  | Parr_init (ws, n) -> F.fprintf fmt "Parr_init %a (%d)" pp_wsize ws n
   | Pvar gv -> F.fprintf fmt "Pvar %a" pp_gvar gv
   | Pget (al, aa, ws, gv, e) ->
       F.fprintf fmt "Pget %a %a %a %a (%a)" pp_aligned al pp_arr_access aa
         pp_wsize ws pp_gvar gv pp_expr e
   | Psub (aa, ws, len, gv, e) ->
-      F.fprintf fmt "Psub %a %a %d %a (%a)" pp_arr_access aa pp_wsize ws len
+      F.fprintf fmt "Psub %a %a (%d) %a (%a)" pp_arr_access aa pp_wsize ws len
         pp_gvar gv pp_expr e
   | Pload (al, ws, e) ->
       F.fprintf fmt "Pload %a %a (%a)" pp_aligned al pp_wsize ws pp_expr e
@@ -361,7 +363,7 @@ let pp_lval fmt = function
       F.fprintf fmt "Laset %a %a %a %a (%a)" pp_aligned al pp_arr_access aa
         pp_wsize ws pp_gv_var_i x pp_expr e
   | Lasub (aa, ws, len, x, e) ->
-      F.fprintf fmt "Lasub %a %a %d %a (%a)" pp_arr_access aa pp_wsize ws len
+      F.fprintf fmt "Lasub %a %a (%d) %a (%a)" pp_arr_access aa pp_wsize ws len
         pp_gv_var_i x pp_expr e
 
 let pp_lvals fmt lvs = pp_rocq_seq pp_lval fmt lvs
@@ -518,7 +520,7 @@ let pp_glob fmt (x, gd) =
       F.fprintf fmt "(%a, Garr (arr_of_bytes %a %a))" pp_v_var_var x pp_rocq_cz
         p pp_glob_data x
 
-let pp_globs fmt name = Format.fprintf fmt "%s_gds" (sanitize_s name)
+let pp_globs fmt name = Format.fprintf fmt "%s_gds" (rocq_sanitize_s name)
 
 let pp_globs_definition fmt name globs =
   pp_vars_definition fmt (List.map fst globs);
@@ -540,7 +542,7 @@ let pp_mk_prog name fmt funcs =
   F.fprintf fmt "p_extra := tt;"
 
 let pp_prog_definition fmt name funcs =
-  pp_rocq_definition fmt F.pp_print_string (sanitize_s name) "uprog"
+  pp_rocq_definition fmt F.pp_print_string (rocq_sanitize_s name) "uprog"
     (pp_rocq_record (pp_mk_prog name))
     funcs
 
@@ -561,13 +563,15 @@ let pp_oracles fmt =
   F.fprintf fmt "Axiom IdO : IdentOracles.@ ";
   F.fprintf fmt "Existing Instance IdO.@ "
 
-(* Needs ident oracles *)
-let pp_arch_imports fmt = function
-  | X86_64 ->
-      F.fprintf fmt "Require Import x86_decl x86_instr_decl x86_extra.@ ";
-      F.fprintf fmt "Existing Instance x86_atoI.@ "
-  | ARM_M4 -> assert false (* TODO *)
-  | RISCV -> assert false (* TODO *)
+let suff_of_arch = function
+  | X86_64 -> "x86"
+  | ARM_M4 -> "arm"
+  | RISCV -> "riscv"
+
+let pp_arch_imports fmt a =
+  let s = suff_of_arch a in
+  F.fprintf fmt "Require Import %s_decl %s_instr_decl %s_extra.@ " s s s;
+  F.fprintf fmt "Existing Instance %s_atoI.@ " s
 
 (* -------------------------------------------------------------------------- *)
 (* Entry point *)
@@ -576,13 +580,15 @@ let pp_arch_imports fmt = function
    global variables used in the functions' bodies. *)
 let extract ?(imports = true) arch _pd _msfsz _asmOp pp_asm_op (gd, funcs) name
     fmt =
-  ignore imports;
+  let name = rocq_sanitize_s name in
   F.fprintf fmt "@[<v 0>";
-  pp_imports fmt;
-  pp_newline fmt ();
+  if imports then begin
+    pp_imports fmt;
+    pp_newline fmt ();
+    pp_arch_imports fmt arch;
+    pp_newline fmt ()
+  end;
   pp_oracles fmt;
-  pp_newline fmt ();
-  pp_arch_imports fmt arch;
   pp_newline fmt ();
   pp_separator fmt "Globals";
   pp_globs_definition fmt name gd;

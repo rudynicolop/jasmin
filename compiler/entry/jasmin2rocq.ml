@@ -101,8 +101,8 @@ let after_pass =
   Arg.(value & opt passes ParamsExpansion & info [ "compile"; "after" ] ~doc)
 
 let imports =
-  let doc = "Print Rocq imports and axioms at the top of the output." in
-  Arg.(value & flag & info [ "imports" ] ~doc)
+  let doc = "Do not print Rocq imports and axioms at the top of the output." in
+  Arg.(value & vflag true [ (false, info [ "no-imports" ] ~doc) ])
 
 let slice =
   let doc =

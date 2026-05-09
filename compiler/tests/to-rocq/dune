@@ -5,8 +5,8 @@
   (modules common))
 
 (tests
-  (libraries jasmin.jasmin common_to_rocq)
+  (libraries jasmin.jasmin common_to_rocq threads)
   (deps
-    (glob_files success/*))
+    (glob_files ../success/x86-64/*))
   (modules accept)
   (names accept))
