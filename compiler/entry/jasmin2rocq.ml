@@ -34,7 +34,8 @@ let slice_prog (gd, funcs) names =
       if Ss.mem name seen then close todo seen
       else
         let seen = Ss.add name seen in
-        let todo = match Ms.find_opt name by_name with
+        let todo =
+          match Ms.find_opt name by_name with
           | Some fd -> Ss.union todo (callees_of_func fd)
           | None -> todo
         in
@@ -48,15 +49,10 @@ let slice_prog (gd, funcs) names =
 
 let parse_and_extract arch call_conv idirs =
   let module A = (val CoreArchFactory.get_arch_module arch call_conv) in
-  let extract output pass slice imports split file warn =
+  let extract output pass slice imports file warn =
     if not warn then nowarning ();
-    let prog =
-      parse_and_compile (module A) ~wi2i:false pass file idirs
-    in
-    let prog = match slice with
-      | [] -> prog
-      | names -> slice_prog prog names
-    in
+    let prog = parse_and_compile (module A) ~wi2i:false pass file idirs in
+    let prog = match slice with [] -> prog | names -> slice_prog prog names in
     let fmt, close =
       match output with
       | None -> (Format.std_formatter, fun () -> ())
@@ -65,17 +61,17 @@ let parse_and_extract arch call_conv idirs =
           let fmt = Format.formatter_of_out_channel out in
           (fmt, fun () -> close_out out)
     in
-    (try
-       ToRocq.extract ~imports ~split arch A.reg_size A.msf_size A.asmOp
-         A.pp_extended_op_for_rocq prog "p" fmt;
-       Format.pp_print_flush fmt ();
-       close ()
-     with e ->
-       BatPervasives.ignore_exceptions (fun () -> close ()) ();
-       raise e)
+    try
+      ToRocq.extract ~imports arch A.reg_size A.msf_size A.asmOp
+        A.pp_extended_op_for_rocq prog "p" fmt;
+      Format.pp_print_flush fmt ();
+      close ()
+    with e ->
+      BatPervasives.ignore_exceptions (fun () -> close ()) ();
+      raise e
   in
-  fun output pass slice imports split file warn ->
-    match extract output pass slice imports split file warn with
+  fun output pass slice imports file warn ->
+    match extract output pass slice imports file warn with
     | () -> ()
     | exception HiError e ->
         Format.eprintf "%a@." pp_hierror e;
@@ -108,15 +104,11 @@ let imports =
   let doc = "Print Rocq imports and axioms at the top of the output." in
   Arg.(value & flag & info [ "imports" ] ~doc)
 
-let split =
-  let doc = "Print each function body as a separate Definition." in
-  Arg.(value & flag & info [ "split" ] ~doc)
-
 let slice =
   let doc =
     "Only extract the given function (and its dependencies). This argument may \
-     be repeated to extract many functions. If not given, all functions will be \
-     extracted."
+     be repeated to extract many functions. If not given, all functions will \
+     be extracted."
   in
   Arg.(value & opt_all string [] & info [ "slice"; "only"; "on" ] ~doc)
 
@@ -139,6 +131,6 @@ let () =
   in
   Cmd.v info
     Term.(
-      const parse_and_extract $ arch $ call_conv $ idirs
-      $ output $ after_pass $ slice $ imports $ split $ file $ warn)
+      const parse_and_extract $ arch $ call_conv $ idirs $ output $ after_pass
+      $ slice $ imports $ file $ warn)
   |> Cmd.eval |> exit

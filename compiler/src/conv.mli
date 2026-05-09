@@ -58,6 +58,8 @@ val prog_of_csprog : 'asm Expr._sprog -> (unit, 'asm) sprog
 val to_array : 
   Prog.ty -> BinNums.coq_Z -> Warray_.WArray.array -> wsize * Z.t array
 
+val to_array8 : Prog.ty -> BinNums.coq_Z -> Warray_.WArray.array -> Z.t array
+
 val error_of_cerror :
   (Format.formatter -> Compiler_util.pp_error -> unit) ->
    Compiler_util.pp_error_loc -> Utils.hierror
