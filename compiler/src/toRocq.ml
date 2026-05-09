@@ -20,54 +20,39 @@ let sanitize_c c = if is_ident_c c then c else '_'
 let sanitize_s = String.map sanitize_c
 let sanitize_v v = sanitize_s (v.v_name ^ "_" ^ string_of_uid v.v_id)
 let sanitize_fn fn = sanitize_s (fn.fn_name ^ "_" ^ string_of_uid fn.fn_id)
+
+(* Print the name of a [var], [var_i], [gvar] (they all print the same). *)
 let pp_var fmt v = F.fprintf fmt "%s" (sanitize_v v)
 let pp_var_i fmt v = pp_var fmt (L.unloc v)
 let pp_gvar fmt v = pp_var_i fmt v.gv
 
-(* We define a Rocq [gvar] under the name [pp_var]. To access the [var_i] and
-   [var], we use projections. *)
+(* We only define the Rocq [gvar] under the name [pp_var]. To access the [var_i]
+   and [var], we use projections. *)
 let pp_gv_var fmt v = F.fprintf fmt "%a.(gv)" pp_var v
 let pp_gv_var_i fmt v = F.fprintf fmt "%a.(gv)" pp_var_i v
 let pp_v_var_var fmt v = F.fprintf fmt "%a.(gv).(v_var)" pp_var v
+
+(* Function names. *)
 let pp_fn fmt fn = F.fprintf fmt "%s" (sanitize_fn fn)
-let pp_fd_name fmt fn = F.fprintf fmt "fd_%a" pp_fn fn
+
+(* -------------------------------------------------------------------------- *)
+(* Printing helpers *)
+
+let pp_newline fmt = F.fprintf fmt "@ "
 
 (* -------------------------------------------------------------------------- *)
 (* Rocq helpers *)
 
-let pp_newline fmt = F.fprintf fmt "@ "
+let pp_comment_gen fmt pp x = F.fprintf fmt "(* %a *)@ " pp x
+let pp_comment fmt = pp_comment_gen fmt F.pp_print_string
 
-let pp_rocq_seq pp fmt xs =
-  match xs with
-  | [] -> F.fprintf fmt "[::]"
-  | _ ->
-      let pp_sep fmt () =
-        F.pp_print_break fmt 0 2;
-        F.fprintf fmt "; "
-      in
-      F.fprintf fmt "@[<hv>[:: %a ]@]" (F.pp_print_list ~pp_sep pp) xs
-
-let pp_rocq_option pp =
-  let none fmt () = F.fprintf fmt "None" in
-  let some fmt a = F.fprintf fmt "(Some %a)" pp a in
-  F.pp_print_option ~none some
-
-let pp_string fmt s = F.fprintf fmt "%S" s
-let pp_z fmt z = F.fprintf fmt "(%a)%%Z" Z.pp_print z
-
-let pp_positive fmt p =
-  F.fprintf fmt "%a%%positive" Z.pp_print (Conv.z_of_pos p)
-
-let pp_separator fmt pp x =
-  F.fprintf fmt
-    "(* \
-     -------------------------------------------------------------------------- \
-     *)@ ";
-  F.fprintf fmt "(* %a *)@ " pp x;
+let pp_separator_gen fmt pp x =
+  pp_comment fmt
+    "--------------------------------------------------------------------------";
+  pp_comment_gen fmt pp x;
   pp_newline fmt
 
-let pp_separator_s fmt s = pp_separator fmt F.pp_print_string s
-let pp_comment fmt s = F.fprintf fmt "(* %s *)@ " s
+let pp_separator fmt s = pp_separator_gen fmt F.pp_print_string s
 
 let pp_rocq_definition_gen fmt pp_lhs lhs pp_type ty pp_rhs rhs =
   F.fprintf fmt "@[<hv 2>Definition %a : %a :=@ %a@].@ " pp_lhs lhs pp_type ty
@@ -78,8 +63,27 @@ let pp_rocq_definition fmt pp_lhs lhs ty pp_rhs rhs =
 
 let pp_rocq_record pp fmt x = F.fprintf fmt "@[<v 0>{|@[<v 0>@ %a@]@ |}@]" pp x
 
+let pp_rocq_seq pp fmt xs =
+  if xs = [] then F.fprintf fmt "[::]"
+  else
+    let pp_sep fmt () =
+      F.pp_print_break fmt 0 2;
+      F.fprintf fmt "; "
+    in
+    F.fprintf fmt "@[<hv>[:: %a ]@]" (F.pp_print_list ~pp_sep pp) xs
+
+let pp_rocq_option pp =
+  let none fmt () = F.fprintf fmt "None" in
+  let some fmt a = F.fprintf fmt "(Some %a)" pp a in
+  F.pp_print_option ~none some
+
+let pp_rocq_z fmt z = F.fprintf fmt "(%a)%%Z" Z.pp_print z
+
+let pp_rocq_positive fmt p =
+  F.fprintf fmt "%a%%positive" Z.pp_print (Conv.z_of_pos p)
+
 (* -------------------------------------------------------------------------- *)
-(* Jasmin *)
+(* Basics *)
 
 let pp_wsize fmt = function
   | U8 -> F.fprintf fmt "U8"
@@ -101,19 +105,19 @@ let pp_atype fmt = function
 
 let pp_aligned fmt = function
   | Memory_model.Aligned -> F.fprintf fmt "Aligned"
-  | Memory_model.Unaligned -> F.fprintf fmt "Unaligned"
+  | Unaligned -> F.fprintf fmt "Unaligned"
 
 let pp_arr_access fmt = function
   | Warray_.AAscale -> F.fprintf fmt "AAscale"
-  | Warray_.AAdirect -> F.fprintf fmt "AAdirect"
+  | AAdirect -> F.fprintf fmt "AAdirect"
 
 let pp_align fmt = function
   | Expr.Align -> F.fprintf fmt "Align"
-  | Expr.NoAlign -> F.fprintf fmt "NoAlign"
+  | NoAlign -> F.fprintf fmt "NoAlign"
 
 let pp_dir fmt = function
   | Expr.UpTo -> F.fprintf fmt "UpTo"
-  | Expr.DownTo -> F.fprintf fmt "DownTo"
+  | DownTo -> F.fprintf fmt "DownTo"
 
 let pp_op_kind fmt = function
   | Op_int -> F.fprintf fmt "Op_int"
@@ -139,11 +143,11 @@ let pp_velem fmt = function
   | VE32 -> F.fprintf fmt "VE32"
   | VE64 -> F.fprintf fmt "VE64"
 
-let pp_wrepr ws fmt n = F.fprintf fmt "wrepr %a %a" pp_wsize ws pp_z n
+let pp_wrepr ws fmt n = F.fprintf fmt "wrepr %a %a" pp_wsize ws pp_rocq_z n
 let pp_word_ty fmt ws = F.fprintf fmt "word %a" pp_wsize ws
 let pp_word ws fmt w = F.fprintf fmt "%a" (pp_wrepr ws) (Conv.z_of_word ws w)
 
-(* -------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Helpers for printing Rocq constructors with their arguments.
    Used by architecture-specific asm_op printers. *)
 
@@ -174,7 +178,7 @@ let pp_ve_ws_ve_ws name fmt (ve1, ws1, ve2, ws2) =
   F.fprintf fmt "(%s %a %a %a %a)" name pp_velem ve1 pp_wsize ws1 pp_velem ve2
     pp_wsize ws2
 
-(* -------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Operators *)
 
 let pp_wiop1 fmt = function
@@ -256,12 +260,12 @@ let pp_combine_flags fmt = function
 
 let pp_opN fmt = function
   | Opack (ws, pe) -> F.fprintf fmt "(Opack %a %a)" pp_wsize ws pp_pelem pe
-  | Oarray len -> F.fprintf fmt "(Oarray %a)" pp_positive len
+  | Oarray len -> F.fprintf fmt "(Oarray %a)" pp_rocq_positive len
   | Ocombine_flags c -> F.fprintf fmt "(Ocombine_flags %a)" pp_combine_flags c
 
 let pp_opN_safety fmt = function
-  | Ois_arr_init len -> F.fprintf fmt "(Ois_arr_init %a)" pp_positive len
-  | Ois_barr_init len -> F.fprintf fmt "(Ois_barr_init %a)" pp_positive len
+  | Ois_arr_init len -> F.fprintf fmt "(Ois_arr_init %a)" pp_rocq_positive len
+  | Ois_barr_init len -> F.fprintf fmt "(Ois_barr_init %a)" pp_rocq_positive len
 
 let pp_spill_op fmt = function
   | Pseudo_operator.Spill -> F.fprintf fmt "Spill"
@@ -271,16 +275,18 @@ let pp_cil_atype fmt = function
   | Type.Coq_abool -> F.fprintf fmt "abool"
   | Coq_aint -> F.fprintf fmt "aint"
   | Coq_aword ws -> F.fprintf fmt "(aword %a)" pp_wsize ws
-  | Coq_aarr (ws, p) -> F.fprintf fmt "(aarr %a %a)" pp_wsize ws pp_positive p
+  | Coq_aarr (ws, p) ->
+      F.fprintf fmt "(aarr %a %a)" pp_wsize ws pp_rocq_positive p
 
 let pp_pseudo_operator fmt = function
   | Pseudo_operator.Ospill (o, tys) ->
       F.fprintf fmt "(Ospill %a %a)" pp_spill_op o (pp_rocq_seq pp_cil_atype)
         tys
-  | Ocopy (ws, p) -> F.fprintf fmt "(Ocopy %a %a)" pp_wsize ws pp_positive p
+  | Ocopy (ws, p) ->
+      F.fprintf fmt "(Ocopy %a %a)" pp_wsize ws pp_rocq_positive p
   | Odeclassify ty -> F.fprintf fmt "(Odeclassify %a)" pp_cil_atype ty
-  | Odeclassify_mem p -> F.fprintf fmt "(Odeclassify_mem %a)" pp_positive p
-  | Onop -> F.fprintf fmt "Onop"
+  | Odeclassify_mem p -> F.fprintf fmt "(Odeclassify_mem %a)" pp_rocq_positive p
+  | Onop -> assert false (* never happens *)
   | Omulu ws -> F.fprintf fmt "(Omulu %a)" pp_wsize ws
   | Oaddcarry ws -> F.fprintf fmt "(Oaddcarry %a)" pp_wsize ws
   | Osubcarry ws -> F.fprintf fmt "(Osubcarry %a)" pp_wsize ws
@@ -292,9 +298,8 @@ let pp_slh_op fmt = function
   | SLHmove -> F.fprintf fmt "SLHmove"
   | SLHprotect ws -> F.fprintf fmt "(SLHprotect %a)" pp_wsize ws
   | SLHprotect_ptr (ws, p) ->
-      F.fprintf fmt "(SLHprotect_ptr %a %a)" pp_wsize ws pp_positive p
-  | SLHprotect_ptr_fail (ws, p) ->
-      F.fprintf fmt "(SLHprotect_ptr_fail %a %a)" pp_wsize ws pp_positive p
+      F.fprintf fmt "(SLHprotect_ptr %a %a)" pp_wsize ws pp_rocq_positive p
+  | SLHprotect_ptr_fail _ -> assert false (* never happens *)
 
 let pp_sopn pp_asm_op fmt = function
   | Sopn.Opseudo_op o -> F.fprintf fmt "(Opseudo_op %a)" pp_pseudo_operator o
@@ -305,29 +310,28 @@ let pp_sopn pp_asm_op fmt = function
 (* Expressions *)
 
 let rec pp_expr fmt = function
-  | Pconst z -> F.fprintf fmt "(Pconst %a)" pp_z z
-  | Pbool b -> F.fprintf fmt "(Pbool %b)" b
-  | Parr_init (ws, n) -> F.fprintf fmt "(Parr_init %a %d)" pp_wsize ws n
-  | Pvar gv -> F.fprintf fmt "(Pvar %a)" pp_gvar gv
+  | Pconst z -> F.fprintf fmt "Pconst %a" pp_rocq_z z
+  | Pbool b -> F.fprintf fmt "Pbool %b" b
+  | Parr_init (ws, n) -> F.fprintf fmt "Parr_init %a %d" pp_wsize ws n
+  | Pvar gv -> F.fprintf fmt "Pvar %a" pp_gvar gv
   | Pget (al, aa, ws, gv, e) ->
-      F.fprintf fmt "@[<hov 2>(Pget %a %a %a@ %a@ %a)@]" pp_aligned al
+      F.fprintf fmt "@[<hov 2>Pget %a %a %a@ %a@ (%a)@]" pp_aligned al
         pp_arr_access aa pp_wsize ws pp_gvar gv pp_expr e
   | Psub (aa, ws, len, gv, e) ->
-      F.fprintf fmt "@[<hov 2>(Psub %a %a %d@ %a@ %a)@]" pp_arr_access aa
+      F.fprintf fmt "@[<hov 2>Psub %a %a %d@ %a@ (%a)@]" pp_arr_access aa
         pp_wsize ws len pp_gvar gv pp_expr e
   | Pload (al, ws, e) ->
-      F.fprintf fmt "@[<hov 2>(Pload %a %a@ %a)@]" pp_aligned al pp_wsize ws
+      F.fprintf fmt "@[<hov 2>Pload %a %a@ (%a)@]" pp_aligned al pp_wsize ws
         pp_expr e
   | Papp1 (op, e) ->
-      F.fprintf fmt "@[<hov 2>(Papp1 %a@ %a)@]" pp_sop1 op pp_expr e
+      F.fprintf fmt "@[<hov 2>Papp1 %a@ (%a)@]" pp_sop1 op pp_expr e
   | Papp2 (op, e1, e2) ->
-      F.fprintf fmt "@[<hov 2>(Papp2 %a@ %a@ %a)@]" pp_sop2 op pp_expr e1
+      F.fprintf fmt "@[<hov 2>Papp2 %a@ (%a)@ (%a)@]" pp_sop2 op pp_expr e1
         pp_expr e2
   | PappN (op, es) ->
-      F.fprintf fmt "@[<hov 2>(PappN %a@ %a)@]" pp_opN op (pp_rocq_seq pp_expr)
-        es
+      F.fprintf fmt "@[<hov 2>PappN %a@ %a@]" pp_opN op (pp_rocq_seq pp_expr) es
   | Pif (ty, e1, e2, e3) ->
-      F.fprintf fmt "@[<hov 2>(Pif %a@ %a@ %a@ %a)@]" pp_atype ty pp_expr e1
+      F.fprintf fmt "@[<hov 2>Pif %a@ (%a)@ (%a)@ (%a)@]" pp_atype ty pp_expr e1
         pp_expr e2 pp_expr e3
 
 let pp_exprs fmt es = pp_rocq_seq pp_expr fmt es
@@ -336,13 +340,13 @@ let pp_exprs fmt es = pp_rocq_seq pp_expr fmt es
 (* Assertions *)
 
 let rec pp_eassert fmt = function
-  | Pexpr e -> F.fprintf fmt "(Pexpr %a)" pp_expr e
+  | Pexpr e -> F.fprintf fmt "(Pexpr (%a))" pp_expr e
   | PappN_safety (op, es) ->
       F.fprintf fmt "@[<hov 2>(PappN_safety %a@ %a)@]" pp_opN_safety op
         (pp_rocq_seq pp_expr) es
   | Pis_var_init x -> F.fprintf fmt "(Pis_var_init %a)" pp_var_i x
   | Pis_mem_init (e1, e2) ->
-      F.fprintf fmt "@[<hov 2>(Pis_mem_init %a@ %a)@]" pp_expr e1 pp_expr e2
+      F.fprintf fmt "@[<hov 2>(Pis_mem_init (%a)@ (%a))@]" pp_expr e1 pp_expr e2
   | Pand (a1, a2) ->
       F.fprintf fmt "@[<hov 2>(Pand %a@ %a)@]" pp_eassert a1 pp_eassert a2
 
@@ -352,16 +356,16 @@ let pp_assertion fmt (label, a) = F.fprintf fmt "(%S, %a)" label pp_eassert a
 (* Lvals *)
 
 let pp_lval fmt = function
-  | Lnone (_, ty) -> F.fprintf fmt "(Lnone dummy_var_info %a)" pp_atype ty
-  | Lvar x -> F.fprintf fmt "(Lvar %a)" pp_gv_var_i x
+  | Lnone (_, ty) -> F.fprintf fmt "Lnone dummy_var_info %a" pp_atype ty
+  | Lvar x -> F.fprintf fmt "Lvar %a" pp_gv_var_i x
   | Lmem (al, ws, _, e) ->
-      F.fprintf fmt "@[<hov 2>(Lmem %a %a dummy_var_info@ %a)@]" pp_aligned al
+      F.fprintf fmt "@[<hov 2>Lmem %a %a dummy_var_info@ (%a)@]" pp_aligned al
         pp_wsize ws pp_expr e
   | Laset (al, aa, ws, x, e) ->
-      F.fprintf fmt "@[<hov 2>(Laset %a %a %a@ %a@ %a)@]" pp_aligned al
+      F.fprintf fmt "@[<hov 2>Laset %a %a %a@ %a@ (%a)@]" pp_aligned al
         pp_arr_access aa pp_wsize ws pp_gv_var_i x pp_expr e
   | Lasub (aa, ws, len, x, e) ->
-      F.fprintf fmt "@[<hov 2>(Lasub %a %a %d@ %a@ %a)@]" pp_arr_access aa
+      F.fprintf fmt "@[<hov 2>Lasub %a %a %d@ %a@ (%a)@]" pp_arr_access aa
         pp_wsize ws len pp_gv_var_i x pp_expr e
 
 let pp_lvals fmt lvs = pp_rocq_seq pp_lval fmt lvs
@@ -382,7 +386,7 @@ let rec pp_instr_r pp_asm_op fmt = function
           match (lvs, es) with
           | [ lv ], [ e ] ->
               F.fprintf fmt "@[<hv 2>crandombytes@ (%a)@ %a@ %a@ (%a)@]" pp_lval
-                lv pp_wsize ws pp_positive n pp_expr e
+                lv pp_wsize ws pp_rocq_positive n pp_expr e
           | _ -> assert false)
     end
   | Cassert (label, a) ->
@@ -466,11 +470,13 @@ let pp_fd fmt fd =
   in
   pp_rocq_record pp_fields fmt fd
 
+let pp_fd_name fmt fn = F.fprintf fmt "fd_%a" pp_fn fn
+
 let pp_fd_defintion fmt fd =
   pp_rocq_definition fmt pp_fd_name fd.f_name "ufundef" pp_fd fd
 
 let pp_fd_block pp_asm_op fmt fd =
-  pp_separator fmt pp_fn fd.f_name;
+  pp_separator_gen fmt pp_fn fd.f_name;
   pp_comment fmt "Local variables";
   pp_vars_definition fmt (Sv.to_list (vars_fc fd));
   pp_newline fmt;
@@ -507,8 +513,8 @@ let pp_glob fmt (x, gd) =
   | Global.Gword _ ->
       F.fprintf fmt "(%a, Gword %a)" pp_v_var_var x pp_glob_data x
   | Global.Garr (p, _) ->
-      F.fprintf fmt "(%a, Garr (arr_of_bytes %a %a))" pp_v_var_var x pp_positive
-        p pp_glob_data x
+      F.fprintf fmt "(%a, Garr (arr_of_bytes %a %a))" pp_v_var_var x
+        pp_rocq_positive p pp_glob_data x
 
 let pp_globs fmt name = Format.fprintf fmt "%s_gds" (sanitize_s name)
 
@@ -576,9 +582,9 @@ let extract ?(imports = true) arch _pd _msfsz _asmOp pp_asm_op (gd, funcs) name
   pp_newline fmt;
   pp_fds pp_asm_op fmt (List.rev funcs);
   pp_newline fmt;
-  pp_separator_s fmt "Globals";
+  pp_separator fmt "Globals";
   pp_globs_definition fmt name gd;
   pp_newline fmt;
-  pp_separator_s fmt "Program";
+  pp_separator fmt "Program";
   pp_prog_definition fmt name funcs;
   F.fprintf fmt "@]"

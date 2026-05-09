@@ -2,7 +2,6 @@ val pp_rocq_option :
   (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a option -> unit
 
 val pp_wsize : Format.formatter -> Wsize.wsize -> unit
-val pp_string : Format.formatter -> string -> unit
 val pp_bare : string -> Format.formatter -> unit
 val pp_with_ws : string -> Format.formatter -> Wsize.wsize -> unit
 
