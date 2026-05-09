@@ -314,30 +314,26 @@ let pp_sopn pp_asm_op fmt = function
 (* Expressions *)
 
 let rec pp_expr fmt = function
-  | Pconst z -> F.fprintf fmt "@[<hv 2>Pconst %a@]" pp_rocq_z z
-  | Pbool b -> F.fprintf fmt "@[<hv 2>Pbool %a@]" pp_rocq_bool b
-  | Parr_init (ws, n) -> F.fprintf fmt "@[<hv 2>Parr_init %a %d@]" pp_wsize ws n
-  | Pvar gv -> F.fprintf fmt "@[<hv 2>Pvar %a@]" pp_gvar gv
+  | Pconst z -> F.fprintf fmt "Pconst %a" pp_rocq_z z
+  | Pbool b -> F.fprintf fmt "Pbool %a" pp_rocq_bool b
+  | Parr_init (ws, n) -> F.fprintf fmt "Parr_init %a %d" pp_wsize ws n
+  | Pvar gv -> F.fprintf fmt "Pvar %a" pp_gvar gv
   | Pget (al, aa, ws, gv, e) ->
-      F.fprintf fmt "@[<hv 2>Pget %a %a %a@ %a@ (%a)@]" pp_aligned al
-        pp_arr_access aa pp_wsize ws pp_gvar gv pp_expr e
+      F.fprintf fmt "Pget %a %a %a %a (%a)" pp_aligned al pp_arr_access aa
+        pp_wsize ws pp_gvar gv pp_expr e
   | Psub (aa, ws, len, gv, e) ->
-      F.fprintf fmt "@[<hv 2>Psub %a %a %d@ %a@ (%a)@]" pp_arr_access aa
-        pp_wsize ws len pp_gvar gv pp_expr e
+      F.fprintf fmt "Psub %a %a %d %a (%a)" pp_arr_access aa pp_wsize ws len
+        pp_gvar gv pp_expr e
   | Pload (al, ws, e) ->
-      F.fprintf fmt "@[<hv 2>Pload %a %a@ (%a)@]" pp_aligned al pp_wsize ws
-        pp_expr e
-  | Papp1 (op, e) ->
-      F.fprintf fmt "@[<hv 2>Papp1 (%a)@ (%a)@]" pp_sop1 op pp_expr e
+      F.fprintf fmt "Pload %a %a (%a)" pp_aligned al pp_wsize ws pp_expr e
+  | Papp1 (op, e) -> F.fprintf fmt "Papp1 (%a) (%a)" pp_sop1 op pp_expr e
   | Papp2 (op, e1, e2) ->
-      F.fprintf fmt "@[<hv 2>Papp2 (%a)@ (%a)@ (%a)@]" pp_sop2 op pp_expr e1
-        pp_expr e2
+      F.fprintf fmt "Papp2 (%a) (%a) (%a)" pp_sop2 op pp_expr e1 pp_expr e2
   | PappN (op, es) ->
-      F.fprintf fmt "@[<hv 2>PappN (%a)@ %a@]" pp_opN op (pp_rocq_seq pp_expr)
-        es
+      F.fprintf fmt "PappN (%a) %a" pp_opN op (pp_rocq_seq pp_expr) es
   | Pif (ty, e1, e2, e3) ->
-      F.fprintf fmt "@[<hv 2>Pif (%a)@ (%a)@ (%a)@ (%a)@]" pp_atype ty pp_expr
-        e1 pp_expr e2 pp_expr e3
+      F.fprintf fmt "Pif (%a) (%a) (%a) (%a)" pp_atype ty pp_expr e1 pp_expr e2
+        pp_expr e3
 
 let pp_exprs fmt es = pp_rocq_seq pp_expr fmt es
 
@@ -345,69 +341,66 @@ let pp_exprs fmt es = pp_rocq_seq pp_expr fmt es
 (* Assertions *)
 
 let rec pp_eassert fmt = function
-  | Pexpr e -> F.fprintf fmt "@[<hv 2>Pexpr (%a)@]" pp_expr e
+  | Pexpr e -> F.fprintf fmt "Pexpr (%a)" pp_expr e
   | PappN_safety (op, es) ->
-      F.fprintf fmt "@[<hv 2>PappN_safety (%a)@ %a@]" pp_opN_safety op
+      F.fprintf fmt "PappN_safety (%a) %a" pp_opN_safety op
         (pp_rocq_seq pp_expr) es
-  | Pis_var_init x -> F.fprintf fmt "@[<hv 2>Pis_var_init %a@]" pp_gv_var_i x
+  | Pis_var_init x -> F.fprintf fmt "Pis_var_init %a" pp_gv_var_i x
   | Pis_mem_init (e1, e2) ->
-      F.fprintf fmt "@[<hv 2>Pis_mem_init (%a)@ (%a)@]" pp_expr e1 pp_expr e2
-  | Pand (a1, a2) ->
-      F.fprintf fmt "@[<hv 2>Pand (%a)@ (%a)@]" pp_eassert a1 pp_eassert a2
+      F.fprintf fmt "Pis_mem_init (%a) (%a)" pp_expr e1 pp_expr e2
+  | Pand (a1, a2) -> F.fprintf fmt "Pand (%a) (%a)" pp_eassert a1 pp_eassert a2
 
 (* -------------------------------------------------------------------------- *)
 (* Lvals *)
 
 let pp_lval fmt = function
-  | Lnone (_, ty) ->
-      F.fprintf fmt "@[<hv 2>Lnone dummy_var_info (%a)@]" pp_atype ty
-  | Lvar x -> F.fprintf fmt "@[<hv 2>Lvar %a@]" pp_gv_var_i x
+  | Lnone (_, ty) -> F.fprintf fmt "Lnone dummy_var_info (%a)" pp_atype ty
+  | Lvar x -> F.fprintf fmt "Lvar %a" pp_gv_var_i x
   | Lmem (al, ws, _, e) ->
-      F.fprintf fmt "@[<hv 2>Lmem %a %a dummy_var_info@ (%a)@]" pp_aligned al
-        pp_wsize ws pp_expr e
+      F.fprintf fmt "Lmem %a %a dummy_var_info (%a)" pp_aligned al pp_wsize ws
+        pp_expr e
   | Laset (al, aa, ws, x, e) ->
-      F.fprintf fmt "@[<hv 2>Laset %a %a %a@ %a@ (%a)@]" pp_aligned al
-        pp_arr_access aa pp_wsize ws pp_gv_var_i x pp_expr e
+      F.fprintf fmt "Laset %a %a %a %a (%a)" pp_aligned al pp_arr_access aa
+        pp_wsize ws pp_gv_var_i x pp_expr e
   | Lasub (aa, ws, len, x, e) ->
-      F.fprintf fmt "@[<hv 2>Lasub %a %a %d@ %a@ (%a)@]" pp_arr_access aa
-        pp_wsize ws len pp_gv_var_i x pp_expr e
+      F.fprintf fmt "Lasub %a %a %d %a (%a)" pp_arr_access aa pp_wsize ws len
+        pp_gv_var_i x pp_expr e
 
 let pp_lvals fmt lvs = pp_rocq_seq pp_lval fmt lvs
 
 (* -------------------------------------------------------------------------- *)
 (* Instructions *)
 
+(* [Cif], [Cfor], and [Cwhile] always break the line, the rest never do. *)
 let rec pp_instr_r pp_asm_op fmt = function
   | Cassgn (lv, _, ty, e) ->
-      F.fprintf fmt "@[<hv 2>cassgn@ (%a)@ (%a)@ (%a)@]" pp_lval lv pp_atype ty
+      F.fprintf fmt "@[<h>cassgn (%a) (%a) (%a)@]" pp_lval lv pp_atype ty
         pp_expr e
   | Copn (lvs, _, op, es) ->
-      F.fprintf fmt "@[<hv 2>copn@ %a@ (%a)@ %a@]" pp_lvals lvs
-        (pp_sopn pp_asm_op) op pp_exprs es
+      F.fprintf fmt "@[<h>copn %a (%a) %a@]" pp_lvals lvs (pp_sopn pp_asm_op) op
+        pp_exprs es
   | Csyscall (lvs, sc, es) -> begin
       match sc with
       | RandomBytes (ws, n) -> (
           match (lvs, es) with
           | [ lv ], [ e ] ->
-              F.fprintf fmt "@[<hv 2>crandombytes@ (%a)@ %a@ %a@ (%a)@]" pp_lval
-                lv pp_wsize ws pp_rocq_positive n pp_expr e
+              F.fprintf fmt "@[<h>crandombytes (%a) %a %a (%a)@]" pp_lval lv
+                pp_wsize ws pp_rocq_positive n pp_expr e
           | _ -> assert false (* absurd, type error*))
     end
   | Cassert (label, e) ->
-      F.fprintf fmt "@[<hv 2>cassert@ %a (%a)@]" pp_rocq_string label pp_eassert
-        e
+      F.fprintf fmt "@[<h>cassert %a (%a)@]" pp_rocq_string label pp_eassert e
   | Cif (e, c1, c2) ->
-      F.fprintf fmt "@[<v 2>cif (%a)@ %a@ %a@]" pp_expr e (pp_stmt pp_asm_op) c1
-        (pp_stmt pp_asm_op) c2
+      F.fprintf fmt "@[<hv 2>cif@ (%a)@ %a@ %a@]" pp_expr e (pp_stmt pp_asm_op)
+        c1 (pp_stmt pp_asm_op) c2
   | Cfor (x, (dir, lo, hi), c) ->
-      F.fprintf fmt "@[<v 2>cfor (%a) (%a, %a, %a)@ %a@]" pp_gv_var_i x pp_dir dir
-        pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
+      F.fprintf fmt "@[<hv 2>cfor@ (%a)@ (%a, %a, %a)@ %a@]" pp_gv_var_i x
+        pp_dir dir pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
   | Cwhile (al, c1, e, _, c2) ->
-      F.fprintf fmt "@[<v 2>cwhile (%a)@ %a@ (%a)@ @ %a)@]" pp_align al
+      F.fprintf fmt "@[<hv 2>cwhile@ (%a)@ %a@ (%a)@ %a@]" pp_align al
         (pp_stmt pp_asm_op) c1 pp_expr e (pp_stmt pp_asm_op) c2
   | Ccall (lvs, fn, es) ->
-      F.fprintf fmt "@[<hv 2>ccall %a@ %a@ %a@]" pp_lvals lvs pp_fn fn pp_exprs
-        es
+      F.fprintf fmt "@[<h>ccall %a %a %a@]" pp_lvals lvs pp_fn fn pp_exprs es
 
 and pp_instr pp_asm_op fmt i =
   F.fprintf fmt "%a" (pp_instr_r pp_asm_op) i.i_desc
@@ -545,7 +538,7 @@ let pp_mk_prog name fmt funcs =
     F.fprintf fmt "(%a, %a)" pp_fn fd.f_name pp_fd_name fd.f_name
   in
   F.fprintf fmt "p_globs := %a;@ " pp_globs name;
-  F.fprintf fmt "p_funcs := %a;@ " (pp_rocq_seq pp_fd_pair) funcs;
+  F.fprintf fmt "@[<hov 2>p_funcs :=@ %a;@]@ " (pp_rocq_seq pp_fd_pair) funcs;
   F.fprintf fmt "p_extra := tt;"
 
 let pp_prog_definition fmt name funcs =
