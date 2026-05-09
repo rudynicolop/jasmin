@@ -84,7 +84,7 @@ let pp_rocq_seq pp fmt xs =
 
 let pp_rocq_option pp =
   let none fmt () = F.fprintf fmt "None" in
-  let some fmt a = F.fprintf fmt "(Some %a)" pp a in
+  let some fmt a = F.fprintf fmt "Some %a" pp a in
   F.pp_print_option ~none some
 
 (* -------------------------------------------------------------------------- *)
@@ -349,7 +349,7 @@ let rec pp_eassert fmt = function
   | PappN_safety (op, es) ->
       F.fprintf fmt "@[<hv 2>PappN_safety (%a)@ %a@]" pp_opN_safety op
         (pp_rocq_seq pp_expr) es
-  | Pis_var_init x -> F.fprintf fmt "@[<hv 2>Pis_var_init %a@]" pp_var_i x
+  | Pis_var_init x -> F.fprintf fmt "@[<hv 2>Pis_var_init %a@]" pp_gv_var_i x
   | Pis_mem_init (e1, e2) ->
       F.fprintf fmt "@[<hv 2>Pis_mem_init (%a)@ (%a)@]" pp_expr e1 pp_expr e2
   | Pand (a1, a2) ->
@@ -400,7 +400,7 @@ let rec pp_instr_r pp_asm_op fmt = function
       F.fprintf fmt "@[<v 2>cif (%a)@ %a@ %a@]" pp_expr e (pp_stmt pp_asm_op) c1
         (pp_stmt pp_asm_op) c2
   | Cfor (x, (dir, lo, hi), c) ->
-      F.fprintf fmt "@[<v 2>cfor (%a) (%a, %a, %a)@ %a@]" pp_var_i x pp_dir dir
+      F.fprintf fmt "@[<v 2>cfor (%a) (%a, %a, %a)@ %a@]" pp_gv_var_i x pp_dir dir
         pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
   | Cwhile (al, c1, e, _, c2) ->
       F.fprintf fmt "@[<v 2>cwhile (%a)@ %a@ (%a)@ @ %a)@]" pp_align al
