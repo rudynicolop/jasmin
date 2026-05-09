@@ -107,13 +107,6 @@ let pp_arr_access fmt = function
   | Warray_.AAscale -> F.fprintf fmt "AAscale"
   | Warray_.AAdirect -> F.fprintf fmt "AAdirect"
 
-let pp_assgn_tag fmt = function
-  | Expr.AT_none -> F.fprintf fmt "AT_none"
-  | Expr.AT_keep -> F.fprintf fmt "AT_keep"
-  | Expr.AT_rename -> F.fprintf fmt "AT_rename"
-  | Expr.AT_inline -> F.fprintf fmt "AT_inline"
-  | Expr.AT_phinode -> F.fprintf fmt "AT_phinode"
-
 let pp_align fmt = function
   | Expr.Align -> F.fprintf fmt "Align"
   | Expr.NoAlign -> F.fprintf fmt "NoAlign"
@@ -272,53 +265,41 @@ let pp_opN_safety fmt = function
 
 let pp_spill_op fmt = function
   | Pseudo_operator.Spill -> F.fprintf fmt "Spill"
-  | Pseudo_operator.Unspill -> F.fprintf fmt "Unspill"
+  | Unspill -> F.fprintf fmt "Unspill"
 
 let pp_cil_atype fmt = function
   | Type.Coq_abool -> F.fprintf fmt "abool"
-  | Type.Coq_aint -> F.fprintf fmt "aint"
-  | Type.Coq_aword ws -> F.fprintf fmt "(aword %a)" pp_wsize ws
-  | Type.Coq_aarr (ws, p) ->
-      F.fprintf fmt "(aarr %a %a)" pp_wsize ws pp_positive p
+  | Coq_aint -> F.fprintf fmt "aint"
+  | Coq_aword ws -> F.fprintf fmt "(aword %a)" pp_wsize ws
+  | Coq_aarr (ws, p) -> F.fprintf fmt "(aarr %a %a)" pp_wsize ws pp_positive p
 
 let pp_pseudo_operator fmt = function
   | Pseudo_operator.Ospill (o, tys) ->
       F.fprintf fmt "(Ospill %a %a)" pp_spill_op o (pp_rocq_seq pp_cil_atype)
         tys
-  | Pseudo_operator.Ocopy (ws, p) ->
-      F.fprintf fmt "(Ocopy %a %a)" pp_wsize ws pp_positive p
-  | Pseudo_operator.Odeclassify ty ->
-      F.fprintf fmt "(Odeclassify %a)" pp_cil_atype ty
-  | Pseudo_operator.Odeclassify_mem p ->
-      F.fprintf fmt "(Odeclassify_mem %a)" pp_positive p
-  | Pseudo_operator.Onop -> F.fprintf fmt "Onop"
-  | Pseudo_operator.Omulu ws -> F.fprintf fmt "(Omulu %a)" pp_wsize ws
-  | Pseudo_operator.Oaddcarry ws -> F.fprintf fmt "(Oaddcarry %a)" pp_wsize ws
-  | Pseudo_operator.Osubcarry ws -> F.fprintf fmt "(Osubcarry %a)" pp_wsize ws
-  | Pseudo_operator.Oswap ty -> F.fprintf fmt "(Oswap %a)" pp_cil_atype ty
+  | Ocopy (ws, p) -> F.fprintf fmt "(Ocopy %a %a)" pp_wsize ws pp_positive p
+  | Odeclassify ty -> F.fprintf fmt "(Odeclassify %a)" pp_cil_atype ty
+  | Odeclassify_mem p -> F.fprintf fmt "(Odeclassify_mem %a)" pp_positive p
+  | Onop -> F.fprintf fmt "Onop"
+  | Omulu ws -> F.fprintf fmt "(Omulu %a)" pp_wsize ws
+  | Oaddcarry ws -> F.fprintf fmt "(Oaddcarry %a)" pp_wsize ws
+  | Osubcarry ws -> F.fprintf fmt "(Osubcarry %a)" pp_wsize ws
+  | Oswap ty -> F.fprintf fmt "(Oswap %a)" pp_cil_atype ty
 
 let pp_slh_op fmt = function
   | Slh_ops.SLHinit -> F.fprintf fmt "SLHinit"
-  | Slh_ops.SLHupdate -> F.fprintf fmt "SLHupdate"
-  | Slh_ops.SLHmove -> F.fprintf fmt "SLHmove"
-  | Slh_ops.SLHprotect ws -> F.fprintf fmt "(SLHprotect %a)" pp_wsize ws
-  | Slh_ops.SLHprotect_ptr (ws, p) ->
+  | SLHupdate -> F.fprintf fmt "SLHupdate"
+  | SLHmove -> F.fprintf fmt "SLHmove"
+  | SLHprotect ws -> F.fprintf fmt "(SLHprotect %a)" pp_wsize ws
+  | SLHprotect_ptr (ws, p) ->
       F.fprintf fmt "(SLHprotect_ptr %a %a)" pp_wsize ws pp_positive p
-  | Slh_ops.SLHprotect_ptr_fail (ws, p) ->
+  | SLHprotect_ptr_fail (ws, p) ->
       F.fprintf fmt "(SLHprotect_ptr_fail %a %a)" pp_wsize ws pp_positive p
 
 let pp_sopn pp_asm_op fmt = function
   | Sopn.Opseudo_op o -> F.fprintf fmt "(Opseudo_op %a)" pp_pseudo_operator o
-  | Sopn.Oslh o -> F.fprintf fmt "(Oslh %a)" pp_slh_op o
-  | Sopn.Oasm o -> F.fprintf fmt "(Oasm %a)" pp_asm_op o
-
-(* -------------------------------------------------------------------------- *)
-(* Syscall *)
-
-let pp_syscall fmt (o : _ Syscall_t.syscall_t) =
-  match o with
-  | Syscall_t.RandomBytes (ws, n) ->
-      F.fprintf fmt "(RandomBytes (%a, %a))" pp_wsize ws pp_positive n
+  | Oslh o -> F.fprintf fmt "(Oslh %a)" pp_slh_op o
+  | Oasm o -> F.fprintf fmt "(Oasm %a)" pp_asm_op o
 
 (* -------------------------------------------------------------------------- *)
 (* Expressions *)
@@ -389,33 +370,38 @@ let pp_lvals fmt lvs = pp_rocq_seq pp_lval fmt lvs
 (* Instructions *)
 
 let rec pp_instr_r pp_asm_op fmt = function
-  | Cassgn (lv, tag, ty, e) ->
-      F.fprintf fmt "@[<hov 2>(Cassgn %a@ %a %a@ %a)@]" pp_lval lv pp_assgn_tag
-        tag pp_atype ty pp_expr e
-  | Copn (lvs, tag, op, es) ->
-      F.fprintf fmt "@[<hov 2>(Copn %a@ %a %a@ %a)@]" pp_lvals lvs pp_assgn_tag
-        tag (pp_sopn pp_asm_op) op pp_exprs es
-  | Csyscall (lvs, sc, es) ->
-      F.fprintf fmt "@[<hov 2>(Csyscall %a@ %a@ %a)@]" pp_lvals lvs pp_syscall
-        sc pp_exprs es
+  | Cassgn (lv, _, ty, e) ->
+      F.fprintf fmt "@[<hv 2>cassgn@ (%a)@ (%a)@ (%a)@]" pp_lval lv pp_atype ty
+        pp_expr e
+  | Copn (lvs, _, op, es) ->
+      F.fprintf fmt "@[<hv 2>copn@ %a@ (%a)@ %a@]" pp_lvals lvs
+        (pp_sopn pp_asm_op) op pp_exprs es
+  | Csyscall (lvs, sc, es) -> begin
+      match sc with
+      | RandomBytes (ws, n) -> (
+          match (lvs, es) with
+          | [ lv ], [ e ] ->
+              F.fprintf fmt "@[<hv 2>crandombytes@ (%a)@ %a@ %a@ (%a)@]" pp_lval
+                lv pp_wsize ws pp_positive n pp_expr e
+          | _ -> assert false)
+    end
   | Cassert (label, a) ->
-      F.fprintf fmt "@[<hov 2>(Cassert %a)@]" pp_assertion (label, a)
+      F.fprintf fmt "@[<hv 2>cassert@ (%a)@]" pp_assertion (label, a)
   | Cif (e, c1, c2) ->
-      F.fprintf fmt "@[<v 2>(Cif %a@ %a@ %a)@]" pp_expr e (pp_stmt pp_asm_op) c1
+      F.fprintf fmt "@[<v 2>cif (%a)@ %a@ %a@]" pp_expr e (pp_stmt pp_asm_op) c1
         (pp_stmt pp_asm_op) c2
   | Cfor (x, (dir, lo, hi), c) ->
-      F.fprintf fmt "@[<v 2>(Cfor %a (%a, %a, %a)@ %a)@]" pp_var_i x pp_dir dir
+      F.fprintf fmt "@[<v 2>cfor (%a) (%a, %a, %a)@ %a@]" pp_var_i x pp_dir dir
         pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
   | Cwhile (al, c1, e, _, c2) ->
-      F.fprintf fmt "@[<v 2>(Cwhile %a@ %a@ %a@ dummy_instr_info@ %a)@]"
-        pp_align al (pp_stmt pp_asm_op) c1 pp_expr e (pp_stmt pp_asm_op) c2
+      F.fprintf fmt "@[<v 2>cwhile (%a)@ %a@ (%a)@ @ %a)@]" pp_align al
+        (pp_stmt pp_asm_op) c1 pp_expr e (pp_stmt pp_asm_op) c2
   | Ccall (lvs, fn, es) ->
-      F.fprintf fmt "@[<hov 2>(Ccall %a@ %a@ %a)@]" pp_lvals lvs pp_fn fn
-        pp_exprs es
+      F.fprintf fmt "@[<hv 2>ccall %a@ %a@ %a@]" pp_lvals lvs pp_fn fn pp_exprs
+        es
 
 and pp_instr pp_asm_op fmt i =
-  F.fprintf fmt "@[<hov 2>(MkI dummy_instr_info@ %a)@]" (pp_instr_r pp_asm_op)
-    i.i_desc
+  F.fprintf fmt "%a" (pp_instr_r pp_asm_op) i.i_desc
 
 and pp_stmt pp_asm_op fmt c = pp_rocq_seq (pp_instr pp_asm_op) fmt c
 
@@ -457,11 +443,11 @@ let pp_f_sig_definition suff pp_xs fmt fn xs =
 let pp_f_args_definition = pp_f_sig_definition "args" pp_gv_var
 let pp_f_res_definition = pp_f_sig_definition "res" pp_gv_var_i
 
-let pp_f_tyin_definition fmt fn tyin =
-  pp_rocq_definition fmt pp_f_tyin fn "seq stype" (pp_rocq_seq pp_atype) tyin
+let pp_f_sig_ty_definition pp fmt fn tys =
+  pp_rocq_definition fmt pp fn "seq atype" (pp_rocq_seq pp_atype) tys
 
-let pp_f_tyout_definition fmt fn tyout =
-  pp_rocq_definition fmt pp_f_tyout fn "seq stype" (pp_rocq_seq pp_atype) tyout
+let pp_f_tyin_definition = pp_f_sig_ty_definition pp_f_tyin
+let pp_f_tyout_definition = pp_f_sig_ty_definition pp_f_tyout
 
 let pp_f_body_definition pp_asm_op fmt fn body =
   pp_rocq_definition fmt pp_f_body fn "cmd" (pp_stmt pp_asm_op) body
@@ -506,7 +492,6 @@ let pp_fds pp_asm_op fmt = List.iter (pp_fd_block pp_asm_op fmt)
 (* Globals *)
 
 let glob_bytes x p t = Conv.to_array8 x.v_ty p t |> Array.to_list
-
 let pp_glob_data fmt v = F.fprintf fmt "%a_data" pp_var v
 
 let pp_glob_arr_data fmt (x, gd) =
