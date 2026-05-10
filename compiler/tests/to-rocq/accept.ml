@@ -1,5 +1,4 @@
 open Jasmin
-open Common
 
 let rec find_named_dirs base target =
   if not (Sys.file_exists base && Sys.is_directory base) then []
@@ -12,13 +11,13 @@ let rec find_named_dirs base target =
              else find_named_dirs path target
            else [])
 
-let make_out_name dir name =
-  let path_parts p =
-    String.split_on_char '/' p
-    |> List.filter (fun s -> s <> ".." && s <> "." && s <> "")
-  in
+let path_parts p =
+  String.split_on_char '/' p
+  |> List.filter (fun s -> s <> ".." && s <> "." && s <> "")
+
+let make_out_name arch_dir dir name =
   let key =
-    String.concat "_" (path_parts dir @ [ Filename.remove_extension name ])
+    String.concat "_" (arch_dir :: path_parts dir @ [ Filename.remove_extension name ])
   in
   (ToRocq.rocq_sanitize_s key) ^ ".v"
 
@@ -80,8 +79,8 @@ let cleanup_artifacts vfile =
     (fun ext -> try Sys.remove (base ^ ext) with _ -> ())
     [ ".v"; ".vo"; ".vos"; ".vok"; ".glob"; ".aux" ]
 
-let print_mutex = Mutex.create ()
-let max_threads = 4
+(* Shared semaphore across all architectures so total parallelism stays at max_threads *)
+let max_threads = 8
 let active = ref 0
 let active_mutex = Mutex.create ()
 let active_cond = Condition.create ()
@@ -100,86 +99,131 @@ let release () =
   Condition.signal active_cond;
   Mutex.unlock active_mutex
 
-let generate (dir, name) =
-  let full_path = Filename.concat dir name in
-  let p = load_file full_path in
-  let out_name = make_out_name dir name in
-  let oc = open_out out_name in
-  let fmt = Format.formatter_of_out_channel oc in
-  match
-    ToRocq.extract ~imports:true Utils.X86_64 Arch.reg_size Arch.msf_size
-      Arch.asmOp Arch.pp_extended_op_for_rocq p "p" fmt
-  with
-  | () ->
-      Format.pp_print_flush fmt ();
-      close_out oc;
-      Some (full_path, out_name)
-  | exception e ->
-      close_out_noerr oc;
-      cleanup_artifacts out_name;
-      Mutex.lock print_mutex;
-      Format.eprintf "File %s: extraction failed: %s@." full_path
-        (Printexc.to_string e);
-      Mutex.unlock print_mutex;
-      None
+let find_dirs arch_dir =
+  find_named_dirs "../../examples" arch_dir
+  @ find_named_dirs "../success" arch_dir
+  @ find_named_dirs "../success" "common"
+  |> List.sort_uniq String.compare
 
-let check full_path out_name =
-  let rc, errors = rocq_check out_name in
-  cleanup_artifacts out_name;
-  Mutex.lock print_mutex;
-  Format.printf "File %s: %s@." full_path (if rc = 0 then "OK" else "rocq failed");
-  List.iter prerr_endline errors;
-  Mutex.unlock print_mutex;
-  rc
+(* -------------------------------------------------------------------- *)
+(* Per-architecture driver *)
+
+module type ArchDriver = sig
+  val arch : Utils.architecture
+  val dir_name : string
+  module A : Arch_full.Arch
+  val load_file : string -> (unit, A.extended_op) Prog.prog
+end
+
+module RunArch (D : ArchDriver) = struct
+  let generate (dir, name) =
+    let full_path = Filename.concat dir name in
+    let p = D.load_file full_path in
+    let out_name = make_out_name D.dir_name dir name in
+    let oc = open_out out_name in
+    let fmt = Format.formatter_of_out_channel oc in
+    match
+      ToRocq.extract ~imports:true D.arch D.A.reg_size D.A.msf_size
+        D.A.asmOp D.A.pp_extended_op_for_rocq p "p" fmt
+    with
+    | () ->
+        Format.pp_print_flush fmt ();
+        close_out oc;
+        Some (full_path, out_name)
+    | exception e ->
+        close_out_noerr oc;
+        cleanup_artifacts out_name;
+        Format.eprintf "File %s: extraction failed: %s@." full_path
+          (Printexc.to_string e);
+        None
+
+  let check out_name =
+    let rc, errors = rocq_check out_name in
+    cleanup_artifacts out_name;
+    (rc, errors)
+
+  let run () =
+    let dirs = find_dirs D.dir_name in
+    let cases =
+      dirs
+      |> List.concat_map (fun dir ->
+             Sys.readdir dir |> Array.to_list
+             |> List.filter_map (fun name ->
+                    let full = Filename.concat dir name in
+                    if (not (Sys.is_directory full)) && Filename.check_suffix name ".jazz"
+                    then Some (dir, name)
+                    else None))
+      |> List.sort compare
+    in
+    let jobs = List.filter_map generate cases in
+    let threads =
+      List.map
+        (fun (full_path, out_name) ->
+          let result = ref (1, []) in
+          let t =
+            Thread.create
+              (fun () ->
+                acquire ();
+                result := check out_name;
+                release ())
+              ()
+          in
+          (t, full_path, result))
+        jobs
+    in
+    let results =
+      List.map (fun (t, full_path, result) -> Thread.join t; (full_path, !result)) threads
+      |> List.sort (fun (a, _) (b, _) -> String.compare a b)
+    in
+    List.fold_left
+      (fun n (full_path, (rc, errors)) ->
+        if rc = 0 then
+          Format.printf "File %s: OK@." full_path
+        else begin
+          Format.eprintf "File %s: rocq failed@." full_path;
+          List.iter prerr_endline errors
+        end;
+        n + rc)
+      0 results
+end
+
+(* -------------------------------------------------------------------- *)
+(* Architecture instances *)
+
+module CX86 =
+  Common.Make
+    ((val CoreArchFactory.core_arch_x86 ~use_lea:true ~use_set0:true
+            Glob_options.Linux))
+
+module DX86 : ArchDriver = struct
+  let arch = Utils.X86_64
+  let dir_name = "x86-64"
+  module A = CX86.Arch
+  let load_file = CX86.load_file
+end
+
+module CARM = Common.Make (CoreArchFactory.Core_arch_ARM)
+
+module DARM : ArchDriver = struct
+  let arch = Utils.ARM_M4
+  let dir_name = "arm-m4"
+  module A = CARM.Arch
+  let load_file = CARM.load_file
+end
+
+module CRV = Common.Make (CoreArchFactory.Core_arch_RISCV)
+
+module DRV : ArchDriver = struct
+  let arch = Utils.RISCV
+  let dir_name = "risc-v"
+  module A = CRV.Arch
+  let load_file = CRV.load_file
+end
+
+module RX86 = RunArch (DX86)
+module RARM = RunArch (DARM)
+module RRV  = RunArch (DRV)
 
 let () =
-  let dirs =
-    find_named_dirs "../../examples" "x86-64"
-    @ find_named_dirs "../success" "x86-64"
-    @ find_named_dirs "../success" "common"
-    |> List.sort_uniq String.compare
-  in
-  let cases =
-    dirs
-    |> List.concat_map (fun dir ->
-           Sys.readdir dir |> Array.to_list
-           |> List.filter_map (fun name ->
-                  let full = Filename.concat dir name in
-                  if (not (Sys.is_directory full)) && Filename.check_suffix name ".jazz"
-                  then Some (dir, name)
-                  else None))
-    |> List.sort compare
-  in
-  let jobs =
-    List.filter_map
-      (fun file ->
-        match generate file with
-        | Some r -> Some r
-        | None -> None)
-      cases
-  in
-  let threads =
-    List.map
-      (fun (full_path, out_name) ->
-        let result = ref 1 in
-        let t =
-          Thread.create
-            (fun () ->
-              acquire ();
-              let rc = check full_path out_name in
-              release ();
-              result := rc;
-              if rc <> 0 then exit rc)
-            ()
-        in
-        (t, result))
-      jobs
-  in
-  let errors =
-    List.fold_left
-      (fun n (t, result) ->
-        Thread.join t;
-        n + !result)
-      0 threads
-  in
+  let errors = RX86.run () + RARM.run () + RRV.run () in
   exit errors

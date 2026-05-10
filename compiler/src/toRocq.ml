@@ -3,7 +3,6 @@ open Prog
 open Wsize
 open Operators
 module F = Format
-module SS = Set.Make (String)
 
 (* -------------------------------------------------------------------------- *)
 (* Identifiers *)
@@ -158,30 +157,28 @@ let pp_word ws fmt w = F.fprintf fmt "%a" (pp_wrepr ws) (Conv.z_of_word ws w)
 (* Helpers for printing Rocq constructors with their arguments.
    Used by architecture-specific asm_op printers. *)
 
-(* TODO fmt should go as the first argument *)
+let pp_bare fmt name = F.fprintf fmt "%s" name
+let pp_with_ws fmt name ws = F.fprintf fmt "(%s %a)" name pp_wsize ws
 
-let pp_bare name fmt = F.fprintf fmt "%s" name
-let pp_with_ws name fmt ws = F.fprintf fmt "(%s %a)" name pp_wsize ws
-
-let pp_with_ws2 name fmt (ws1, ws2) =
+let pp_with_ws2 fmt name (ws1, ws2) =
   F.fprintf fmt "(%s %a %a)" name pp_wsize ws1 pp_wsize ws2
 
-let pp_ve name fmt ve = F.fprintf fmt "(%s %a)" name pp_velem ve
+let pp_ve fmt name ve = F.fprintf fmt "(%s %a)" name pp_velem ve
 
-let pp_ve_ws name fmt (ve, ws) =
+let pp_ve_ws fmt name (ve, ws) =
   F.fprintf fmt "(%s %a %a)" name pp_velem ve pp_wsize ws
 
-let pp_s_ws name fmt (s, ws) =
+let pp_s_ws fmt name (s, ws) =
   F.fprintf fmt "(%s %a %a)" name pp_signedness s pp_wsize ws
 
 let pp_reg_kind fmt = function
   | Wsize.Normal -> F.fprintf fmt "Normal"
-  | Wsize.Extra -> F.fprintf fmt "Extra"
+  | Extra -> F.fprintf fmt "Extra"
 
-let pp_rk_ws name fmt (rk, ws) =
+let pp_rk_ws fmt name (rk, ws) =
   F.fprintf fmt "(%s %a %a)" name pp_reg_kind rk pp_wsize ws
 
-let pp_ve_ws_ve_ws name fmt (ve1, ws1, ve2, ws2) =
+let pp_ve_ws_ve_ws fmt name (ve1, ws1, ve2, ws2) =
   F.fprintf fmt "(%s %a %a %a %a)" name pp_velem ve1 pp_wsize ws1 pp_velem ve2
     pp_wsize ws2
 
