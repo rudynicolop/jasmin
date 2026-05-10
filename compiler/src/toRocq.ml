@@ -4,6 +4,16 @@ open Wsize
 open Operators
 module F = Format
 
+let error_empty_name () =
+  hierror ~loc:Lnone ~kind:"compilation error" ~sub_kind:"to Rocq"
+    ~internal:true
+    "internal error: empty identifier while sanitizing Rocq names"
+
+let randombytes_invalid_args loc =
+  hierror ~loc:(Lone loc.L.base_loc) ~kind:"compilation error" ~sub_kind:"to Rocq"
+    ~internal:true
+    "internal error: RandomBytes syscall has invalid arguments"
+
 (* -------------------------------------------------------------------------- *)
 (* Identifiers *)
 
@@ -20,12 +30,12 @@ let is_ident_start_c c =
   (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c = '_'
 
 let rocq_sanitize_c c = if is_ident_c c then c else '_'
+
 let rocq_sanitize_s s =
-  if s = "" then assert false
+  if s = "" then error_empty_name ()
   else
     let s = String.map rocq_sanitize_c s in
-    if is_ident_start_c s.[0] then s
-    else "_" ^ s
+    if is_ident_start_c s.[0] then s else "_" ^ s
 
 let append_ids = ref true
 
@@ -386,7 +396,7 @@ let pp_lvals fmt lvs = pp_rocq_seq pp_lval fmt lvs
 (* Instructions *)
 
 (* [Cif], [Cfor], and [Cwhile] always break the line, the rest never do. *)
-let rec pp_instr_r pp_asm_op fmt = function
+let rec pp_instr_r ~loc pp_asm_op fmt = function
   | Cassgn (lv, _, ty, e) ->
       F.fprintf fmt "@[<h>cassgn (%a) (%a) (%a)@]" pp_lval lv pp_atype ty
         pp_expr e
@@ -400,7 +410,7 @@ let rec pp_instr_r pp_asm_op fmt = function
           | [ lv ], [ e ] ->
               F.fprintf fmt "@[<h>crandombytes (%a) %a %a (%a)@]" pp_lval lv
                 pp_wsize ws pp_rocq_positive n pp_expr e
-          | _ -> assert false (* absurd, type error*))
+          | _ -> randombytes_invalid_args loc)
     end
   | Cassert (label, e) ->
       F.fprintf fmt "@[<h>cassert %a (%a)@]" pp_rocq_string label pp_eassert e
@@ -417,7 +427,7 @@ let rec pp_instr_r pp_asm_op fmt = function
       F.fprintf fmt "@[<h>ccall %a %a %a@]" pp_lvals lvs pp_fn fn pp_exprs es
 
 and pp_instr pp_asm_op fmt i =
-  F.fprintf fmt "%a" (pp_instr_r pp_asm_op) i.i_desc
+  F.fprintf fmt "%a" (pp_instr_r ~loc:i.i_loc pp_asm_op) i.i_desc
 
 and pp_stmt pp_asm_op fmt c = pp_rocq_seq (pp_instr pp_asm_op) fmt c
 
@@ -642,7 +652,9 @@ let coqproject_name = "_CoqProject"
 let makefile_name = "Makefile"
 let globs_module_name base = rocq_sanitize_s (base ^ "_globs")
 let funnames_module_name base = rocq_sanitize_s (base ^ "_funnames")
-let function_module_name base fn = rocq_sanitize_s (base ^ "_" ^ rocq_sanitize_fn fn)
+
+let function_module_name base fn =
+  rocq_sanitize_s (base ^ "_" ^ rocq_sanitize_fn fn)
 
 let coq_project_header =
   "-arg \"-set\" -arg \"'Uniform Inductive Parameters'\"\n\

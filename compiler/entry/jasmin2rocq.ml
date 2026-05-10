@@ -2,48 +2,6 @@ open Jasmin
 open Cmdliner
 open CommonCLI
 open Utils
-open Prog
-
-(* -------------------------------------------------------------------- *)
-(* Slicing: keep only selected functions and their transitive callees *)
-(* TODO Doesn't Slicing.slice work? *)
-
-let callees_of_func fd =
-  let rec from_stmt acc c = List.fold_left from_instr acc c
-  and from_instr acc i =
-    match i.i_desc with
-    | Ccall (_, fn, _) -> Ss.add fn.fn_name acc
-    | Cif (_, c1, c2) -> from_stmt (from_stmt acc c1) c2
-    | Cfor (_, _, c) -> from_stmt acc c
-    | Cwhile (_, c1, _, _, c2) -> from_stmt (from_stmt acc c1) c2
-    | _ -> acc
-  in
-  from_stmt Ss.empty fd.f_body
-
-let slice_prog (gd, funcs) names =
-  (* Build a map from function name to func *)
-  let by_name =
-    List.fold_left (fun m fd -> Ms.add fd.f_name.fn_name fd m) Ms.empty funcs
-  in
-  (* Compute transitive closure of callees *)
-  let rec close todo seen =
-    if Ss.is_empty todo then seen
-    else
-      let name = Ss.choose todo in
-      let todo = Ss.remove name todo in
-      if Ss.mem name seen then close todo seen
-      else
-        let seen = Ss.add name seen in
-        let todo =
-          match Ms.find_opt name by_name with
-          | Some fd -> Ss.union todo (callees_of_func fd)
-          | None -> todo
-        in
-        close todo seen
-  in
-  let keep = close (Ss.of_list names) Ss.empty in
-  let funcs = List.filter (fun fd -> Ss.mem fd.f_name.fn_name keep) funcs in
-  (gd, funcs)
 
 (* -------------------------------------------------------------------- *)
 
@@ -52,7 +10,7 @@ let parse_and_extract arch call_conv idirs =
   let extract output pass slice ids split file warn =
     if not warn then nowarning ();
     let prog = parse_and_compile (module A) ~wi2i:false pass file idirs in
-    let prog = match slice with [] -> prog | names -> slice_prog prog names in
+    let prog = if slice = [] then prog else Slicing.slice slice prog in
     if split then
       match output with
       | None ->
@@ -74,7 +32,7 @@ let parse_and_extract arch call_conv idirs =
         Format.pp_print_flush fmt ();
         close ()
       with e ->
-        BatPervasives.ignore_exceptions (fun () -> close ()) ();
+        BatPervasives.ignore_exceptions close ();
         raise e
   in
   fun output pass slice ids split file warn ->
