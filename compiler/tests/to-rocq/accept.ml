@@ -52,7 +52,7 @@ let rocq_check vfile =
   let args =
     ("rocq" :: "c" :: r "lang")
     @ r "compiler" @ r "arch" @ r "3rdparty" @ r "ssrmisc"
-    @ [ "-q"; Filename.quote vfile ]
+    @ [ "-q"; "-w"; "-all"; Filename.quote vfile ]
   in
   let cmd = String.concat " " args ^ " > " ^ Filename.quote log ^ " 2>&1" in
   let rc = Sys.command cmd in
@@ -123,8 +123,7 @@ module RunArch (D : ArchDriver) = struct
     let oc = open_out out_name in
     let fmt = Format.formatter_of_out_channel oc in
     match
-      ToRocq.extract ~imports:true D.arch D.A.reg_size D.A.msf_size
-        D.A.asmOp D.A.pp_extended_op_for_rocq p "p" fmt
+      ToRocq.extract ~imports:true D.arch D.A.pp_extended_op_for_rocq p "p" fmt
     with
     | () ->
         Format.pp_print_flush fmt ();

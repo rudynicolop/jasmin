@@ -49,29 +49,36 @@ let slice_prog (gd, funcs) names =
 
 let parse_and_extract arch call_conv idirs =
   let module A = (val CoreArchFactory.get_arch_module arch call_conv) in
-  let extract output pass slice imports file warn =
+  let extract output pass slice imports ids split file warn =
     if not warn then nowarning ();
     let prog = parse_and_compile (module A) ~wi2i:false pass file idirs in
     let prog = match slice with [] -> prog | names -> slice_prog prog names in
-    let fmt, close =
+    if split then
       match output with
-      | None -> (Format.std_formatter, fun () -> ())
+      | None ->
+          Format.eprintf "--split requires -o to specify an output file@.";
+          exit 1
       | Some f ->
-          let out = open_out f in
-          let fmt = Format.formatter_of_out_channel out in
-          (fmt, fun () -> close_out out)
-    in
-    try
-      ToRocq.extract ~imports arch A.reg_size A.msf_size A.asmOp
-        A.pp_extended_op_for_rocq prog "p" fmt;
-      Format.pp_print_flush fmt ();
-      close ()
-    with e ->
-      BatPervasives.ignore_exceptions (fun () -> close ()) ();
-      raise e
+          ToRocq.extract_split ~ids arch A.pp_extended_op_for_rocq prog "p" f
+    else
+      let fmt, close =
+        match output with
+        | None -> (Format.std_formatter, fun () -> ())
+        | Some f ->
+            let out = open_out f in
+            let fmt = Format.formatter_of_out_channel out in
+            (fmt, fun () -> close_out out)
+      in
+      (try
+         ToRocq.extract ~imports ~ids arch A.pp_extended_op_for_rocq prog "p" fmt;
+         Format.pp_print_flush fmt ();
+         close ()
+       with e ->
+         BatPervasives.ignore_exceptions (fun () -> close ()) ();
+         raise e)
   in
-  fun output pass slice imports file warn ->
-    match extract output pass slice imports file warn with
+  fun output pass slice imports ids split file warn ->
+    match extract output pass slice imports ids split file warn with
     | () -> ()
     | exception HiError e ->
         Format.eprintf "%a@." pp_hierror e;
@@ -104,6 +111,22 @@ let imports =
   let doc = "Do not print Rocq imports and axioms at the top of the output." in
   Arg.(value & vflag true [ (false, info [ "no-imports" ] ~doc) ])
 
+let ids =
+  let doc =
+    "Print variable and function names without appending their internal unique \
+     identifier."
+  in
+  Arg.(value & vflag true [ (false, info [ "no-ids" ] ~doc) ])
+
+let split =
+  let doc =
+    "Write globals, each function, and the program to separate files. Requires \
+     -o. The program file is $(i,OUTPUT FILE), globals go to \
+     $(i,OUTPUT FILE)_globs.v, and each function goes to \
+     $(i,OUTPUT FILE)_<funname>.v."
+  in
+  Arg.(value & flag & info [ "split" ] ~doc)
+
 let slice =
   let doc =
     "Only extract the given function (and its dependencies). This argument may \
@@ -132,5 +155,5 @@ let () =
   Cmd.v info
     Term.(
       const parse_and_extract $ arch $ call_conv $ idirs $ output $ after_pass
-      $ slice $ imports $ file $ warn)
+      $ slice $ imports $ ids $ split $ file $ warn)
   |> Cmd.eval |> exit
