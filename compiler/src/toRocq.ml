@@ -10,8 +10,8 @@ let error_empty_name () =
     "internal error: empty identifier while sanitizing Rocq names"
 
 let randombytes_invalid_args loc =
-  hierror ~loc:(Lone loc.L.base_loc) ~kind:"compilation error" ~sub_kind:"to Rocq"
-    ~internal:true
+  hierror ~loc:(Lone loc.L.base_loc) ~kind:"compilation error"
+    ~sub_kind:"to Rocq" ~internal:true
     "internal error: RandomBytes syscall has invalid arguments"
 
 (* -------------------------------------------------------------------------- *)
@@ -31,21 +31,81 @@ let is_ident_start_c c =
 
 let rocq_sanitize_c c = if is_ident_c c then c else '_'
 
+let rocq_keywords =
+  [
+    "_";
+    "Axiom";
+    "CoFixpoint";
+    "Definition";
+    "Fixpoint";
+    "Hypothesis";
+    "Parameter";
+    "Prop";
+    "SProp";
+    "Set";
+    "Theorem";
+    "Type";
+    "Variable";
+    "as";
+    "at";
+    "cofix";
+    "else";
+    "end";
+    "fix";
+    "for";
+    "forall";
+    "fun";
+    "if";
+    "in";
+    "let";
+    "match";
+    "return";
+    "then";
+    "where";
+    "with";
+  ]
+  @ [ (* Prelude *) "by"; "exists"; "exists2"; "using" ]
+  @ [ (* ssreflect *) "of"; "is" ]
+  |> Ss.of_list
+
+let is_rocq_reserved s =
+  Ss.mem s rocq_keywords || (s.[0] = '_' && s.[String.length s - 1] = '_')
+
+(* Produce a valid Rocq identifier from [s]. *)
 let rocq_sanitize_s s =
   if s = "" then error_empty_name ()
   else
     let s = String.map rocq_sanitize_c s in
-    if is_ident_start_c s.[0] then s else "_" ^ s
+    let s = if is_ident_start_c s.[0] then s else "_" ^ s in
+    if is_rocq_reserved s then "s_" ^ s else s
 
-let append_ids = ref true
+let seen_rocq_names = Hs.create 1009
 
-let rocq_sanitize_v v =
-  if !append_ids then rocq_sanitize_s (v.v_name ^ "_" ^ string_of_uid v.v_id)
-  else rocq_sanitize_s v.v_name
+let reset_sanitized_names () = Hs.clear seen_rocq_names
 
-let rocq_sanitize_fn fn =
-  if !append_ids then rocq_sanitize_s (fn.fn_name ^ "_" ^ string_of_uid fn.fn_id)
-  else rocq_sanitize_s fn.fn_name
+let reserve_sanitized_name name =
+  Hs.replace seen_rocq_names (rocq_sanitize_s name) ()
+
+let smart_sanitize id name =
+  let tbl = Hid.create 101 in
+  fun x ->
+    let i = id x in
+    match Hid.find tbl i with
+    | name -> name
+    | exception Not_found ->
+        let base = rocq_sanitize_s (name x) in
+        let chosen =
+          if Hs.mem seen_rocq_names base then base ^ "_" ^ string_of_uid i
+          else base
+        in
+        Hid.add tbl (id x) chosen;
+        Hs.add seen_rocq_names chosen ();
+        chosen
+
+let rocq_sanitize_v = smart_sanitize (fun v -> v.v_id) (fun v -> v.v_name)
+
+let rocq_sanitize_fn =
+  smart_sanitize (fun fn -> fn.fn_id) (fun fn -> fn.fn_name)
 
 (* Print the name of a [var], [var_i], [gvar] (they all print the same). *)
 let pp_var fmt v = F.fprintf fmt "%s" (rocq_sanitize_v v)
@@ -621,28 +681,50 @@ let with_out_file path f =
   F.pp_print_flush fmt ();
   close_out oc
 
-(* The globals block must come before functions because it declares the names of
-   global variables used in the functions' bodies. *)
-let extract ?(ids = true) arch pp_asm_op (gd, funcs) name fmt =
-  append_ids := ids;
-  let name = rocq_sanitize_s name in
-  let funcs = List.rev funcs in
-  F.fprintf fmt "@[<v 0>";
+let pp_header fmt arch =
   pp_imports fmt;
   pp_newline fmt ();
   pp_arch_imports fmt arch;
-  pp_newline fmt ();
+  pp_newline fmt ()
+
+let pp_oracles_block fmt =
   pp_oracles fmt;
-  pp_newline fmt ();
+  pp_newline fmt ()
+
+let pp_globals_block fmt name gd =
   pp_separator fmt "Globals";
   pp_globs_definition fmt name gd;
-  pp_newline fmt ();
+  pp_newline fmt ()
+
+let pp_funnames_block fmt names =
+  pp_separator fmt "Function names";
+  pp_fn_definitions fmt names;
+  pp_newline fmt ()
+
+let pp_fundecls_block pp_asm_op fmt funcs =
   pp_separator fmt "Functions";
-  pp_fn_definitions fmt (List.map (fun f -> f.f_name) funcs);
   pp_fds pp_asm_op fmt funcs;
-  pp_newline fmt ();
+  pp_newline fmt ()
+
+let pp_prog_block fmt name funcs =
   pp_separator fmt "Program";
-  pp_prog_definition fmt name funcs;
+  pp_prog_definition fmt name funcs
+
+(* The globals block must come before functions because it declares the names of
+   global variables used in the functions' bodies. *)
+let extract arch pp_asm_op (gd, funcs) name fmt =
+  reset_sanitized_names ();
+  let name = rocq_sanitize_s name in
+  reserve_sanitized_name name;
+  reserve_sanitized_name (name ^ "_gds");
+  let funcs = List.rev funcs in
+  F.fprintf fmt "@[<v 0>";
+  pp_header fmt arch;
+  pp_oracles_block fmt;
+  pp_globals_block fmt name gd;
+  pp_funnames_block fmt (List.map (fun fd -> fd.f_name) funcs);
+  pp_fundecls_block pp_asm_op fmt funcs;
+  pp_prog_block fmt name funcs;
   F.fprintf fmt "@]"
 
 (* -------------------------------------------------------------------------- *)
@@ -711,9 +793,11 @@ let makefile =
 
 let pp_makefile fmt = F.fprintf fmt "%s" makefile
 
-let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
-  append_ids := ids;
+let extract_split arch pp_asm_op (gd, funcs) name base_path =
+  reset_sanitized_names ();
   let name = rocq_sanitize_s name in
+  reserve_sanitized_name name;
+  reserve_sanitized_name (name ^ "_gds");
   let base_dir = Filename.dirname base_path in
   let base_module =
     let open Filename in
@@ -728,14 +812,8 @@ let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
     List.map (fun fd -> (fd, function_module_name base_module fd.f_name)) funcs
   in
   let fn_module_names = List.map snd fn_modules in
-  let pp_header fmt =
-    pp_imports fmt;
-    pp_newline fmt ();
-    pp_arch_imports fmt arch;
-    pp_newline fmt ()
-  in
   with_out_file (make_path globs_module ".v") (fun fmt ->
-      pp_header fmt;
+      pp_header fmt arch;
       pp_section_ido fmt;
       pp_newline fmt ();
       pp_separator fmt "Globals";
@@ -743,17 +821,15 @@ let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
       pp_newline fmt ();
       pp_end_ido fmt ());
   with_out_file (make_path funnames_module ".v") (fun fmt ->
-      pp_header fmt;
+      pp_header fmt arch;
       pp_section_ido fmt;
       pp_newline fmt ();
-      pp_separator fmt "Function names";
-      pp_fn_definitions fmt funnames;
-      pp_newline fmt ();
+      pp_funnames_block fmt funnames;
       pp_end_ido fmt ());
   List.iter
     (fun (fd, fn_module) ->
       with_out_file (make_path fn_module ".v") (fun fmt ->
-          pp_header fmt;
+          pp_header fmt arch;
           pp_require_import fmt globs_module;
           pp_require_import fmt funnames_module;
           pp_newline fmt ();
@@ -764,16 +840,14 @@ let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
           pp_end_ido fmt ()))
     fn_modules;
   with_out_file base_path (fun fmt ->
-      pp_header fmt;
+      pp_header fmt arch;
       pp_require_import fmt globs_module;
       pp_require_import fmt funnames_module;
       F.pp_print_list ~pp_sep:pp_print_nothing pp_require_import fmt
         fn_module_names;
       pp_newline fmt ();
-      pp_oracles fmt;
-      pp_newline fmt ();
-      pp_separator fmt "Program";
-      pp_prog_definition fmt name funcs);
+      pp_oracles_block fmt;
+      pp_prog_block fmt name funcs);
   with_out_file
     (make_path coqproject_name "")
     (pp_coq_project base_module fn_module_names);

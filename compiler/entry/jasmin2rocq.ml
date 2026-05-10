@@ -5,10 +5,21 @@ open Utils
 
 (* -------------------------------------------------------------------- *)
 
+let ensure_output_writable path =
+  let existed = Sys.file_exists path in
+  try
+    let oc = open_out_gen [ Open_wronly; Open_creat; Open_append ] 0o666 path in
+    close_out oc;
+    if not existed then BatPervasives.ignore_exceptions Sys.remove path
+  with Sys_error msg ->
+    hierror ~loc:Lnone ~kind:"I/O error" "cannot write output file %S (%s)" path
+      msg
+
 let parse_and_extract arch call_conv idirs =
   let module A = (val CoreArchFactory.get_arch_module arch call_conv) in
-  let extract output pass slice ids split file warn =
+  let extract output pass slice split file program_name warn =
     if not warn then nowarning ();
+    Option.may ensure_output_writable output;
     let prog = parse_and_compile (module A) ~wi2i:false pass file idirs in
     let prog = if slice = [] then prog else Slicing.slice slice prog in
     if split then
@@ -17,7 +28,7 @@ let parse_and_extract arch call_conv idirs =
           Format.eprintf "--split requires -o to specify an output file@.";
           exit 1
       | Some f ->
-          ToRocq.extract_split ~ids arch A.pp_extended_op_for_rocq prog "p" f
+          ToRocq.extract_split arch A.pp_extended_op_for_rocq prog program_name f
     else
       let fmt, close =
         match output with
@@ -28,15 +39,15 @@ let parse_and_extract arch call_conv idirs =
             (fmt, fun () -> close_out out)
       in
       try
-        ToRocq.extract ~ids arch A.pp_extended_op_for_rocq prog "p" fmt;
+        ToRocq.extract arch A.pp_extended_op_for_rocq prog program_name fmt;
         Format.pp_print_flush fmt ();
         close ()
       with e ->
         BatPervasives.ignore_exceptions close ();
         raise e
   in
-  fun output pass slice ids split file warn ->
-    match extract output pass slice ids split file warn with
+  fun output pass slice split file program_name warn ->
+    match extract output pass slice split file program_name warn with
     | () -> ()
     | exception HiError e ->
         Format.eprintf "%a@." pp_hierror e;
@@ -65,15 +76,6 @@ let after_pass =
   let passes = Arg.enum alts in
   Arg.(value & opt passes ParamsExpansion & info [ "compile"; "after" ] ~doc)
 
-let ids =
-  let doc =
-    "Print variable and function names without appending their internal unique \
-     identifier. This may cause name clashes with other definitions (for \
-     example, if two local variables from different functions share the same \
-     name)."
-  in
-  Arg.(value & vflag true [ (false, info [ "no-ids" ] ~doc) ])
-
 let split =
   let doc =
     "Write globals, function names, each function, and the program to separate \
@@ -100,6 +102,10 @@ let slice =
 let file =
   let doc = "The Jasmin source file to extract" in
   Arg.(required & pos 0 (some non_dir_file) None & info [] ~docv:"JAZZ" ~doc)
+
+let program_name =
+  let doc = "Name of the generated Rocq program definition." in
+  Arg.(required & pos 1 (some string) None & info [] ~docv:"PROGRAM" ~doc)
 
 let () =
   let doc = "Extract Jasmin program to Rocq representation" in
@@ -128,5 +134,5 @@ let () =
   Cmd.v info
     Term.(
       const parse_and_extract $ arch $ call_conv $ idirs $ output $ after_pass
-      $ slice $ ids $ split $ file $ warn)
+      $ slice $ split $ file $ program_name $ warn)
   |> Cmd.eval |> exit

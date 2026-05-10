@@ -123,7 +123,8 @@ module RunArch (D : ArchDriver) = struct
     let out_name = make_out_name D.dir_name dir name in
     let oc = open_out out_name in
     let fmt = Format.formatter_of_out_channel oc in
-    match ToRocq.extract D.arch D.A.pp_extended_op_for_rocq p "p" fmt with
+    let p_name = ToRocq.rocq_sanitize_s out_name in
+    match ToRocq.extract D.arch D.A.pp_extended_op_for_rocq p p_name fmt with
     | () ->
         Format.pp_print_flush fmt ();
         close_out oc;
