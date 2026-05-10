@@ -1,5 +1,4 @@
 val rocq_sanitize_s : string -> string
-val append_ids : bool ref
 
 val pp_rocq_option :
   (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a option -> unit
@@ -27,7 +26,6 @@ val pp_s_ws :
   Format.formatter -> string -> Wsize.signedness * Wsize.wsize -> unit
 
 val extract :
-  ?ids:bool ->
   Utils.architecture ->
   (Format.formatter ->
   ('reg, 'regx, 'xreg, 'rflag, 'cond, 'asm_op, 'extra_op) Arch_extra.extended_op ->
@@ -47,7 +45,6 @@ val extract :
   unit
 
 val extract_split :
-  ?ids:bool ->
   Utils.architecture ->
   (Format.formatter ->
   ('reg, 'regx, 'xreg, 'rflag, 'cond, 'asm_op, 'extra_op) Arch_extra.extended_op ->

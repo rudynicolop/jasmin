@@ -12,6 +12,8 @@ type uid
 
 val string_of_uid : uid -> string
 
+module Hid : Hash.S with type key = uid
+
 (* ------------------------------------------------------------------------ *)
 type base_ty =
   | Bool
