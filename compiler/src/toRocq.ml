@@ -79,15 +79,9 @@ let rocq_sanitize_s s =
     let s = if is_ident_start_c s.[0] then s else "_" ^ s in
     if is_rocq_reserved s then "s_" ^ s else s
 
-let seen_rocq_names = Hs.create 1009
-
-let reset_sanitized_names () = Hs.clear seen_rocq_names
-
-let reserve_sanitized_name name =
-  Hs.replace seen_rocq_names (rocq_sanitize_s name) ()
-
 let smart_sanitize id name =
   let tbl = Hid.create 101 in
+  let seen = Hs.create 101 in
   fun x ->
     let i = id x in
     match Hid.find tbl i with
@@ -95,11 +89,10 @@ let smart_sanitize id name =
     | exception Not_found ->
         let base = rocq_sanitize_s (name x) in
         let chosen =
-          if Hs.mem seen_rocq_names base then base ^ "_" ^ string_of_uid i
-          else base
+          if Hs.mem seen base then base ^ "_" ^ string_of_uid i else base
         in
-        Hid.add tbl (id x) chosen;
-        Hs.add seen_rocq_names chosen ();
+        Hid.add tbl (id x) (rocq_sanitize_s chosen);
+        Hs.add seen chosen ();
         chosen
 
 let rocq_sanitize_v = smart_sanitize (fun v -> v.v_id) (fun v -> v.v_name)
@@ -713,10 +706,7 @@ let pp_prog_block fmt name funcs =
 (* The globals block must come before functions because it declares the names of
    global variables used in the functions' bodies. *)
 let extract arch pp_asm_op (gd, funcs) name fmt =
-  reset_sanitized_names ();
   let name = rocq_sanitize_s name in
-  reserve_sanitized_name name;
-  reserve_sanitized_name (name ^ "_gds");
   let funcs = List.rev funcs in
   F.fprintf fmt "@[<v 0>";
   pp_header fmt arch;
@@ -794,10 +784,7 @@ let makefile =
 let pp_makefile fmt = F.fprintf fmt "%s" makefile
 
 let extract_split arch pp_asm_op (gd, funcs) name base_path =
-  reset_sanitized_names ();
   let name = rocq_sanitize_s name in
-  reserve_sanitized_name name;
-  reserve_sanitized_name (name ^ "_gds");
   let base_dir = Filename.dirname base_path in
   let base_module =
     let open Filename in

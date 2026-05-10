@@ -54,7 +54,10 @@ let parse_and_extract arch call_conv idirs =
         exit 1
 
 let output =
-  let doc = "Output file. If not given, output will be printed on stdout." in
+  let doc =
+    "Output file. If not given, output is printed on stdout. If given, the path \
+     is checked before extraction and must be creatable/writable."
+  in
   Arg.(
     value
     & opt (some string) None
@@ -85,9 +88,11 @@ let split =
      for the program, (2) $(i,BASE)_globs.v for globals, (3) \
      $(i,BASE)_funnames.v for function names, (4) $(i,BASE)_<funname>.v for \
      each function <funname>, and (5) $(i,_CoqProject), and (6) $(i,Makefile). \
-     The _CoqProject file assumes that it is in a directory at the top level \
-     of the Jasmin repository. To use other locations, replace the first\n\
-    \      argument to each -R command."
+      The _CoqProject file assumes that it is in a directory at the top level \
+      of the Jasmin repository. To use other locations, replace the first\n\
+     \      argument to each -R command. Existing files with these names are \
+     overwritten. If generation fails mid-run, some files may already have been \
+     created/overwritten."
   in
   Arg.(value & flag & info [ "split" ] ~doc)
 
@@ -95,16 +100,21 @@ let slice =
   let doc =
     "Only extract the given function (and its dependencies). This argument may \
      be repeated to extract many functions. If not given, all functions will \
-     be extracted."
+     be extracted. Unknown function names are reported as warnings and ignored."
   in
   Arg.(value & opt_all string [] & info [ "slice"; "only"; "on" ] ~doc)
 
 let file =
-  let doc = "The Jasmin source file to extract" in
+  let doc = "The Jasmin source file to extract (first positional argument)." in
   Arg.(required & pos 0 (some non_dir_file) None & info [] ~docv:"JAZZ" ~doc)
 
 let program_name =
-  let doc = "Name of the generated Rocq program definition." in
+  let doc =
+    "Name of the generated Rocq program definition (second positional \
+     argument). The emitted Rocq identifier is sanitized and may differ from \
+     the provided string. Name generation is best-effort and does not guarantee \
+     avoiding all Rocq parser/plugin keyword conflicts."
+  in
   Arg.(required & pos 1 (some string) None & info [] ~docv:"PROGRAM" ~doc)
 
 let () =
@@ -116,12 +126,20 @@ let () =
         "All generated names are sanitized (every non-letter and non-number \
          symbol is replaced with an underscore), which may cause clashes.";
       `P
+        "Name generation is best-effort. Reserved keyword handling is based on a \
+         built-in list and may be incomplete when additional Rocq \
+         notations/plugins are loaded.";
+      `P
         "The printer derives additional names from base names as follows: (1) \
          a variable $(i,v) produces two definitions: $(i,v) and $(i,v_data); \
          (2) a function $(i,f) produces seven definitions: $(i,f), \
          $(i,tyin_f), $(i,args_f), $(i,tyout_f), $(i,res_f), $(i,body_f), and \
          $(i,fd_f); (3) the program name $(i,p) produces two definitions: \
          $(i,p_gds) and $(i,p).";
+      `S "ARGUMENTS";
+      `P
+        "Positional arguments are required in this order: $(i,JAZZ) then \
+         $(i,PROGRAM).";
       `S Manpage.s_environment;
       Manpage.s_environment_intro;
       `I ("OCAMLRUNPARAM", "This is an OCaml program");
