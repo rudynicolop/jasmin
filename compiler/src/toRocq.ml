@@ -15,8 +15,18 @@ let is_ident_c c =
   || (c >= '0' && c <= '9')
   || c = '_'
 
+(* Rocq identifiers must start with one of these. *)
+let is_ident_start_c c =
+  (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c = '_'
+
 let rocq_sanitize_c c = if is_ident_c c then c else '_'
-let rocq_sanitize_s = String.map rocq_sanitize_c
+let rocq_sanitize_s s =
+  if s = "" then assert false
+  else
+    let s = String.map rocq_sanitize_c s in
+    if is_ident_start_c s.[0] then s
+    else "_" ^ s
+
 let append_ids = ref true
 
 let rocq_sanitize_v v =
@@ -630,9 +640,9 @@ let extract ?(ids = true) arch pp_asm_op (gd, funcs) name fmt =
 
 let coqproject_name = "_CoqProject"
 let makefile_name = "Makefile"
-let globs_module_name base = base ^ "_globs"
-let funnames_module_name base = base ^ "_funnames"
-let function_module_name base fn = base ^ "_" ^ rocq_sanitize_fn fn
+let globs_module_name base = rocq_sanitize_s (base ^ "_globs")
+let funnames_module_name base = rocq_sanitize_s (base ^ "_funnames")
+let function_module_name base fn = rocq_sanitize_s (base ^ "_" ^ rocq_sanitize_fn fn)
 
 let coq_project_header =
   "-arg \"-set\" -arg \"'Uniform Inductive Parameters'\"\n\
@@ -693,7 +703,10 @@ let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
   append_ids := ids;
   let name = rocq_sanitize_s name in
   let base_dir = Filename.dirname base_path in
-  let base_module = Filename.basename (Filename.remove_extension base_path) in
+  let base_module =
+    let open Filename in
+    remove_extension base_path |> basename |> rocq_sanitize_s
+  in
   let make_path m ext = Filename.concat base_dir (m ^ ext) in
   let globs_module = globs_module_name base_module in
   let funnames_module = funnames_module_name base_module in
