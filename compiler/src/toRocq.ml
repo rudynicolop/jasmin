@@ -17,10 +17,16 @@ let is_ident_c c =
 
 let rocq_sanitize_c c = if is_ident_c c then c else '_'
 let rocq_sanitize_s = String.map rocq_sanitize_c
-let rocq_sanitize_v v = rocq_sanitize_s (v.v_name ^ "_" ^ string_of_uid v.v_id)
+
+let append_ids = ref true
+
+let rocq_sanitize_v v =
+  if !append_ids then rocq_sanitize_s (v.v_name ^ "_" ^ string_of_uid v.v_id)
+  else rocq_sanitize_s v.v_name
 
 let rocq_sanitize_fn fn =
-  rocq_sanitize_s (fn.fn_name ^ "_" ^ string_of_uid fn.fn_id)
+  if !append_ids then rocq_sanitize_s (fn.fn_name ^ "_" ^ string_of_uid fn.fn_id)
+  else rocq_sanitize_s fn.fn_name
 
 (* Print the name of a [var], [var_i], [gvar] (they all print the same). *)
 let pp_var fmt v = F.fprintf fmt "%s" (rocq_sanitize_v v)
@@ -575,10 +581,29 @@ let pp_arch_imports fmt a =
 (* -------------------------------------------------------------------------- *)
 (* Entry point *)
 
+let pp_section_ido fmt =
+  F.fprintf fmt "Section IDO.@ ";
+  F.fprintf fmt "Context {IdO : IdentOracles}.@ "
+
+let pp_end_ido fmt () = F.fprintf fmt "End IDO.@ "
+
+let pp_require_import fmt modname =
+  F.fprintf fmt "Require Import %s.@ " modname
+
+let with_out_file path f =
+  let oc = open_out path in
+  let fmt = F.formatter_of_out_channel oc in
+  F.fprintf fmt "@[<v 0>";
+  (try f fmt with e -> close_out_noerr oc; raise e);
+  F.fprintf fmt "@]";
+  F.pp_print_flush fmt ();
+  close_out oc
+
 (* The globals block must come before functions because it declares the names of
    global variables used in the functions' bodies. *)
-let extract ?(imports = true) arch _pd _msfsz _asmOp pp_asm_op (gd, funcs) name
+let extract ?(imports = true) ?(ids = true) arch pp_asm_op (gd, funcs) name
     fmt =
+  append_ids := ids;
   let name = rocq_sanitize_s name in
   F.fprintf fmt "@[<v 0>";
   if imports then begin
@@ -598,3 +623,56 @@ let extract ?(imports = true) arch _pd _msfsz _asmOp pp_asm_op (gd, funcs) name
   pp_separator fmt "Program";
   pp_prog_definition fmt name funcs;
   F.fprintf fmt "@]"
+
+(* Split output: one file for globals, one per function, one for the program.
+   base_path is the path of the program file (e.g. "out/p.v"); sibling files
+   are placed in the same directory with the base module name as prefix. *)
+let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
+  append_ids := ids;
+  let name = rocq_sanitize_s name in
+  let base_dir = Filename.dirname base_path in
+  let base_module = Filename.basename (Filename.remove_extension base_path) in
+  let make_path m = Filename.concat base_dir (m ^ ".v") in
+  let globs_module = base_module ^ "_globs" in
+  let fn_list = List.rev funcs in
+  let fn_modules =
+    List.map (fun fd -> (fd, base_module ^ "_" ^ rocq_sanitize_fn fd.f_name)) fn_list
+  in
+  let pp_header fmt =
+    pp_imports fmt;
+    pp_newline fmt ();
+    pp_arch_imports fmt arch;
+    pp_newline fmt ()
+  in
+  with_out_file (make_path globs_module) (fun fmt ->
+    pp_header fmt;
+    pp_section_ido fmt;
+    pp_newline fmt ();
+    pp_separator fmt "Globals";
+    pp_globs_definition fmt name gd;
+    pp_newline fmt ();
+    pp_end_ido fmt ()
+  );
+  List.iter
+    (fun (fd, fn_module) ->
+      with_out_file (make_path fn_module) (fun fmt ->
+        pp_header fmt;
+        pp_require_import fmt globs_module;
+        pp_newline fmt ();
+        pp_section_ido fmt;
+        pp_newline fmt ();
+        pp_fd_block pp_asm_op fmt fd;
+        pp_newline fmt ();
+        pp_end_ido fmt ()
+      ))
+    fn_modules;
+  with_out_file base_path (fun fmt ->
+    pp_header fmt;
+    pp_require_import fmt globs_module;
+    List.iter (fun (_, fn_module) -> pp_require_import fmt fn_module) fn_modules;
+    pp_newline fmt ();
+    pp_oracles fmt;
+    pp_newline fmt ();
+    pp_separator fmt "Program";
+    pp_prog_definition fmt name funcs
+  )

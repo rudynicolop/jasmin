@@ -1,5 +1,7 @@
 val rocq_sanitize_s : string -> string
 
+val append_ids : bool ref
+
 val pp_rocq_option :
   (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a option -> unit
 
@@ -27,11 +29,8 @@ val pp_s_ws :
 
 val extract :
   ?imports:bool ->
+  ?ids:bool ->
   Utils.architecture ->
-  Wsize.wsize ->
-  Wsize.wsize ->
-  ('reg, 'regx, 'xreg, 'rflag, 'cond, 'asm_op, 'extra_op) Arch_extra.extended_op
-  Sopn.asmOp ->
   (Format.formatter ->
   ('reg, 'regx, 'xreg, 'rflag, 'cond, 'asm_op, 'extra_op) Arch_extra.extended_op ->
   unit) ->
@@ -47,4 +46,24 @@ val extract :
   Prog.prog ->
   string ->
   Format.formatter ->
+  unit
+
+val extract_split :
+  ?ids:bool ->
+  Utils.architecture ->
+  (Format.formatter ->
+  ('reg, 'regx, 'xreg, 'rflag, 'cond, 'asm_op, 'extra_op) Arch_extra.extended_op ->
+  unit) ->
+  ( 'info,
+    ( 'reg,
+      'regx,
+      'xreg,
+      'rflag,
+      'cond,
+      'asm_op,
+      'extra_op )
+    Arch_extra.extended_op )
+  Prog.prog ->
+  string ->
+  string ->
   unit
