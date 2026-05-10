@@ -17,7 +17,6 @@ let is_ident_c c =
 
 let rocq_sanitize_c c = if is_ident_c c then c else '_'
 let rocq_sanitize_s = String.map rocq_sanitize_c
-
 let append_ids = ref true
 
 let rocq_sanitize_v v =
@@ -438,15 +437,18 @@ let pp_mk_fname fmt i = F.fprintf fmt "mkfname %s" (string_of_uid i)
 let pp_fn_definition fmt fn =
   pp_rocq_definition fmt pp_fn fn "funname" pp_mk_fname fn.fn_id
 
-let pp_f_sig suff fmt fn = F.fprintf fmt "%a_%s" pp_fn fn suff
+let pp_fn_definitions fmt =
+  F.pp_print_list ~pp_sep:pp_print_nothing pp_fn_definition fmt
+
+let pp_f_sig pre fmt fn = F.fprintf fmt "%s_%a" pre pp_fn fn
 let pp_f_tyin = pp_f_sig "tyin"
 let pp_f_args = pp_f_sig "args"
 let pp_f_tyout = pp_f_sig "tyout"
 let pp_f_res = pp_f_sig "res"
 let pp_f_body = pp_f_sig "body"
 
-let pp_f_sig_definition suff pp_xs fmt fn xs =
-  pp_rocq_definition fmt (pp_f_sig suff) fn "seq var_i" (pp_rocq_seq pp_xs) xs
+let pp_f_sig_definition pre pp_xs fmt fn xs =
+  pp_rocq_definition fmt (pp_f_sig pre) fn "seq var_i" (pp_rocq_seq pp_xs) xs
 
 let pp_f_args_definition = pp_f_sig_definition "args" pp_gv_var
 let pp_f_res_definition = pp_f_sig_definition "res" pp_gv_var_i
@@ -494,7 +496,6 @@ let pp_fd_block pp_asm_op fmt fd =
   pp_comment fmt "Body";
   pp_f_body_definition pp_asm_op fmt fd.f_name fd.f_body;
   pp_newline fmt ();
-  pp_fn_definition fmt fd.f_name;
   pp_fd_defintion fmt fd
 
 let pp_fds pp_asm_op =
@@ -562,7 +563,7 @@ let pp_imports fmt =
   F.fprintf fmt
     "Require Import expr ident var type global pseudo_operator sopn \
      arch_extra.@ ";
-  F.fprintf fmt "Require Import jasmin_printing.@ "
+  F.fprintf fmt "From Printing Require Import atoi syntax data.@ "
 
 let pp_oracles fmt =
   F.fprintf fmt "Axiom IdO : IdentOracles.@ ";
@@ -586,93 +587,169 @@ let pp_section_ido fmt =
   F.fprintf fmt "Context {IdO : IdentOracles}.@ "
 
 let pp_end_ido fmt () = F.fprintf fmt "End IDO.@ "
-
-let pp_require_import fmt modname =
-  F.fprintf fmt "Require Import %s.@ " modname
+let pp_require_import fmt modname = F.fprintf fmt "Require Import %s.@ " modname
 
 let with_out_file path f =
   let oc = open_out path in
   let fmt = F.formatter_of_out_channel oc in
   F.fprintf fmt "@[<v 0>";
-  (try f fmt with e -> close_out_noerr oc; raise e);
+  (try f fmt
+   with e ->
+     close_out_noerr oc;
+     raise e);
   F.fprintf fmt "@]";
   F.pp_print_flush fmt ();
   close_out oc
 
 (* The globals block must come before functions because it declares the names of
    global variables used in the functions' bodies. *)
-let extract ?(imports = true) ?(ids = true) arch pp_asm_op (gd, funcs) name
-    fmt =
+let extract ?(ids = true) arch pp_asm_op (gd, funcs) name fmt =
   append_ids := ids;
   let name = rocq_sanitize_s name in
+  let funcs = List.rev funcs in
   F.fprintf fmt "@[<v 0>";
-  if imports then begin
-    pp_imports fmt;
-    pp_newline fmt ();
-    pp_arch_imports fmt arch;
-    pp_newline fmt ()
-  end;
+  pp_imports fmt;
+  pp_newline fmt ();
+  pp_arch_imports fmt arch;
+  pp_newline fmt ();
   pp_oracles fmt;
   pp_newline fmt ();
   pp_separator fmt "Globals";
   pp_globs_definition fmt name gd;
   pp_newline fmt ();
   pp_separator fmt "Functions";
-  pp_fds pp_asm_op fmt (List.rev funcs);
+  pp_fn_definitions fmt (List.map (fun f -> f.f_name) funcs);
+  pp_fds pp_asm_op fmt funcs;
   pp_newline fmt ();
   pp_separator fmt "Program";
   pp_prog_definition fmt name funcs;
   F.fprintf fmt "@]"
 
-(* Split output: one file for globals, one per function, one for the program.
-   base_path is the path of the program file (e.g. "out/p.v"); sibling files
-   are placed in the same directory with the base module name as prefix. *)
+(* -------------------------------------------------------------------------- *)
+(* Split files. Produces a _CoqProject and a Makefile as well. *)
+
+let coqproject_name = "_CoqProject"
+let makefile_name = "Makefile"
+let globs_module_name base = base ^ "_globs"
+let funnames_module_name base = base ^ "_funnames"
+let function_module_name base fn = base ^ "_" ^ rocq_sanitize_fn fn
+
+let coq_project_header =
+  "-arg \"-set\" -arg \"'Uniform Inductive Parameters'\"\n\
+   -arg \"-set\" -arg \"'Implicit Arguments'\"\n\
+   -arg \"-unset\" -arg \"'Strict Implicit'\"\n\
+   -arg \"-unset\" -arg \"'Printing Implicit Defensive'\"\n\
+   -arg \"-w -notation-overridden\"\n\
+   -arg \"-w -extraction-reserved-identifier\"\n\
+   -arg \"-w -extraction-opaque-accessed\"\n\
+   -arg \"-w -ambiguous-paths\"\n\
+   -arg \"-w -redundant-canonical-projection\"\n\
+   -arg \"-w -projection-no-head-constant\"\n\
+   -arg \"-w -postfix-notation-not-level-1\"\n\
+   -arg \"-w -deprecated-since-mathcomp-2.4.0\"\n\
+   -arg \"-w -deprecated-since-mathcomp-2.5.0\"\n\
+   -arg \"-w -deprecated-from-Coq\"\n\
+   -arg \"-w -deprecated-dirpath-Coq\"\n\
+   # can be solved only with Stdlib >= 9.1\n\
+   -arg \"-w -deprecated-reference-since-9.1\"\n\
+   # to be handled when requiring Rocq >= 9.3\n\
+   -arg \"-w -rewrite-rw\"\n\n\
+   -R ../proofs/3rdparty Jasmin\n\
+   -R ../proofs/arch Jasmin\n\
+   -R ../proofs/compiler Jasmin\n\
+   -R ../proofs/lang Jasmin\n\
+   -R ../proofs/ssrmisc Jasmin\n\
+   -R ../proofs/itrees Jasmin\n\
+   -R ../proofs/printing Printing\n\n\
+   -Q . \"\"\n"
+
+let pp_coq_project base fnames fmt =
+  let modules =
+    base :: globs_module_name base :: funnames_module_name base :: fnames
+  in
+  F.fprintf fmt "%s" coq_project_header;
+  pp_newline fmt ();
+  List.iter (fun s -> F.fprintf fmt "%s.v\n" s) modules
+
+let makefile =
+  "# -*- Makefile -*-\n\n\
+   .PHONY: all clean\n\n\
+   COQMAKE = $(MAKE) -f Makefile.coq\n\n\
+   all: Makefile.coq\n\
+   \t+$(COQMAKE)\n\n\
+   Makefile.coq: _CoqProject Makefile\n\
+   \tcoq_makefile -f _CoqProject -o Makefile.coq\n\n\
+   %.vo: Makefile.coq\n\
+   \t+$(COQMAKE) $@\n\n\
+   clean:\n\
+   \t@if [ -f Makefile.coq ]; then $(COQMAKE) clean; fi\n\
+   \t@find . -type f \\( -name '*.vo' -o -name '*.vos' -o -name '*.vok' -o \
+   -name '*.glob' -o -name '*.aux' -o -name '*.d' \\) -delete\n\
+   \t@rm -f Makefile.coq\n"
+
+let pp_makefile fmt = F.fprintf fmt "%s" makefile
+
 let extract_split ?(ids = true) arch pp_asm_op (gd, funcs) name base_path =
   append_ids := ids;
   let name = rocq_sanitize_s name in
   let base_dir = Filename.dirname base_path in
   let base_module = Filename.basename (Filename.remove_extension base_path) in
-  let make_path m = Filename.concat base_dir (m ^ ".v") in
-  let globs_module = base_module ^ "_globs" in
-  let fn_list = List.rev funcs in
+  let make_path m ext = Filename.concat base_dir (m ^ ext) in
+  let globs_module = globs_module_name base_module in
+  let funnames_module = funnames_module_name base_module in
+  let funcs = List.rev funcs in
+  let funnames = List.map (fun f -> f.f_name) funcs in
   let fn_modules =
-    List.map (fun fd -> (fd, base_module ^ "_" ^ rocq_sanitize_fn fd.f_name)) fn_list
+    List.map (fun fd -> (fd, function_module_name base_module fd.f_name)) funcs
   in
+  let fn_module_names = List.map snd fn_modules in
   let pp_header fmt =
     pp_imports fmt;
     pp_newline fmt ();
     pp_arch_imports fmt arch;
     pp_newline fmt ()
   in
-  with_out_file (make_path globs_module) (fun fmt ->
-    pp_header fmt;
-    pp_section_ido fmt;
-    pp_newline fmt ();
-    pp_separator fmt "Globals";
-    pp_globs_definition fmt name gd;
-    pp_newline fmt ();
-    pp_end_ido fmt ()
-  );
+  with_out_file (make_path globs_module ".v") (fun fmt ->
+      pp_header fmt;
+      pp_section_ido fmt;
+      pp_newline fmt ();
+      pp_separator fmt "Globals";
+      pp_globs_definition fmt name gd;
+      pp_newline fmt ();
+      pp_end_ido fmt ());
+  with_out_file (make_path funnames_module ".v") (fun fmt ->
+      pp_header fmt;
+      pp_section_ido fmt;
+      pp_newline fmt ();
+      pp_separator fmt "Function names";
+      pp_fn_definitions fmt funnames;
+      pp_newline fmt ();
+      pp_end_ido fmt ());
   List.iter
     (fun (fd, fn_module) ->
-      with_out_file (make_path fn_module) (fun fmt ->
-        pp_header fmt;
-        pp_require_import fmt globs_module;
-        pp_newline fmt ();
-        pp_section_ido fmt;
-        pp_newline fmt ();
-        pp_fd_block pp_asm_op fmt fd;
-        pp_newline fmt ();
-        pp_end_ido fmt ()
-      ))
+      with_out_file (make_path fn_module ".v") (fun fmt ->
+          pp_header fmt;
+          pp_require_import fmt globs_module;
+          pp_require_import fmt funnames_module;
+          pp_newline fmt ();
+          pp_section_ido fmt;
+          pp_newline fmt ();
+          pp_fd_block pp_asm_op fmt fd;
+          pp_newline fmt ();
+          pp_end_ido fmt ()))
     fn_modules;
   with_out_file base_path (fun fmt ->
-    pp_header fmt;
-    pp_require_import fmt globs_module;
-    List.iter (fun (_, fn_module) -> pp_require_import fmt fn_module) fn_modules;
-    pp_newline fmt ();
-    pp_oracles fmt;
-    pp_newline fmt ();
-    pp_separator fmt "Program";
-    pp_prog_definition fmt name funcs
-  )
+      pp_header fmt;
+      pp_require_import fmt globs_module;
+      pp_require_import fmt funnames_module;
+      F.pp_print_list ~pp_sep:pp_print_nothing pp_require_import fmt
+        fn_module_names;
+      pp_newline fmt ();
+      pp_oracles fmt;
+      pp_newline fmt ();
+      pp_separator fmt "Program";
+      pp_prog_definition fmt name funcs);
+  with_out_file
+    (make_path coqproject_name "")
+    (pp_coq_project base_module fn_module_names);
+  with_out_file (make_path makefile_name "") pp_makefile

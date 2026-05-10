@@ -24,8 +24,7 @@
 -R lang Jasmin
 -R ssrmisc Jasmin
 -R itrees Jasmin
-
-compiler/jasmin_printing.v
+-R printing Printing
 
 ssrmisc/oseq.v
 ssrmisc/seq_extra.v
@@ -209,3 +208,6 @@ lang/waes.v
 lang/warray_.v
 lang/word.v
 lang/wsize.v
+printing/atoi.v
+printing/syntax.v
+printing/data.v

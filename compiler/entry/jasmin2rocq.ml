@@ -49,7 +49,7 @@ let slice_prog (gd, funcs) names =
 
 let parse_and_extract arch call_conv idirs =
   let module A = (val CoreArchFactory.get_arch_module arch call_conv) in
-  let extract output pass slice imports ids split file warn =
+  let extract output pass slice ids split file warn =
     if not warn then nowarning ();
     let prog = parse_and_compile (module A) ~wi2i:false pass file idirs in
     let prog = match slice with [] -> prog | names -> slice_prog prog names in
@@ -69,16 +69,16 @@ let parse_and_extract arch call_conv idirs =
             let fmt = Format.formatter_of_out_channel out in
             (fmt, fun () -> close_out out)
       in
-      (try
-         ToRocq.extract ~imports ~ids arch A.pp_extended_op_for_rocq prog "p" fmt;
-         Format.pp_print_flush fmt ();
-         close ()
-       with e ->
-         BatPervasives.ignore_exceptions (fun () -> close ()) ();
-         raise e)
+      try
+        ToRocq.extract ~ids arch A.pp_extended_op_for_rocq prog "p" fmt;
+        Format.pp_print_flush fmt ();
+        close ()
+      with e ->
+        BatPervasives.ignore_exceptions (fun () -> close ()) ();
+        raise e
   in
-  fun output pass slice imports ids split file warn ->
-    match extract output pass slice imports ids split file warn with
+  fun output pass slice ids split file warn ->
+    match extract output pass slice ids split file warn with
     | () -> ()
     | exception HiError e ->
         Format.eprintf "%a@." pp_hierror e;
@@ -107,23 +107,27 @@ let after_pass =
   let passes = Arg.enum alts in
   Arg.(value & opt passes ParamsExpansion & info [ "compile"; "after" ] ~doc)
 
-let imports =
-  let doc = "Do not print Rocq imports and axioms at the top of the output." in
-  Arg.(value & vflag true [ (false, info [ "no-imports" ] ~doc) ])
-
 let ids =
   let doc =
     "Print variable and function names without appending their internal unique \
-     identifier."
+     identifier. This may cause name clashes with other definitions (for \
+     example, if two local variables from different functions share the same \
+     name)."
   in
   Arg.(value & vflag true [ (false, info [ "no-ids" ] ~doc) ])
 
 let split =
   let doc =
-    "Write globals, each function, and the program to separate files. Requires \
-     -o. The program file is $(i,OUTPUT FILE), globals go to \
-     $(i,OUTPUT FILE)_globs.v, and each function goes to \
-     $(i,OUTPUT FILE)_<funname>.v."
+    "Write globals, function names, each function, and the program to separate \
+     files. Requires -o $(i,OUTPUT FILE). All files are created in the \
+     directory of $(i,OUTPUT FILE). If $(i,BASE) is the basename of $(i,OUTPUT \
+     FILE) (without extension), the printer generates: (1) $(i,OUTPUT FILE) \
+     for the program, (2) $(i,BASE)_globs.v for globals, (3) \
+     $(i,BASE)_funnames.v for function names, (4) $(i,BASE)_<funname>.v for \
+     each function <funname>, and (5) $(i,_CoqProject), and (6) $(i,Makefile). \
+     The _CoqProject file assumes that it is in a directory at the top level \
+     of the Jasmin repository. To use other locations, replace the first\n\
+    \      argument to each -R command."
   in
   Arg.(value & flag & info [ "split" ] ~doc)
 
@@ -143,6 +147,17 @@ let () =
   let doc = "Extract Jasmin program to Rocq representation" in
   let man =
     [
+      `S "NAMING";
+      `P
+        "All generated names are sanitized (every non-letter and non-number \
+         symbol is replaced with an underscore), which may cause clashes.";
+      `P
+        "The printer derives additional names from base names as follows: (1) \
+         a variable $(i,v) produces two definitions: $(i,v) and $(i,v_data); \
+         (2) a function $(i,f) produces seven definitions: $(i,f), \
+         $(i,tyin_f), $(i,args_f), $(i,tyout_f), $(i,res_f), $(i,body_f), and \
+         $(i,fd_f); (3) the program name $(i,p) produces two definitions: \
+         $(i,p_gds) and $(i,p).";
       `S Manpage.s_environment;
       Manpage.s_environment_intro;
       `I ("OCAMLRUNPARAM", "This is an OCaml program");
@@ -155,5 +170,5 @@ let () =
   Cmd.v info
     Term.(
       const parse_and_extract $ arch $ call_conv $ idirs $ output $ after_pass
-      $ slice $ imports $ ids $ split $ file $ warn)
+      $ slice $ ids $ split $ file $ warn)
   |> Cmd.eval |> exit

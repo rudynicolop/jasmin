@@ -5,11 +5,10 @@ let rec find_named_dirs base target =
   else
     Sys.readdir base |> Array.to_list
     |> List.concat_map (fun entry ->
-           let path = Filename.concat base entry in
-           if Sys.is_directory path then
-             if entry = target then [ path ]
-             else find_named_dirs path target
-           else [])
+        let path = Filename.concat base entry in
+        if Sys.is_directory path then
+          if entry = target then [ path ] else find_named_dirs path target
+        else [])
 
 let path_parts p =
   String.split_on_char '/' p
@@ -17,9 +16,10 @@ let path_parts p =
 
 let make_out_name arch_dir dir name =
   let key =
-    String.concat "_" (arch_dir :: path_parts dir @ [ Filename.remove_extension name ])
+    String.concat "_"
+      ((arch_dir :: path_parts dir) @ [ Filename.remove_extension name ])
   in
-  (ToRocq.rocq_sanitize_s key) ^ ".v"
+  ToRocq.rocq_sanitize_s key ^ ".v"
 
 let find_proofs_dir () =
   let rec walk dir =
@@ -45,13 +45,12 @@ let proofs_dir =
   | None -> find_proofs_dir ()
 
 let rocq_check vfile =
-  let r dir =
-    [ "-R"; Filename.quote (Filename.concat proofs_dir dir); "Jasmin" ]
-  in
+  let r dir m = [ "-R"; Filename.quote (Filename.concat proofs_dir dir); m ] in
   let log = Filename.temp_file "rocq" ".log" in
   let args =
-    ("rocq" :: "c" :: r "lang")
-    @ r "compiler" @ r "arch" @ r "3rdparty" @ r "ssrmisc"
+    [ "rocq"; "c" ] @ r "lang" "Jasmin" @ r "compiler" "Jasmin"
+    @ r "arch" "Jasmin" @ r "3rdparty" "Jasmin" @ r "ssrmisc" "Jasmin"
+    @ r "printing" "Printing"
     @ [ "-q"; "-w"; "-all"; Filename.quote vfile ]
   in
   let cmd = String.concat " " args ^ " > " ^ Filename.quote log ^ " 2>&1" in
@@ -111,7 +110,9 @@ let find_dirs arch_dir =
 module type ArchDriver = sig
   val arch : Utils.architecture
   val dir_name : string
+
   module A : Arch_full.Arch
+
   val load_file : string -> (unit, A.extended_op) Prog.prog
 end
 
@@ -122,9 +123,7 @@ module RunArch (D : ArchDriver) = struct
     let out_name = make_out_name D.dir_name dir name in
     let oc = open_out out_name in
     let fmt = Format.formatter_of_out_channel oc in
-    match
-      ToRocq.extract ~imports:true D.arch D.A.pp_extended_op_for_rocq p "p" fmt
-    with
+    match ToRocq.extract D.arch D.A.pp_extended_op_for_rocq p "p" fmt with
     | () ->
         Format.pp_print_flush fmt ();
         close_out oc;
@@ -146,12 +145,14 @@ module RunArch (D : ArchDriver) = struct
     let cases =
       dirs
       |> List.concat_map (fun dir ->
-             Sys.readdir dir |> Array.to_list
-             |> List.filter_map (fun name ->
-                    let full = Filename.concat dir name in
-                    if (not (Sys.is_directory full)) && Filename.check_suffix name ".jazz"
-                    then Some (dir, name)
-                    else None))
+          Sys.readdir dir |> Array.to_list
+          |> List.filter_map (fun name ->
+              let full = Filename.concat dir name in
+              if
+                (not (Sys.is_directory full))
+                && Filename.check_suffix name ".jazz"
+              then Some (dir, name)
+              else None))
       |> List.sort compare
     in
     let jobs = List.filter_map generate cases in
@@ -171,13 +172,16 @@ module RunArch (D : ArchDriver) = struct
         jobs
     in
     let results =
-      List.map (fun (t, full_path, result) -> Thread.join t; (full_path, !result)) threads
+      List.map
+        (fun (t, full_path, result) ->
+          Thread.join t;
+          (full_path, !result))
+        threads
       |> List.sort (fun (a, _) (b, _) -> String.compare a b)
     in
     List.fold_left
       (fun n (full_path, (rc, errors)) ->
-        if rc = 0 then
-          Format.printf "File %s: OK@." full_path
+        if rc = 0 then Format.printf "File %s: OK@." full_path
         else begin
           Format.eprintf "File %s: rocq failed@." full_path;
           List.iter prerr_endline errors
@@ -197,7 +201,9 @@ module CX86 =
 module DX86 : ArchDriver = struct
   let arch = Utils.X86_64
   let dir_name = "x86-64"
+
   module A = CX86.Arch
+
   let load_file = CX86.load_file
 end
 
@@ -206,7 +212,9 @@ module CARM = Common.Make (CoreArchFactory.Core_arch_ARM)
 module DARM : ArchDriver = struct
   let arch = Utils.ARM_M4
   let dir_name = "arm-m4"
+
   module A = CARM.Arch
+
   let load_file = CARM.load_file
 end
 
@@ -215,13 +223,15 @@ module CRV = Common.Make (CoreArchFactory.Core_arch_RISCV)
 module DRV : ArchDriver = struct
   let arch = Utils.RISCV
   let dir_name = "risc-v"
+
   module A = CRV.Arch
+
   let load_file = CRV.load_file
 end
 
 module RX86 = RunArch (DX86)
 module RARM = RunArch (DARM)
-module RRV  = RunArch (DRV)
+module RRV = RunArch (DRV)
 
 let () =
   let errors = RX86.run () + RARM.run () + RRV.run () in
