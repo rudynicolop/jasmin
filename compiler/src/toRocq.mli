@@ -1,5 +1,4 @@
 val rocq_sanitize_s : string -> string
-
 val append_ids : bool ref
 
 val pp_rocq_option :
@@ -28,7 +27,6 @@ val pp_s_ws :
   Format.formatter -> string -> Wsize.signedness * Wsize.wsize -> unit
 
 val extract :
-  ?imports:bool ->
   ?ids:bool ->
   Utils.architecture ->
   (Format.formatter ->
