@@ -66,18 +66,19 @@ let rocq_keywords =
   ]
   @ [ (* Prelude *) "by"; "exists"; "exists2"; "using" ]
   @ [ (* ssreflect *) "of"; "is" ]
+  @ [ (* stdlib *) "tt" ]
   |> Ss.of_list
 
 let is_rocq_reserved s =
   Ss.mem s rocq_keywords || (s.[0] = '_' && s.[String.length s - 1] = '_')
 
-(* Produce a valid Rocq identifier from [s]. *)
+(* Produce a valid Rocq identifier. *)
 let rocq_sanitize_s s =
   if s = "" then error_empty_name ()
   else
     let s = String.map rocq_sanitize_c s in
     let s = if is_ident_start_c s.[0] then s else "_" ^ s in
-    if is_rocq_reserved s then "s_" ^ s else s
+    if is_rocq_reserved s then "j_" ^ s else s
 
 let smart_sanitize id name =
   let tbl = Hid.create 101 in

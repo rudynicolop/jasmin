@@ -28,7 +28,8 @@ let parse_and_extract arch call_conv idirs =
           Format.eprintf "--split requires -o to specify an output file@.";
           exit 1
       | Some f ->
-          ToRocq.extract_split arch A.pp_extended_op_for_rocq prog program_name f
+          ToRocq.extract_split arch A.pp_extended_op_for_rocq prog program_name
+            f
     else
       let fmt, close =
         match output with
@@ -55,8 +56,8 @@ let parse_and_extract arch call_conv idirs =
 
 let output =
   let doc =
-    "Output file. If not given, output is printed on stdout. If given, the path \
-     is checked before extraction and must be creatable/writable."
+    "Output file. If not given, output is printed on stdout. If given, the \
+     path is checked before extraction and must be creatable/writable."
   in
   Arg.(
     value
@@ -88,11 +89,11 @@ let split =
      for the program, (2) $(i,BASE)_globs.v for globals, (3) \
      $(i,BASE)_funnames.v for function names, (4) $(i,BASE)_<funname>.v for \
      each function <funname>, and (5) $(i,_CoqProject), and (6) $(i,Makefile). \
-      The _CoqProject file assumes that it is in a directory at the top level \
-      of the Jasmin repository. To use other locations, replace the first\n\
-     \      argument to each -R command. Existing files with these names are \
-     overwritten. If generation fails mid-run, some files may already have been \
-     created/overwritten."
+     The _CoqProject file assumes that it is in a directory at the top level \
+     of the Jasmin repository. To use other locations, replace the first\n\
+    \      argument to each -R command. Existing files with these names are \
+     overwritten. If generation fails mid-run, some files may already have \
+     been created/overwritten."
   in
   Arg.(value & flag & info [ "split" ] ~doc)
 
@@ -100,7 +101,8 @@ let slice =
   let doc =
     "Only extract the given function (and its dependencies). This argument may \
      be repeated to extract many functions. If not given, all functions will \
-     be extracted. Unknown function names are reported as warnings and ignored."
+     be extracted. Unknown function names are reported as warnings and \
+     ignored."
   in
   Arg.(value & opt_all string [] & info [ "slice"; "only"; "on" ] ~doc)
 
@@ -112,8 +114,8 @@ let program_name =
   let doc =
     "Name of the generated Rocq program definition (second positional \
      argument). The emitted Rocq identifier is sanitized and may differ from \
-     the provided string. Name generation is best-effort and does not guarantee \
-     avoiding all Rocq parser/plugin keyword conflicts."
+     the provided string. Name generation is best-effort and does not \
+     guarantee avoiding all Rocq parser/plugin keyword conflicts."
   in
   Arg.(required & pos 1 (some string) None & info [] ~docv:"PROGRAM" ~doc)
 
@@ -126,8 +128,8 @@ let () =
         "All generated names are sanitized (every non-letter and non-number \
          symbol is replaced with an underscore), which may cause clashes.";
       `P
-        "Name generation is best-effort. Reserved keyword handling is based on a \
-         built-in list and may be incomplete when additional Rocq \
+        "Name generation is best-effort. Reserved keyword handling is based on \
+         a built-in list and may be incomplete when additional Rocq \
          notations/plugins are loaded.";
       `P
         "The printer derives additional names from base names as follows: (1) \
