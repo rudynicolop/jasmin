@@ -13,14 +13,21 @@ Require Import expr.
       - size suffix: 8u / 16u / 32u / 64u / 128u / 256u = word size + unsigned
       - signed suffix: 8s / 16s / 32s / 64s
       - integer (mathematical int) suffix: i
-      - i2w[N] = int → word of size N
-      - u2i[N] = word N → unsigned int
-      - s2i[N] = word N → signed int
+      - ld[w](e)   = aligned load of word size w from address e (address must be
+                   an atom or parenthesised expression)
+      - get[w](v, e) = aligned array read of word size w at index e
+      - sub[w](v, len, e) = aligned array sub-slice of word size w
+      - i2w[N]   = int → word of size N
+      - u2i[N]   = word N → unsigned int
+      - s2i[N]   = word N → signed int
       - zext[M, N] = zero-extend from M to N
       - sext[M, N] = sign-extend from M to N
 
     Precedence (lower level = tighter binding):
-       2  : unary !, !Nu, -Nu, i2w[N], u2i[N], s2i[N],
+       0  : ld[w](e) (load)
+       0  : get[w](v, e) (array read)
+       0  : sub[w](v, len, e) (array sub-slice)
+       2  : unary ![b], !Nu, -Nu, i2w[N], u2i[N], s2i[N],
             zext[M,N], sext[M,N], -i
        4  : *Nu, *i, /Nu, /Ns, %Nu, %Ns
        5  : <<Nu, >>Nu, >>sNu, <<rNu, >>rNu, <<i, >>si
@@ -65,74 +72,23 @@ Notation "x" := (Pvar x)
 (* -------------------------------------------------------------------------- *)
 (* Memory loads (aligned) *)
 
-Notation "load8( e )" := (Pload Aligned U8 e)
-  (in custom expr, e custom expr at level 99,
-   format "load8( e )").
-Notation "load16( e )" := (Pload Aligned U16 e)
-  (in custom expr, e custom expr at level 99,
-   format "load16( e )").
-Notation "load32( e )" := (Pload Aligned U32 e)
-  (in custom expr, e custom expr at level 99,
-   format "load32( e )").
-Notation "load64( e )" := (Pload Aligned U64 e)
-  (in custom expr, e custom expr at level 99,
-   format "load64( e )").
-Notation "load128( e )" := (Pload Aligned U128 e)
-  (in custom expr, e custom expr at level 99,
-   format "load128( e )").
-Notation "load256( e )" := (Pload Aligned U256 e)
-  (in custom expr, e custom expr at level 99,
-   format "load256( e )").
+Notation "ld[ w ]( e )" := (Pload Aligned w e)
+  (in custom expr, w constr at level 0, e custom expr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Array subscript — scale-indexed, aligned: get8u(v, i) etc. *)
+(* Array subscript — scale-indexed, aligned: get[w](v, i) *)
 
-Notation "get8u( v , i )" := (Pget Aligned AAscale U8 v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, format "get8u( v ,  i )").
-Notation "get16u( v , i )" := (Pget Aligned AAscale U16 v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, format "get16u( v ,  i )").
-Notation "get32u( v , i )" := (Pget Aligned AAscale U32 v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, format "get32u( v ,  i )").
-Notation "get64u( v , i )" := (Pget Aligned AAscale U64 v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, format "get64u( v ,  i )").
-Notation "get128u( v , i )" := (Pget Aligned AAscale U128 v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, format "get128u( v ,  i )").
-Notation "get256u( v , i )" := (Pget Aligned AAscale U256 v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, format "get256u( v ,  i )").
+Notation "get[ w ]( v , i )" := (Pget Aligned AAscale w v i)
+  (in custom expr,
+   v constr at level 0, w constr at level 0, i custom expr at level 99).
 
 (* -------------------------------------------------------------------------- *)
-(* Array sub-slice — scale-indexed: subarr8u(v, len, i) etc. *)
+(* Array sub-slice — scale-indexed, aligned: sub[w](v, len, i) *)
 
-Notation "subarr8u( v , len , i )" := (Psub AAscale U8 len v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, len constr at level 0,
-   format "subarr8u( v ,  len ,  i )").
-Notation "subarr16u( v , len , i )" := (Psub AAscale U16 len v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, len constr at level 0,
-   format "subarr16u( v ,  len ,  i )").
-Notation "subarr32u( v , len , i )" := (Psub AAscale U32 len v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, len constr at level 0,
-   format "subarr32u( v ,  len ,  i )").
-Notation "subarr64u( v , len , i )" := (Psub AAscale U64 len v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, len constr at level 0,
-   format "subarr64u( v ,  len ,  i )").
-Notation "subarr128u( v , len , i )" := (Psub AAscale U128 len v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, len constr at level 0,
-   format "subarr128u( v ,  len ,  i )").
-Notation "subarr256u( v , len , i )" := (Psub AAscale U256 len v i)
-  (in custom expr, i custom expr at level 99,
-   v constr at level 0, len constr at level 0,
-   format "subarr256u( v ,  len ,  i )").
+Notation "sub[ w ]( v , len , i )" := (Psub AAscale w len v i)
+  (in custom expr,
+   v constr at level 0, w constr at level 0, len constr at level 0,
+   i custom expr at level 99).
 
 (* -------------------------------------------------------------------------- *)
 (* Unary operators *)
@@ -156,7 +112,7 @@ Notation "-128u e" := (eneg (Op_w U128) e)
 Notation "-256u e" := (eneg (Op_w U256) e)
   (in custom expr at level 2, right associativity).
 
-Notation "! e" := (enot e)
+Notation "![b] e" := (enot e)
   (in custom expr at level 2, right associativity).
 Notation "!8u e" := (elnot U8 e)
   (in custom expr at level 2, right associativity).
@@ -594,14 +550,14 @@ Section ExprTests.
 
 Context (x y z b : gvar).
 
-Goal expr:( load64(x) ) = Pload Aligned U64 (Pvar x). done. Qed.
+Goal expr:( ld[U64](x) ) = Pload Aligned U64 (Pvar x). done. Qed.
 
-Goal expr:( get64u(x, #0) ) =
+Goal expr:( get[U64](x, #0) ) =
   Pget Aligned AAscale U64 x (Pconst 0). done. Qed.
 
 Goal expr:( -i #5 ) = Papp1 (Oneg Op_int) (Pconst 5). done. Qed.
 Goal expr:( -64u x ) = Papp1 (Oneg (Op_w U64)) (Pvar x). done. Qed.
-Goal expr:( ! b ) = Papp1 Onot (Pvar b). done. Qed.
+Goal expr:( ![b] b ) = Papp1 Onot (Pvar b). done. Qed.
 Goal expr:( !64u x ) = Papp1 (Olnot U64) (Pvar x). done. Qed.
 Goal expr:( i2w[U8] #42 ) =
   Papp1 (Oword_of_int U8) (Pconst 42). done. Qed.
@@ -715,7 +671,7 @@ Goal expr:( x *128u y ) =
 Goal expr:( x *256u y ) =
   Papp2 (Omul (Op_w U256)) (Pvar x) (Pvar y). done. Qed.
 
-Goal expr:( subarr64u(x, 4, #0) ) =
+Goal expr:( sub[U64](x, 4, #0) ) =
   Psub AAscale U64 4 x (Pconst 0). done. Qed.
 
 Goal expr:( x >i y ) =
@@ -730,5 +686,26 @@ Goal expr:( x >=64u y ) =
   Papp2 (Oge (Cmp_w Unsigned U64)) (Pvar x) (Pvar y). done. Qed.
 Goal expr:( x >=64s y ) =
   Papp2 (Oge (Cmp_w Signed U64)) (Pvar x) (Pvar y). done. Qed.
+
+Goal expr:( ld[U8](x) ) = Pload Aligned U8 (Pvar x). done. Qed.
+Goal expr:( ld[U16](x)) = Pload Aligned U16 (Pvar x). done. Qed.
+Goal expr:( ld[U32](x) ) = Pload Aligned U32 (Pvar x). done. Qed.
+Goal expr:( ld[U128](x) ) = Pload Aligned U128 (Pvar x). done. Qed.
+Goal expr:( ld[U256](x) ) = Pload Aligned U256 (Pvar x). done. Qed.
+Goal expr:( ld[U64](x +64u y) ) =
+  Pload Aligned U64
+    (Papp2 (Oadd (Op_w U64)) (Pvar x) (Pvar y)).
+done. Qed.
+
+Goal expr:( get[U8](x, #0) ) =
+  Pget Aligned AAscale U8 x (Pconst 0). done. Qed.
+Goal expr:( get[U32](x, #0) ) =
+  Pget Aligned AAscale U32 x (Pconst 0). done. Qed.
+Goal expr:( get[U64](x, y) ) =
+  Pget Aligned AAscale U64 x (Pvar y). done. Qed.
+Goal expr:( get[U64](x, y +64u #1) ) =
+  Pget Aligned AAscale U64 x
+    (Papp2 (Oadd (Op_w U64)) (Pvar y) (Pconst 1)).
+done. Qed.
 
 End ExprTests.
