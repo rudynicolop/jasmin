@@ -31,6 +31,9 @@ let is_ident_start_c c =
 
 let rocq_sanitize_c c = if is_ident_c c then c else '_'
 
+(* The following are reserved keywords in Rocq that we cannot use. Additionally,
+   we also include identifiers that we may use but are already defined and we
+   need them for printing (e.g., we use [tt] as [fun_extra]. *)
 let rocq_keywords =
   [
     "_";
@@ -80,6 +83,73 @@ let rocq_sanitize_s s =
     let s = if is_ident_start_c s.[0] then s else "_" ^ s in
     if is_rocq_reserved s then "j_" ^ s else s
 
+(* -------------------------------------------------------------------------- *)
+(* Printing helpers *)
+
+let pp_print_nothing _fmt () = ()
+let pp_newline fmt = F.fprintf fmt "@ "
+
+(* -------------------------------------------------------------------------- *)
+(* Rocq helpers *)
+
+let pp_comment_gen fmt pp x = F.fprintf fmt "(* %a *)@ " pp x
+let pp_comment fmt = pp_comment_gen fmt F.pp_print_string
+
+let pp_separator_gen fmt pp x =
+  pp_comment fmt
+    "--------------------------------------------------------------------------";
+  pp_comment_gen fmt pp x;
+  pp_newline fmt
+
+let pp_separator fmt s = pp_separator_gen fmt F.pp_print_string s
+
+let pp_rocq_definition_gen fmt pp_lhs lhs pp_type ty pp_rhs rhs =
+  F.fprintf fmt "@[<hv 2>Definition %a : %a :=@ %a@].@ " pp_lhs lhs pp_type ty
+    pp_rhs rhs
+
+let pp_rocq_definition fmt pp_lhs lhs ty pp_rhs rhs =
+  pp_rocq_definition_gen fmt pp_lhs lhs F.pp_print_string ty pp_rhs rhs
+
+let pp_rocq_require_import fmt = F.fprintf fmt "Require Import %s.@ "
+let pp_rocq_from_require_import fmt m =
+  F.fprintf fmt "From %s %a" m pp_rocq_require_import
+let pp_rocq_existing_instance fmt = F.fprintf fmt "Existing Instance %s.@ "
+let pp_rocq_section fmt = F.fprintf fmt "Section %s.@ "
+let pp_rocq_end fmt = F.fprintf fmt "End %s.@ "
+let pp_rocq_context fmt = F.fprintf fmt "Context %s.@ "
+let pp_rocq_axiom fmt = F.fprintf fmt "Axiom %s : %s.@ "
+
+let pp_rocq_record pp fmt x = F.fprintf fmt "@[<v 0>{|@[<v 0>@ %a@]@ |}@]" pp x
+let pp_rocq_bool fmt = F.fprintf fmt "%B"
+let pp_rocq_z fmt z = F.fprintf fmt "(%a)%%Z" Z.pp_print z
+
+let pp_rocq_positive fmt p =
+  F.fprintf fmt "%a%%positive" Z.pp_print (Conv.z_of_pos p)
+
+(* We are relying on the string scope being inferred, otherwise we need
+   `%string`. *)
+let pp_rocq_string fmt = F.fprintf fmt "%S"
+
+let pp_rocq_seq pp fmt xs =
+  if xs = [] then F.fprintf fmt "[::]"
+  else
+    let pp_sep fmt () =
+      F.pp_print_break fmt 0 2;
+      F.fprintf fmt "; "
+    in
+    F.fprintf fmt "@[<hv>[:: %a ]@]" (F.pp_print_list ~pp_sep pp) xs
+
+let pp_rocq_option pp =
+  let none fmt () = F.fprintf fmt "None" in
+  let some fmt a = F.fprintf fmt "Some %a" pp a in
+  F.pp_print_option ~none some
+
+(* -------------------------------------------------------------------------- *)
+(* Variables, function names, and identifiers. *)
+
+(* Shared sanitized names for variables and function names. We ensure that these
+   don't clash. They may clash with other identifiers (name of the program, or
+   names derived from it). *)
 let smart_sanitize id name =
   let tbl = Hid.create 101 in
   let seen = Hs.create 101 in
@@ -114,58 +184,6 @@ let pp_v_var_var fmt v = F.fprintf fmt "%a.(gv).(v_var)" pp_var v
 
 (* Function names. *)
 let pp_fn fmt fn = F.fprintf fmt "%s" (rocq_sanitize_fn fn)
-
-(* -------------------------------------------------------------------------- *)
-(* Printing helpers *)
-
-let pp_print_nothing _fmt () = ()
-let pp_newline fmt () = F.fprintf fmt "@ "
-
-(* -------------------------------------------------------------------------- *)
-(* Rocq helpers *)
-
-let pp_comment_gen fmt pp x = F.fprintf fmt "(* %a *)@ " pp x
-let pp_comment fmt = pp_comment_gen fmt F.pp_print_string
-
-let pp_separator_gen fmt pp x =
-  pp_comment fmt
-    "--------------------------------------------------------------------------";
-  pp_comment_gen fmt pp x;
-  pp_newline fmt ()
-
-let pp_separator fmt s = pp_separator_gen fmt F.pp_print_string s
-
-let pp_rocq_definition_gen fmt pp_lhs lhs pp_type ty pp_rhs rhs =
-  F.fprintf fmt "@[<hv 2>Definition %a : %a :=@ %a@].@ " pp_lhs lhs pp_type ty
-    pp_rhs rhs
-
-let pp_rocq_definition fmt pp_lhs lhs ty pp_rhs rhs =
-  pp_rocq_definition_gen fmt pp_lhs lhs F.pp_print_string ty pp_rhs rhs
-
-let pp_rocq_record pp fmt x = F.fprintf fmt "@[<v 0>{|@[<v 0>@ %a@]@ |}@]" pp x
-let pp_rocq_bool fmt = F.fprintf fmt "%B"
-let pp_rocq_z fmt z = F.fprintf fmt "(%a)%%Z" Z.pp_print z
-
-let pp_rocq_positive fmt p =
-  F.fprintf fmt "%a%%positive" Z.pp_print (Conv.z_of_pos p)
-
-(* We are relying on the string scope being inferred, otherwise we need
-   `%string`. *)
-let pp_rocq_string fmt = F.fprintf fmt "%S"
-
-let pp_rocq_seq pp fmt xs =
-  if xs = [] then F.fprintf fmt "[::]"
-  else
-    let pp_sep fmt () =
-      F.pp_print_break fmt 0 2;
-      F.fprintf fmt "; "
-    in
-    F.fprintf fmt "@[<hv>[:: %a ]@]" (F.pp_print_list ~pp_sep pp) xs
-
-let pp_rocq_option pp =
-  let none fmt () = F.fprintf fmt "None" in
-  let some fmt a = F.fprintf fmt "Some %a" pp a in
-  F.pp_print_option ~none some
 
 (* -------------------------------------------------------------------------- *)
 (* Basics *)
@@ -560,20 +578,20 @@ let pp_fd_block pp_asm_op fmt fd =
   pp_separator_gen fmt pp_fn fd.f_name;
   pp_comment fmt "Local variables";
   pp_vars_definition fmt vars;
-  if vars <> [] then pp_newline fmt ();
+  if vars <> [] then pp_newline fmt;
   pp_comment fmt "Signature";
   pp_f_tyin_definition fmt fd.f_name fd.f_tyin;
   pp_f_args_definition fmt fd.f_name fd.f_args;
   pp_f_tyout_definition fmt fd.f_name fd.f_tyout;
   pp_f_res_definition fmt fd.f_name fd.f_ret;
-  pp_newline fmt ();
+  pp_newline fmt;
   pp_comment fmt "Body";
   pp_f_body_definition pp_asm_op fmt fd.f_name fd.f_body;
-  pp_newline fmt ();
+  pp_newline fmt;
   pp_fd_defintion fmt fd
 
 let pp_fds pp_asm_op =
-  F.pp_print_list ~pp_sep:pp_newline (pp_fd_block pp_asm_op)
+  F.pp_print_list ~pp_sep:(fun fmt () -> pp_newline fmt) (pp_fd_block pp_asm_op)
 
 (* -------------------------------------------------------------------- *)
 (* Globals *)
@@ -604,9 +622,9 @@ let pp_globs fmt name = Format.fprintf fmt "%s_gds" (rocq_sanitize_s name)
 
 let pp_globs_definition fmt name globs =
   pp_vars_definition fmt (List.map fst globs);
-  if globs <> [] then pp_newline fmt ();
+  if globs <> [] then pp_newline fmt;
   pp_glob_data_block fmt globs;
-  if globs <> [] then pp_newline fmt ();
+  if globs <> [] then pp_newline fmt;
   pp_rocq_definition fmt pp_globs name "glob_decls" (pp_rocq_seq pp_glob) globs
 
 (* -------------------------------------------------------------------------- *)
@@ -630,18 +648,15 @@ let pp_prog_definition fmt name funcs =
 (* Imports *)
 
 let pp_imports fmt =
-  F.fprintf fmt "From Coq Require Import ZArith.@ ";
-  F.fprintf fmt
-    "From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.@ ";
-  pp_newline fmt ();
-  F.fprintf fmt
-    "Require Import expr ident var type global pseudo_operator sopn \
-     arch_extra.@ ";
-  F.fprintf fmt "From Printing Require Import atoi syntax data.@ "
+  pp_rocq_from_require_import fmt "Coq" "ZArith";
+  pp_rocq_from_require_import fmt "mathcomp" "ssreflect ssrbool ssrfun ssrnat eqtype seq";
+  pp_newline fmt;
+  pp_rocq_require_import fmt "expr ident var type global pseudo_operator sopn arch_extra";
+  pp_rocq_from_require_import fmt "Printing" "atoi syntax data"
 
 let pp_oracles fmt =
-  F.fprintf fmt "Axiom IdO : IdentOracles.@ ";
-  F.fprintf fmt "Existing Instance IdO.@ "
+  pp_rocq_axiom fmt "IdO" "IdentOracles";
+  pp_rocq_existing_instance fmt "IdO"
 
 let suff_of_arch = function
   | X86_64 -> "x86"
@@ -650,18 +665,17 @@ let suff_of_arch = function
 
 let pp_arch_imports fmt a =
   let s = suff_of_arch a in
-  F.fprintf fmt "Require Import %s_decl %s_instr_decl %s_extra.@ " s s s;
-  F.fprintf fmt "Existing Instance %s_atoI.@ " s
+  pp_rocq_require_import fmt (s ^ "_decl " ^ s ^ "_instr_decl " ^ s ^ "_extra");
+  pp_rocq_existing_instance fmt (s ^ "_atoI")
 
 (* -------------------------------------------------------------------------- *)
 (* Entry point *)
 
 let pp_section_ido fmt =
-  F.fprintf fmt "Section IDO.@ ";
-  F.fprintf fmt "Context {IdO : IdentOracles}.@ "
+  pp_rocq_section fmt "IDO";
+  pp_rocq_context fmt "{IdO : IdentOracles}"
 
-let pp_end_ido fmt () = F.fprintf fmt "End IDO.@ "
-let pp_require_import fmt modname = F.fprintf fmt "Require Import %s.@ " modname
+let pp_end_ido fmt () = pp_rocq_end fmt "IDO"
 
 let with_out_file path f =
   let oc = open_out path in
@@ -677,28 +691,28 @@ let with_out_file path f =
 
 let pp_header fmt arch =
   pp_imports fmt;
-  pp_newline fmt ();
+  pp_newline fmt;
   pp_arch_imports fmt arch;
-  pp_newline fmt ()
+  pp_newline fmt
 
 let pp_oracles_block fmt =
   pp_oracles fmt;
-  pp_newline fmt ()
+  pp_newline fmt
 
 let pp_globals_block fmt name gd =
   pp_separator fmt "Globals";
   pp_globs_definition fmt name gd;
-  pp_newline fmt ()
+  pp_newline fmt
 
 let pp_funnames_block fmt names =
   pp_separator fmt "Function names";
   pp_fn_definitions fmt names;
-  pp_newline fmt ()
+  pp_newline fmt
 
 let pp_fundecls_block pp_asm_op fmt funcs =
   pp_separator fmt "Functions";
   pp_fds pp_asm_op fmt funcs;
-  pp_newline fmt ()
+  pp_newline fmt
 
 let pp_prog_block fmt name funcs =
   pp_separator fmt "Program";
@@ -763,7 +777,7 @@ let pp_coq_project base fnames fmt =
     base :: globs_module_name base :: funnames_module_name base :: fnames
   in
   F.fprintf fmt "%s" coq_project_header;
-  pp_newline fmt ();
+  pp_newline fmt;
   List.iter (fun s -> F.fprintf fmt "%s.v\n" s) modules
 
 let makefile =
@@ -803,37 +817,35 @@ let extract_split arch pp_asm_op (gd, funcs) name base_path =
   with_out_file (make_path globs_module ".v") (fun fmt ->
       pp_header fmt arch;
       pp_section_ido fmt;
-      pp_newline fmt ();
-      pp_separator fmt "Globals";
-      pp_globs_definition fmt name gd;
-      pp_newline fmt ();
+      pp_newline fmt;
+      pp_globals_block fmt name gd;
       pp_end_ido fmt ());
   with_out_file (make_path funnames_module ".v") (fun fmt ->
       pp_header fmt arch;
       pp_section_ido fmt;
-      pp_newline fmt ();
+      pp_newline fmt;
       pp_funnames_block fmt funnames;
       pp_end_ido fmt ());
   List.iter
     (fun (fd, fn_module) ->
       with_out_file (make_path fn_module ".v") (fun fmt ->
           pp_header fmt arch;
-          pp_require_import fmt globs_module;
-          pp_require_import fmt funnames_module;
-          pp_newline fmt ();
+          pp_rocq_require_import fmt globs_module;
+          pp_rocq_require_import fmt funnames_module;
+          pp_newline fmt;
           pp_section_ido fmt;
-          pp_newline fmt ();
+          pp_newline fmt;
           pp_fd_block pp_asm_op fmt fd;
-          pp_newline fmt ();
+          pp_newline fmt;
           pp_end_ido fmt ()))
     fn_modules;
   with_out_file base_path (fun fmt ->
       pp_header fmt arch;
-      pp_require_import fmt globs_module;
-      pp_require_import fmt funnames_module;
-      F.pp_print_list ~pp_sep:pp_print_nothing pp_require_import fmt
+      pp_rocq_require_import fmt globs_module;
+      pp_rocq_require_import fmt funnames_module;
+      F.pp_print_list ~pp_sep:pp_print_nothing pp_rocq_require_import fmt
         fn_module_names;
-      pp_newline fmt ();
+      pp_newline fmt;
       pp_oracles_block fmt;
       pp_prog_block fmt name funcs);
   with_out_file

@@ -211,3 +211,4 @@ lang/wsize.v
 printing/atoi.v
 printing/syntax.v
 printing/data.v
+printing/notations.v
