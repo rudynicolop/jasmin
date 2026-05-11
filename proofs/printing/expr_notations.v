@@ -17,18 +17,38 @@ Require Import expr.
                    an atom or parenthesised expression)
       - aget[w](v, e) = aligned array read of word size w at index e
       - asub[w](v, len, e) = aligned array sub-slice of word size w
-      - i2w[N]   = int → word of size N
-      - u2i[N]   = word N → unsigned int
-      - s2i[N]   = word N → signed int
+      - i2w[N]   = int -> word of size N
+      - u2i[N]   = word N -> unsigned int
+      - s2i[N]   = word N -> signed int
       - zext[M, N] = zero-extend from M to N
       - sext[M, N] = sign-extend from M to N
+      - wu = unsigned wint (bounded unsigned integer of word size N)
+      - ws = signed wint
+        i2wu[N] / i2ws[N]      = int -> unsigned/signed wint N
+        wu2i[N] / ws2i[N]      = unsigned/signed wint N -> int
+        wu2w[N] / ws2w[N]      = unsigned/signed wint N -> word N
+        w2wu[N] / w2ws[N]      = word N -> unsigned/signed wint N
+        wuext[M,N] / wsext[M,N] = unsigned/signed wint extension M to N
+        -wu[N]  / -ws[N]       = unsigned/signed wint negation
+
+    Not supported:
+      - [Parr_init n]          : array initialisation expression
+      - [PappN o es]           : [Opack], [Oarray], [Ocombine_flags],
+                                 [Ois_arr_init], [Ois_barr_init]
+      - [Pload Aligned w e]    : aligned load ([Pload Unaligned] is covered)
+      - [Pget] or [Psub] with alignment other than [Aligned] or
+        scale other than [AAscale]
+      - [op2] vector operations: [Ovadd], [Ovsub], [Ovmul],
+        [Ovlsr], [Ovlsl], [Ovasr], [Owi2]
 
     Precedence (lower level = tighter binding):
        0  : ld[w](e) (load)
        0  : aget[w](v, e) (array read)
        0  : asub[w](v, len, e) (array sub-slice)
-       2  : unary ![b], !Nu, -Nu, i2w[N], u2i[N], s2i[N],
-            zext[M,N], sext[M,N], -i
+       2  : unary ![b], !Nu, -Nu, -i; casts i2w[N], u2i[N], s2i[N],
+            zext[M,N], sext[M,N]; wint i2wu[N], i2ws[N], wu2i[N],
+            ws2i[N], wu2w[N], ws2w[N], w2wu[N], w2ws[N],
+            wuext[M,N], wsext[M,N], -wu[N], -ws[N]
        4  : *Nu, *i, /Nu, /Ns, %Nu, %Ns
        5  : <<Nu, >>Nu, >>sNu, <<rNu, >>rNu, <<i, >>si
        6  : +Nu, -Nu (binary), +i, -i (binary)
@@ -76,14 +96,14 @@ Notation "ld[ w ]( e )" := (Pload Unaligned w e)
   (in custom expr, w constr at level 0, e custom expr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Array subscript — scale-indexed, aligned: aget[w](v, i) *)
+(* Array subscript --scale-indexed, aligned: aget[w](v, i) *)
 
 Notation "aget[ w ]( v , i )" := (Pget Aligned AAscale w v i)
   (in custom expr,
    v constr at level 0, w constr at level 0, i custom expr at level 99).
 
 (* -------------------------------------------------------------------------- *)
-(* Array sub-slice — scale-indexed, aligned: asub[w](v, len, i) *)
+(* Array sub-slice --scale-indexed, aligned: asub[w](v, len, i) *)
 
 Notation "asub[ w ]( v , len , i )" := (Psub AAscale w len v i)
   (in custom expr,
@@ -155,6 +175,62 @@ Notation "sext[ szi , szo ] e" := (Papp1 (Osignext szo szi) e)
    szi constr at level 0, szo constr at level 0,
    right associativity,
    format "sext[  szi ,  szo  ]  e").
+
+(* -------------------------------------------------------------------------- *)
+(* Wint operations (Owi1) *)
+
+Notation ewi1 s o e := (Papp1 (Owi1 s o) e).
+
+Notation "i2wu[ w ] e" := (ewi1 Unsigned (WIwint_of_int w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "i2wu[  w  ]  e").
+Notation "i2ws[ w ] e" := (ewi1 Signed (WIwint_of_int w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "i2ws[  w  ]  e").
+Notation "wu2i[ w ] e" := (ewi1 Unsigned (WIint_of_wint w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "wu2i[  w  ]  e").
+Notation "ws2i[ w ] e" := (ewi1 Signed (WIint_of_wint w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "ws2i[  w  ]  e").
+Notation "wu2w[ w ] e" := (ewi1 Unsigned (WIword_of_wint w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "wu2w[  w  ]  e").
+Notation "ws2w[ w ] e" := (ewi1 Signed (WIword_of_wint w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "ws2w[  w  ]  e").
+Notation "w2wu[ w ] e" := (ewi1 Unsigned (WIwint_of_word w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "w2wu[  w  ]  e").
+Notation "w2ws[ w ] e" := (ewi1 Signed (WIwint_of_word w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "w2ws[  w  ]  e").
+Notation "wuext[ szi , szo ] e" := (ewi1 Unsigned (WIwint_ext szo szi) e)
+  (in custom expr at level 2,
+   szi constr at level 0, szo constr at level 0,
+   right associativity,
+   format "wuext[  szi ,  szo  ]  e").
+Notation "wsext[ szi , szo ] e" := (ewi1 Signed (WIwint_ext szo szi) e)
+  (in custom expr at level 2,
+   szi constr at level 0, szo constr at level 0,
+   right associativity,
+   format "wsext[  szi ,  szo  ]  e").
+Notation "-wu[ w ] e" := (ewi1 Unsigned (WIneg w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "-wu[  w  ]  e").
+Notation "-ws[ w ] e" := (ewi1 Signed (WIneg w) e)
+  (in custom expr at level 2,
+   w constr at level 0, right associativity,
+   format "-ws[  w  ]  e").
 
 (* -------------------------------------------------------------------------- *)
 (* Binary arithmetic *)
@@ -707,5 +783,30 @@ Goal expr:( aget[U64](x, y +64u #1) ) =
   Pget Aligned AAscale U64 x
     (Papp2 (Oadd (Op_w U64)) (Pvar y) (Pconst 1)).
 done. Qed.
+
+Goal expr:( i2wu[U64] #42 ) =
+  Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst 42). done. Qed.
+Goal expr:( i2ws[U32] #0 ) =
+  Papp1 (Owi1 Signed (WIwint_of_int U32)) (Pconst 0). done. Qed.
+Goal expr:( wu2i[U64] x ) =
+  Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar x). done. Qed.
+Goal expr:( ws2i[U32] x ) =
+  Papp1 (Owi1 Signed (WIint_of_wint U32)) (Pvar x). done. Qed.
+Goal expr:( wu2w[U64] x ) =
+  Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar x). done. Qed.
+Goal expr:( ws2w[U32] x ) =
+  Papp1 (Owi1 Signed (WIword_of_wint U32)) (Pvar x). done. Qed.
+Goal expr:( w2wu[U64] x ) =
+  Papp1 (Owi1 Unsigned (WIwint_of_word U64)) (Pvar x). done. Qed.
+Goal expr:( w2ws[U32] x ) =
+  Papp1 (Owi1 Signed (WIwint_of_word U32)) (Pvar x). done. Qed.
+Goal expr:( wuext[U32, U64] x ) =
+  Papp1 (Owi1 Unsigned (WIwint_ext U64 U32)) (Pvar x). done. Qed.
+Goal expr:( wsext[U32, U64] x ) =
+  Papp1 (Owi1 Signed (WIwint_ext U64 U32)) (Pvar x). done. Qed.
+Goal expr:( -wu[U64] x ) =
+  Papp1 (Owi1 Unsigned (WIneg U64)) (Pvar x). done. Qed.
+Goal expr:( -ws[U32] x ) =
+  Papp1 (Owi1 Signed (WIneg U32)) (Pvar x). done. Qed.
 
 End ExprTests.

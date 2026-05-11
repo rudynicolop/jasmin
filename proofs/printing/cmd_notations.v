@@ -24,6 +24,18 @@ Require Import expr_notations lval_notations.
       - while { c1 } ( e ) { c2 }   = while loop (Cwhile Align)
       - skip                         = empty command ([::])
 
+    Not supported:
+      - [Copn lvs t o es]         : assembly-operation instructions
+      - [Ccall lvs f es]          : function calls
+      - [Cassert (l, e)]          : assertions
+      - [Csyscall] with other than one input and one output, or with a
+        syscall other than [RandomBytes]
+      - [Cwhile NoAlign c1 e ii c2]: only [Cwhile Align] is covered
+      - [Cassgn lv t ty e] with [t] other than [AT_none]
+      - The [instr_info] field is always [dummy_instr_info]
+      - Sequences of instructions: use [skip] for empty bodies or
+        [rocq:( ... )] to inject arbitrary [cmd] terms
+
     In if/for/while, the cmd bodies are in the cmd entry; use [skip] for
     empty bodies or [rocq:( ... )] to inject arbitrary cmd terms.
 *)
