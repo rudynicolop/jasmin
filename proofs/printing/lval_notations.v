@@ -8,7 +8,7 @@ Require Import expr_notations.
 
     Wrap a [lval] in [lval:( lv )] to view it in Jasmin-like syntax.
     Example:
-      Check lval:( set[U64](x, #0) ).
+      Check lval:( aset[U64](x, #0) ).
 
     Notation summary:
       - lnone[b]             = discard of type bool   (Lnone _ abool)
@@ -17,8 +17,8 @@ Require Import expr_notations.
       - lnone[ws, len]       = discard of type array  (Lnone _ (aarr ws len))
       - x                    = variable (Lvar)
       - st[w](e)             = aligned memory write of word size w to address e
-      - set[w](v, e)         = aligned array element write at index e
-      - sub[w](v, len, e)    = aligned subarray write of word size w
+      - aset[w](v, e)         = aligned array element write at index e
+      - asub[w](v, len, e)    = aligned subarray write of word size w
 
     Precedence: all constructors are atoms (level 0).
 *)
@@ -64,16 +64,16 @@ Notation "st[ w ]( e )" := (Lmem Aligned w dummy_var_info e)
    w constr at level 0, e custom expr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Aligned array element write — set[w](v, i) *)
+(* Aligned array element write — aset[w](v, i) *)
 
-Notation "set[ w ]( v , i )" := (Laset Aligned AAscale w v i)
+Notation "aset[ w ]( v , i )" := (Laset Aligned AAscale w v i)
   (in custom lval,
    w constr at level 0, v constr at level 0, i custom expr at level 99).
 
 (* -------------------------------------------------------------------------- *)
-(* Aligned subarray write — sub[w](v, len, i) *)
+(* Aligned subarray write — asub[w](v, len, i) *)
 
-Notation "sub[ w ]( v , len , i )" := (Lasub AAscale w len v i)
+Notation "asub[ w ]( v , len , i )" := (Lasub AAscale w len v i)
   (in custom lval,
    w constr at level 0, v constr at level 0, len constr at level 0,
    i custom expr at level 99).
@@ -100,22 +100,22 @@ Goal lval:( st[U64](gx +64u #4) ) =
     (Papp2 (Oadd (Op_w U64)) (Pvar gx) (Pconst 4)).
 done. Qed.
 
-Goal lval:( set[U64](x, #0) ) =
+Goal lval:( aset[U64](x, #0) ) =
   Laset Aligned AAscale U64 x (Pconst 0). done. Qed.
-Goal lval:( set[U32](x, #0) ) =
+Goal lval:( aset[U32](x, #0) ) =
   Laset Aligned AAscale U32 x (Pconst 0). done. Qed.
-Goal lval:( set[U64](x, gx) ) =
+Goal lval:( aset[U64](x, gx) ) =
   Laset Aligned AAscale U64 x (Pvar gx). done. Qed.
-Goal lval:( set[U64](x, gx +64u #1) ) =
+Goal lval:( aset[U64](x, gx +64u #1) ) =
   Laset Aligned AAscale U64 x
     (Papp2 (Oadd (Op_w U64)) (Pvar gx) (Pconst 1)).
 done. Qed.
 
-Goal lval:( sub[U64](x, 4, #0) ) =
+Goal lval:( asub[U64](x, 4, #0) ) =
   Lasub AAscale U64 4 x (Pconst 0). done. Qed.
-Goal lval:( sub[U32](x, 8, #0) ) =
+Goal lval:( asub[U32](x, 8, #0) ) =
   Lasub AAscale U32 8 x (Pconst 0). done. Qed.
-Goal lval:( sub[U64](x, 4, gx) ) =
+Goal lval:( asub[U64](x, 4, gx) ) =
   Lasub AAscale U64 4 x (Pvar gx). done. Qed.
 
 End LvalTests.

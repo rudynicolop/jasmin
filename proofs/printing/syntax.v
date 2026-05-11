@@ -33,9 +33,8 @@ Definition cif (e : pexpr) (c1 c2 : cmd) : instr :=
 Definition cfor (v : var_i) (r : range) (c : cmd) : instr :=
   mki (Cfor v r c).
 
-Definition cwhile
-  (a : align) (c1 : cmd) (e : pexpr) (c2 : cmd) : instr :=
-  mki (Cwhile a c1 e dummy_instr_info c2).
+Definition cwhile (c1 : cmd) (e : pexpr) (c2 : cmd) : instr :=
+  mki (Cwhile Align c1 e dummy_instr_info c2).
 
 Definition ccall (lvs : lvals) (f : funname) (es : pexprs) : instr :=
   mki (Ccall lvs f es).

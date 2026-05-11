@@ -15,8 +15,8 @@ Require Import expr.
       - integer (mathematical int) suffix: i
       - ld[w](e)   = aligned load of word size w from address e (address must be
                    an atom or parenthesised expression)
-      - get[w](v, e) = aligned array read of word size w at index e
-      - sub[w](v, len, e) = aligned array sub-slice of word size w
+      - aget[w](v, e) = aligned array read of word size w at index e
+      - asub[w](v, len, e) = aligned array sub-slice of word size w
       - i2w[N]   = int → word of size N
       - u2i[N]   = word N → unsigned int
       - s2i[N]   = word N → signed int
@@ -25,8 +25,8 @@ Require Import expr.
 
     Precedence (lower level = tighter binding):
        0  : ld[w](e) (load)
-       0  : get[w](v, e) (array read)
-       0  : sub[w](v, len, e) (array sub-slice)
+       0  : aget[w](v, e) (array read)
+       0  : asub[w](v, len, e) (array sub-slice)
        2  : unary ![b], !Nu, -Nu, i2w[N], u2i[N], s2i[N],
             zext[M,N], sext[M,N], -i
        4  : *Nu, *i, /Nu, /Ns, %Nu, %Ns
@@ -76,16 +76,16 @@ Notation "ld[ w ]( e )" := (Pload Aligned w e)
   (in custom expr, w constr at level 0, e custom expr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Array subscript — scale-indexed, aligned: get[w](v, i) *)
+(* Array subscript — scale-indexed, aligned: aget[w](v, i) *)
 
-Notation "get[ w ]( v , i )" := (Pget Aligned AAscale w v i)
+Notation "aget[ w ]( v , i )" := (Pget Aligned AAscale w v i)
   (in custom expr,
    v constr at level 0, w constr at level 0, i custom expr at level 99).
 
 (* -------------------------------------------------------------------------- *)
-(* Array sub-slice — scale-indexed, aligned: sub[w](v, len, i) *)
+(* Array sub-slice — scale-indexed, aligned: asub[w](v, len, i) *)
 
-Notation "sub[ w ]( v , len , i )" := (Psub AAscale w len v i)
+Notation "asub[ w ]( v , len , i )" := (Psub AAscale w len v i)
   (in custom expr,
    v constr at level 0, w constr at level 0, len constr at level 0,
    i custom expr at level 99).
@@ -552,7 +552,7 @@ Context (x y z b : gvar).
 
 Goal expr:( ld[U64](x) ) = Pload Aligned U64 (Pvar x). done. Qed.
 
-Goal expr:( get[U64](x, #0) ) =
+Goal expr:( aget[U64](x, #0) ) =
   Pget Aligned AAscale U64 x (Pconst 0). done. Qed.
 
 Goal expr:( -i #5 ) = Papp1 (Oneg Op_int) (Pconst 5). done. Qed.
@@ -671,7 +671,7 @@ Goal expr:( x *128u y ) =
 Goal expr:( x *256u y ) =
   Papp2 (Omul (Op_w U256)) (Pvar x) (Pvar y). done. Qed.
 
-Goal expr:( sub[U64](x, 4, #0) ) =
+Goal expr:( asub[U64](x, 4, #0) ) =
   Psub AAscale U64 4 x (Pconst 0). done. Qed.
 
 Goal expr:( x >i y ) =
@@ -697,13 +697,13 @@ Goal expr:( ld[U64](x +64u y) ) =
     (Papp2 (Oadd (Op_w U64)) (Pvar x) (Pvar y)).
 done. Qed.
 
-Goal expr:( get[U8](x, #0) ) =
+Goal expr:( aget[U8](x, #0) ) =
   Pget Aligned AAscale U8 x (Pconst 0). done. Qed.
-Goal expr:( get[U32](x, #0) ) =
+Goal expr:( aget[U32](x, #0) ) =
   Pget Aligned AAscale U32 x (Pconst 0). done. Qed.
-Goal expr:( get[U64](x, y) ) =
+Goal expr:( aget[U64](x, y) ) =
   Pget Aligned AAscale U64 x (Pvar y). done. Qed.
-Goal expr:( get[U64](x, y +64u #1) ) =
+Goal expr:( aget[U64](x, y +64u #1) ) =
   Pget Aligned AAscale U64 x
     (Papp2 (Oadd (Op_w U64)) (Pvar y) (Pconst 1)).
 done. Qed.
