@@ -20,6 +20,13 @@ Require Import expr_notations.
       - aset[w](v, e)         = aligned array element write at index e
       - asub[w](v, len, e)    = aligned subarray write of word size w
 
+    Not supported:
+      - [Lmem Aligned w vi e]  : aligned memory write (only [Lmem Unaligned]
+                                 is covered via [st[w](e)])
+      - [Laset] with alignment other than [Aligned] or scale other than
+        [AAscale]
+      - [Lasub] with scale other than [AAscale]
+
     Precedence: all constructors are atoms (level 0).
 *)
 
@@ -57,21 +64,21 @@ Notation "x" := (Lvar x.(gv))
   (in custom lval at level 0, x constr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Aligned memory store — st[w](e) *)
+(* Aligned memory store --st[w](e) *)
 
 Notation "st[ w ]( e )" := (Lmem Unaligned w dummy_var_info e)
   (in custom lval,
    w constr at level 0, e custom expr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Aligned array element write — aset[w](v, i) *)
+(* Aligned array element write --aset[w](v, i) *)
 
 Notation "aset[ w ]( v , i )" := (Laset Aligned AAscale w v.(gv) i)
   (in custom lval,
    w constr at level 0, v constr at level 0, i custom expr at level 99).
 
 (* -------------------------------------------------------------------------- *)
-(* Aligned subarray write — asub[w](v, len, i) *)
+(* Aligned subarray write --asub[w](v, len, i) *)
 
 Notation "asub[ w ]( v , len , i )" := (Lasub AAscale w len v.(gv) i)
   (in custom lval,
