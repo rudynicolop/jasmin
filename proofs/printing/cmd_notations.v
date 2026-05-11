@@ -31,28 +31,28 @@ Require Import expr_notations lval_notations.
 Declare Custom Entry cmd.
 
 Notation "cmd:( c )" := c
-  (c custom cmd at level 99).
+  (c custom cmd at level 99, only parsing).
 
 Notation "rocq:( e )" := e
   (in custom cmd at level 0, e constr at level 99).
 
-Notation "lv  =[b]  e" :=
+Notation "lv  :=[b]  e" :=
   (MkI dummy_instr_info (Cassgn lv AT_none abool e))
   (in custom cmd at level 90,
    lv custom lval at level 99, e custom expr at level 99).
 
-Notation "lv =[i]  e" :=
+Notation "lv :=[i]  e" :=
   (MkI dummy_instr_info (Cassgn lv AT_none aint e))
   (in custom cmd at level 90,
    lv custom lval at level 99, e custom expr at level 99).
 
-Notation "lv  =[  ws  ]  e" :=
+Notation "lv  :=[  ws  ]  e" :=
   (MkI dummy_instr_info (Cassgn lv AT_none (aword ws) e))
   (in custom cmd at level 90,
    ws constr at level 0,
    lv custom lval at level 99, e custom expr at level 99).
 
-Notation "lv  =[  ws , n  ]  e" :=
+Notation "lv  :=[  ws , n  ]  e" :=
   (MkI dummy_instr_info (Cassgn lv AT_none (aarr ws n) e))
   (in custom cmd at level 90,
    ws constr at level 0, n constr at level 0,
@@ -105,6 +105,78 @@ Notation "'while' '{' c1 '}' '(' e ')' '{' c2 '}'" :=
 Notation "'skip'" := ([::] : cmd)
   (in custom cmd at level 90).
 
+Notation "'skip'" := ([::] : cmd)
+  (only printing, at level 90).
+
+(* Constr-level only-printing notations so instr terms display with     *)
+(* these notations directly in the proof state, without cmd:(...).      *)
+
+Notation "lv  :=[b]  e" :=
+  (MkI dummy_instr_info (Cassgn lv AT_none abool e))
+  (only printing, at level 90,
+   lv custom lval at level 99, e custom expr at level 99).
+
+Notation "lv :=[i]  e" :=
+  (MkI dummy_instr_info (Cassgn lv AT_none aint e))
+  (only printing, at level 90,
+   lv custom lval at level 99, e custom expr at level 99).
+
+Notation "lv  :=[  ws  ]  e" :=
+  (MkI dummy_instr_info (Cassgn lv AT_none (aword ws) e))
+  (only printing, at level 90,
+   ws constr at level 0,
+   lv custom lval at level 99, e custom expr at level 99).
+
+Notation "lv  :=[  ws , n  ]  e" :=
+  (MkI dummy_instr_info (Cassgn lv AT_none (aarr ws n) e))
+  (only printing, at level 90,
+   ws constr at level 0, n constr at level 0,
+   lv custom lval at level 99, e custom expr at level 99).
+
+Notation "lv  =  randombytes[ ws , n ]( e )" :=
+  (MkI dummy_instr_info (Csyscall [:: lv] (RandomBytes ws n) [:: e]))
+  (only printing, at level 90,
+   ws constr at level 0, n constr at level 0,
+   lv custom lval at level 99, e custom expr at level 99).
+
+Notation "'if' e '{' c1 '}' 'else' '{' c2 '}'" :=
+  (MkI dummy_instr_info (Cif e c1 c2))
+  (only printing, at level 90,
+   e custom expr at level 99,
+   c1 custom cmd at level 99, c2 custom cmd at level 99,
+   format "'if'  e  '{'  c1  '}'  'else'  '{'  c2  '}'").
+
+Notation "'if' e '{' c '}'" :=
+  (MkI dummy_instr_info (Cif e c [::]))
+  (only printing, at level 90,
+   e custom expr at level 99,
+   c custom cmd at level 99,
+   format "'if'  e  '{'  c  '}'").
+
+Notation "'for' v '=' lo 'to' hi 'do' '{' c '}'" :=
+  (MkI dummy_instr_info (Cfor v (UpTo, lo, hi) c))
+  (only printing, at level 90,
+   v constr at level 0,
+   lo custom expr at level 99, hi custom expr at level 99,
+   c custom cmd at level 99,
+   format "'for'  v  '='  lo  'to'  hi  'do'  '{'  c  '}'").
+
+Notation "'for' v '=' hi 'downto' lo 'do' '{' c '}'" :=
+  (MkI dummy_instr_info (Cfor v (DownTo, lo, hi) c))
+  (only printing, at level 90,
+   v constr at level 0,
+   hi custom expr at level 99, lo custom expr at level 99,
+   c custom cmd at level 99,
+   format "'for'  v  '='  hi  'downto'  lo  'do'  '{'  c  '}'").
+
+Notation "'while' '{' c1 '}' '(' e ')' '{' c2 '}'" :=
+  (MkI dummy_instr_info (Cwhile Align c1 e dummy_instr_info c2))
+  (only printing, at level 90,
+   c1 custom cmd at level 99,
+   e custom expr at level 99,
+   c2 custom cmd at level 99,
+   format "'while'  '{'  c1  '}'  '('  e  ')'  '{'  c2  '}'").
+
 Section CmdTests.
 
 Context
@@ -114,28 +186,28 @@ Context
 
 Context (x y : var_i) (gx gy : gvar).
 
-Goal cmd:( x =[b] #1 ==i #1 ) =
+Goal cmd:( x :=[b]#1 ==i #1 ) =
   MkI dummy_instr_info
     (Cassgn (Lvar x) AT_none abool
       (Papp2 (Oeq Op_int) (Pconst 1) (Pconst 1))).
 done. Qed.
 
-Goal cmd:( x =[i] #42 ) =
+Goal cmd:( x :=[i] #42 ) =
   MkI dummy_instr_info (Cassgn (Lvar x) AT_none aint (Pconst 42)).
 done. Qed.
 
-Goal cmd:( x =[U64] gx ) =
+Goal cmd:( x :=[U64] gx ) =
   MkI dummy_instr_info
     (Cassgn (Lvar x) AT_none (aword U64) (Pvar gx)).
 done. Qed.
 
-Goal cmd:( x =[U64] gx +64u #1 ) =
+Goal cmd:( x :=[U64] gx +64u #1 ) =
   MkI dummy_instr_info
     (Cassgn (Lvar x) AT_none (aword U64)
       (Papp2 (Oadd (Op_w U64)) (Pvar gx) (Pconst 1))).
 done. Qed.
 
-Goal cmd:( aset[U64](x, #0) =[U64, 4] gx ) =
+Goal cmd:( aset[U64](x, #0) :=[U64, 4] gx ) =
   MkI dummy_instr_info
     (Cassgn (Laset Aligned AAscale U64 x (Pconst 0))
       AT_none (aarr U64 4) (Pvar gx)).
