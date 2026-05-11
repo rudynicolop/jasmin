@@ -571,7 +571,7 @@ let pp_fd_defintion fmt fd =
 
 let pp_fd_block pp_asm_op fmt fd =
   let vars = Sv.to_list (vars_fc fd) in
-  pp_separator_gen fmt pp_fn fd.f_name;
+  pp_comment_gen fmt pp_fn fd.f_name;
   pp_comment fmt "Local variables";
   pp_vars_definition fmt vars;
   if vars <> [] then pp_newline fmt;

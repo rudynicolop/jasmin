@@ -3,40 +3,27 @@ From Coq Require Import ZArith.
 
 Require Import expr.
 
-Section CODE.
-
-Context
-  {asm_op : Type}
-  {asmop : asmOp asm_op}
-.
-
 Notation mki i := (MkI dummy_instr_info i) (only parsing).
 
-Definition cassgn (lv : lval) (ty : atype) (e : pexpr) : instr :=
-  mki (Cassgn lv AT_none ty e).
+Notation cassgn lv ty e := (mki (Cassgn lv AT_none ty e)) (only parsing).
 
-Definition copn (lvs : lvals) (o : sopn) (es : pexprs) : instr :=
-  mki (Copn lvs AT_none o es).
+Notation copn lvs o es :=
+  (mki (Copn lvs AT_none o es)) (only parsing).
 
-Definition crandombytes
-  (lv : lval) (ws : wsize) (n : positive) (e : pexpr) : instr :=
-  mki (Csyscall [:: lv ] (RandomBytes ws n) [:: e ]).
+Notation crandombytes lv ws n e :=
+  (mki (Csyscall [:: lv] (RandomBytes ws n) [:: e])) (only parsing).
 
-Definition cassert (l : assertion_label) (e : eassert) : instr :=
-  mki (Cassert (l, e)).
+Notation cassert l e :=
+  (mki (Cassert (l%string, e))) (only parsing).
 
-#[global] Arguments cassert _%_string.
+Notation cif e c1 c2 :=
+  (mki (Cif e c1 c2)) (only parsing).
 
-Definition cif (e : pexpr) (c1 c2 : cmd) : instr :=
-  mki (Cif e c1 c2).
+Notation cfor v r c :=
+  (mki (Cfor v r c)) (only parsing).
 
-Definition cfor (v : var_i) (r : range) (c : cmd) : instr :=
-  mki (Cfor v r c).
+Notation cwhile c1 e c2 :=
+  (mki (Cwhile Align c1 e dummy_instr_info c2)) (only parsing).
 
-Definition cwhile (c1 : cmd) (e : pexpr) (c2 : cmd) : instr :=
-  mki (Cwhile Align c1 e dummy_instr_info c2).
-
-Definition ccall (lvs : lvals) (f : funname) (es : pexprs) : instr :=
-  mki (Ccall lvs f es).
-
-End CODE.
+Notation ccall lvs f es :=
+  (mki (Ccall lvs f es)) (only parsing).
