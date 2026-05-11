@@ -214,10 +214,6 @@ let pp_arr_access fmt = function
   | Warray_.AAscale -> F.fprintf fmt "AAscale"
   | AAdirect -> F.fprintf fmt "AAdirect"
 
-let pp_align fmt = function
-  | Expr.Align -> F.fprintf fmt "Align"
-  | NoAlign -> F.fprintf fmt "NoAlign"
-
 let pp_dir fmt = function
   | Expr.UpTo -> F.fprintf fmt "UpTo"
   | DownTo -> F.fprintf fmt "DownTo"
@@ -492,9 +488,9 @@ let rec pp_instr_r ~loc pp_asm_op fmt = function
   | Cfor (x, (dir, lo, hi), c) ->
       F.fprintf fmt "@[<hv 2>cfor@ (%a)@ (%a, %a, %a)@ %a@]" pp_gv_var_i x
         pp_dir dir pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
-  | Cwhile (al, c1, e, _, c2) ->
-      F.fprintf fmt "@[<hv 2>cwhile@ (%a)@ %a@ (%a)@ %a@]" pp_align al
-        (pp_stmt pp_asm_op) c1 pp_expr e (pp_stmt pp_asm_op) c2
+  | Cwhile (_, c1, e, _, c2) ->
+      F.fprintf fmt "@[<hv 2>cwhile@ %a@ (%a)@ %a@]" (pp_stmt pp_asm_op) c1
+      pp_expr e (pp_stmt pp_asm_op) c2
   | Ccall (lvs, fn, es) ->
       F.fprintf fmt "@[<h>ccall %a %a %a@]" pp_lvals lvs pp_fn fn pp_exprs es
 
