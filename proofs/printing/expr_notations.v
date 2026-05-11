@@ -13,7 +13,7 @@ Require Import expr.
       - size suffix: 8u / 16u / 32u / 64u / 128u / 256u = word size + unsigned
       - signed suffix: 8s / 16s / 32s / 64s
       - integer (mathematical int) suffix: i
-      - ld[w](e)   = aligned load of word size w from address e (address must be
+      - ld[w](e) = unaligned load of word size w from address e (address must be
                    an atom or parenthesised expression)
       - aget[w](v, e) = aligned array read of word size w at index e
       - asub[w](v, len, e) = aligned array sub-slice of word size w
@@ -72,7 +72,7 @@ Notation "x" := (Pvar x)
 (* -------------------------------------------------------------------------- *)
 (* Memory loads (aligned) *)
 
-Notation "ld[ w ]( e )" := (Pload Aligned w e)
+Notation "ld[ w ]( e )" := (Pload Unaligned w e)
   (in custom expr, w constr at level 0, e custom expr at level 0).
 
 (* -------------------------------------------------------------------------- *)
@@ -550,7 +550,7 @@ Section ExprTests.
 
 Context (x y z b : gvar).
 
-Goal expr:( ld[U64](x) ) = Pload Aligned U64 (Pvar x). done. Qed.
+Goal expr:( ld[U64](x) ) = Pload Unaligned U64 (Pvar x). done. Qed.
 
 Goal expr:( aget[U64](x, #0) ) =
   Pget Aligned AAscale U64 x (Pconst 0). done. Qed.
@@ -687,13 +687,13 @@ Goal expr:( x >=64u y ) =
 Goal expr:( x >=64s y ) =
   Papp2 (Oge (Cmp_w Signed U64)) (Pvar x) (Pvar y). done. Qed.
 
-Goal expr:( ld[U8](x) ) = Pload Aligned U8 (Pvar x). done. Qed.
-Goal expr:( ld[U16](x)) = Pload Aligned U16 (Pvar x). done. Qed.
-Goal expr:( ld[U32](x) ) = Pload Aligned U32 (Pvar x). done. Qed.
-Goal expr:( ld[U128](x) ) = Pload Aligned U128 (Pvar x). done. Qed.
-Goal expr:( ld[U256](x) ) = Pload Aligned U256 (Pvar x). done. Qed.
+Goal expr:( ld[U8](x) ) = Pload Unaligned U8 (Pvar x). done. Qed.
+Goal expr:( ld[U16](x)) = Pload Unaligned U16 (Pvar x). done. Qed.
+Goal expr:( ld[U32](x) ) = Pload Unaligned U32 (Pvar x). done. Qed.
+Goal expr:( ld[U128](x) ) = Pload Unaligned U128 (Pvar x). done. Qed.
+Goal expr:( ld[U256](x) ) = Pload Unaligned U256 (Pvar x). done. Qed.
 Goal expr:( ld[U64](x +64u y) ) =
-  Pload Aligned U64
+  Pload Unaligned U64
     (Papp2 (Oadd (Op_w U64)) (Pvar x) (Pvar y)).
 done. Qed.
 
