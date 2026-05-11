@@ -30,6 +30,20 @@ Require Import expr.
         w2wu[N] / w2ws[N]      = word N -> unsigned/signed wint N
         wuext[M,N] / wsext[M,N] = unsigned/signed wint extension M to N
         -wu[N]  / -ws[N]       = unsigned/signed wint negation
+      - wint binary: e1 OP wu[N] e2 / e1 OP ws[N] e2 (Owi2):
+        +wu[N] / +ws[N]   = addition       (level 6, left)
+        -wu[N] / -ws[N]   = subtraction    (level 6, left)
+        *wu[N] / *ws[N]   = multiplication (level 4, left)
+        /wu[N] / /ws[N]   = division       (level 4, left)
+        %wu[N] / %ws[N]   = modulo         (level 4, left)
+        <<wu[N] / <<ws[N] = shift left     (level 5, left)
+        >>wu[N] / >>ws[N] = shift right    (level 5, left)
+        ==wu[N] / ==ws[N] = equality       (level 10, none)
+        !=wu[N] / !=ws[N] = inequality     (level 10, none)
+        <wu[N]  / <ws[N]  = less-than      (level 10, none)
+        <=wu[N] / <=ws[N] = less-or-equal  (level 10, none)
+        >wu[N]  / >ws[N]  = greater-than   (level 10, none)
+        >=wu[N] / >=ws[N] = greater-or-equal (level 10, none)
 
     Not supported:
       - [Parr_init n]          : array initialisation expression
@@ -39,7 +53,7 @@ Require Import expr.
       - [Pget] or [Psub] with alignment other than [Aligned] or
         scale other than [AAscale]
       - [op2] vector operations: [Ovadd], [Ovsub], [Ovmul],
-        [Ovlsr], [Ovlsl], [Ovasr], [Owi2]
+        [Ovlsr], [Ovlsl], [Ovasr]
 
     Precedence (lower level = tighter binding):
        0  : ld[w](e) (load)
@@ -49,13 +63,18 @@ Require Import expr.
             zext[M,N], sext[M,N]; wint i2wu[N], i2ws[N], wu2i[N],
             ws2i[N], wu2w[N], ws2w[N], w2wu[N], w2ws[N],
             wuext[M,N], wsext[M,N], -wu[N], -ws[N]
-       4  : *Nu, *i, /Nu, /Ns, %Nu, %Ns
-       5  : <<Nu, >>Nu, >>sNu, <<rNu, >>rNu, <<i, >>si
-       6  : +Nu, -Nu (binary), +i, -i (binary)
+       4  : *Nu, *i, /Nu, /Ns, %Nu, %Ns; wint *wu[N], *ws[N],
+            /wu[N], /ws[N], %wu[N], %ws[N]
+       5  : <<Nu, >>Nu, >>sNu, <<rNu, >>rNu, <<i, >>si;
+            wint <<wu[N], <<ws[N], >>wu[N], >>ws[N]
+       6  : +Nu, -Nu (binary), +i, -i (binary);
+            wint +wu[N], +ws[N], -wu[N], -ws[N] (binary)
        7  : &Nu
        8  : ^Nu
        9  : |Nu
-      10  : ==Nu, !=Nu, <Nu, <=Nu, >Nu, >=Nu, ==i, !=i, <i, <=i, >i, >=i, ==
+      10  : ==Nu, !=Nu, <Nu, <=Nu, >Nu, >=Nu, ==i, !=i, <i, <=i, >i, >=i, ==;
+            wint ==wu[N], ==ws[N], !=wu[N], !=ws[N], <wu[N], <ws[N],
+            <=wu[N], <=ws[N], >wu[N], >ws[N], >=wu[N], >=ws[N]
       11  : &&
       12  : ||
       13  : if/then/else, ?Nu, ?b, ?i
@@ -231,6 +250,69 @@ Notation "-ws[ w ] e" := (ewi1 Signed (WIneg w) e)
   (in custom expr at level 2,
    w constr at level 0, right associativity,
    format "-ws[  w  ]  e").
+
+(* -------------------------------------------------------------------------- *)
+(* Wint binary operations (Owi2) *)
+
+Notation ewi2 s sz o e1 e2 := (Papp2 (Owi2 s sz o) e1 e2).
+
+(* Arithmetic *)
+Notation "e1 +wu[ sz ] e2" := (ewi2 Unsigned sz WIadd e1 e2)
+  (in custom expr at level 6, left associativity, sz constr at level 0).
+Notation "e1 +ws[ sz ] e2" := (ewi2 Signed sz WIadd e1 e2)
+  (in custom expr at level 6, left associativity, sz constr at level 0).
+Notation "e1 -wu[ sz ] e2" := (ewi2 Unsigned sz WIsub e1 e2)
+  (in custom expr at level 6, left associativity, sz constr at level 0).
+Notation "e1 -ws[ sz ] e2" := (ewi2 Signed sz WIsub e1 e2)
+  (in custom expr at level 6, left associativity, sz constr at level 0).
+Notation "e1 *wu[ sz ] e2" := (ewi2 Unsigned sz WImul e1 e2)
+  (in custom expr at level 4, left associativity, sz constr at level 0).
+Notation "e1 *ws[ sz ] e2" := (ewi2 Signed sz WImul e1 e2)
+  (in custom expr at level 4, left associativity, sz constr at level 0).
+Notation "e1 /wu[ sz ] e2" := (ewi2 Unsigned sz WIdiv e1 e2)
+  (in custom expr at level 4, left associativity, sz constr at level 0).
+Notation "e1 /ws[ sz ] e2" := (ewi2 Signed sz WIdiv e1 e2)
+  (in custom expr at level 4, left associativity, sz constr at level 0).
+Notation "e1 %wu[ sz ] e2" := (ewi2 Unsigned sz WImod e1 e2)
+  (in custom expr at level 4, left associativity, sz constr at level 0).
+Notation "e1 %ws[ sz ] e2" := (ewi2 Signed sz WImod e1 e2)
+  (in custom expr at level 4, left associativity, sz constr at level 0).
+
+(* Shifts *)
+Notation "e1 <<wu[ sz ] e2" := (ewi2 Unsigned sz WIshl e1 e2)
+  (in custom expr at level 5, left associativity, sz constr at level 0).
+Notation "e1 <<ws[ sz ] e2" := (ewi2 Signed sz WIshl e1 e2)
+  (in custom expr at level 5, left associativity, sz constr at level 0).
+Notation "e1 >>wu[ sz ] e2" := (ewi2 Unsigned sz WIshr e1 e2)
+  (in custom expr at level 5, left associativity, sz constr at level 0).
+Notation "e1 >>ws[ sz ] e2" := (ewi2 Signed sz WIshr e1 e2)
+  (in custom expr at level 5, left associativity, sz constr at level 0).
+
+(* Comparisons *)
+Notation "e1 ==wu[ sz ] e2" := (ewi2 Unsigned sz WIeq e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 ==ws[ sz ] e2" := (ewi2 Signed sz WIeq e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 !=wu[ sz ] e2" := (ewi2 Unsigned sz WIneq e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 !=ws[ sz ] e2" := (ewi2 Signed sz WIneq e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 <wu[ sz ] e2" := (ewi2 Unsigned sz WIlt e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 <ws[ sz ] e2" := (ewi2 Signed sz WIlt e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 <=wu[ sz ] e2" := (ewi2 Unsigned sz WIle e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 <=ws[ sz ] e2" := (ewi2 Signed sz WIle e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 >wu[ sz ] e2" := (ewi2 Unsigned sz WIgt e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 >ws[ sz ] e2" := (ewi2 Signed sz WIgt e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 >=wu[ sz ] e2" := (ewi2 Unsigned sz WIge e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
+Notation "e1 >=ws[ sz ] e2" := (ewi2 Signed sz WIge e1 e2)
+  (in custom expr at level 10, no associativity, sz constr at level 0).
 
 (* -------------------------------------------------------------------------- *)
 (* Binary arithmetic *)
@@ -808,5 +890,58 @@ Goal expr:( -wu[U64] x ) =
   Papp1 (Owi1 Unsigned (WIneg U64)) (Pvar x). done. Qed.
 Goal expr:( -ws[U32] x ) =
   Papp1 (Owi1 Signed (WIneg U32)) (Pvar x). done. Qed.
+
+Goal expr:( x +wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIadd) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x +ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIadd) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x -wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIsub) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x -ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIsub) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x *wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WImul) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x *ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WImul) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x /wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIdiv) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x /ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIdiv) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x %wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WImod) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x %ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WImod) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x <<wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIshl) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x <<ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIshl) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x >>wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIshr) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x >>ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIshr) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x ==wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIeq) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x ==ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIeq) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x !=wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIneq) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x !=ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIneq) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x <wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIlt) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x <ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIlt) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x <=wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIle) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x <=ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIle) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x >wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIgt) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x >ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIgt) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x >=wu[U64] y ) =
+  Papp2 (Owi2 Unsigned U64 WIge) (Pvar x) (Pvar y). done. Qed.
+Goal expr:( x >=ws[U32] y ) =
+  Papp2 (Owi2 Signed U32 WIge) (Pvar x) (Pvar y). done. Qed.
 
 End ExprTests.
