@@ -211,4 +211,7 @@ lang/wsize.v
 printing/atoi.v
 printing/syntax.v
 printing/data.v
+printing/expr_notations.v
+printing/lval_notations.v
+printing/cmd_notations.v
 printing/notations.v
