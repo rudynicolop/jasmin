@@ -6,10 +6,13 @@
 
 * Memory and arrays
 
-  - [mget[w](e)]             unaligned memory load, word size [w], address [e]
-  - [aget[w](v, i)]          aligned array read, word size [w], index [i]
-  - [sget[w](v, len, i)]     aligned array slice, word size [w], length [len],
-                             index [i]
+  - [mget[w](e)]              unaligned memory load, word size [w], address [e]
+  - [mget_al[w](e)]           aligned memory load, word size [w], address [e]
+  - [aget[w](v, i)]           aligned array read, word size [w], index [i]
+  - [agetX(al, sc, w, v, i)]  extended array read, all Pget arguments explicit
+  - [sget[w](v, len, i)]      scaled array slice, word size [w], length [len],
+                              index [i]
+  - [sget_direct(sc, w, len, v, i)] direct array slice
 
 * Unary operators (Papp1) — level 30, right-associative
 
@@ -101,29 +104,43 @@
   - [ite[t](e1, e2, e3)]     if [e1] then [e2] else [e3], type annotation [t]
     where [t] is [b] (bool), [i] (int), or a word size (e.g. [U64])
 
+* PappN — pack and array literal
+
+  - [pack[ws, pe] es]            pack values [es] into word size [ws],
+                                 element type [pe]
+  - [mkarr[n] es]                array literal of length [n], values [es]
+
+* PappN — combine_flags (flag predicate applied to a list of flag values)
+
+  Signed variants (suffix [s]):
+  - [_LTs es]                    CF_LT Signed   (less-than, signed)
+  - [_LEs es]                    CF_LE Signed   (less-or-equal, signed)
+  - [_GEs es]                    CF_GE Signed   (greater-or-equal, signed)
+  - [_GTs es]                    CF_GT Signed   (greater-than, signed)
+
+  Unsigned variants (suffix [u]):
+  - [_LTu es]                    CF_LT Unsigned
+  - [_LEu es]                    CF_LE Unsigned
+  - [_GEu es]                    CF_GE Unsigned
+  - [_GTu es]                    CF_GT Unsigned
+
+  Equality (no signedness):
+  - [_Eq es]                     CF_EQ
+  - [_NEq es]                    CF_NEQ
+
+* Vector binary operators (Papp2) — [ve] = velem, [w] = wsize
+
+  - [e1 +v[ve, w] e2]            vector addition
+  - [e1 -v[ve, w] e2]            vector subtraction
+  - [e1 *v[ve, w] e2]            vector multiplication
+  - [e1 >>v[ve, w] e2]           vector logical shift right
+  - [e1 <<v[ve, w] e2]           vector logical shift left
+  - [e1 >>sv[ve, w] e2]          vector arithmetic shift right
+
 * Not supported
 
   pexpr constructors:
-  - [Parr_init w n]               array initialisation expression
-
-  - [Pget Aligned AAdirect w v e]   unscaled aligned array read
-  - [Pget Unaligned AAscale w v e]  scaled unaligned array read
-  - [Pget Unaligned AAdirect w v e] unscaled unaligned array read
-
-  - [Psub AAdirect w len v e]     unscaled array slice
-
-  - [Pload Aligned w e]           aligned memory load
-
-  - [Opack w pe]                  pack values into a word
-  - [Oarray n]                    array literal of length [n]
-  - [Ocombine_flags cf]           combine processor flags
-
-  - [Ovadd ve w]                  vector addition
-  - [Ovsub ve w]                  vector subtraction
-  - [Ovmul ve w]                  vector multiplication
-  - [Ovlsr ve w]                  vector logical shift right
-  - [Ovlsl ve w]                  vector logical shift left
-  - [Ovasr ve w]                  vector arithmetic shift right *)
+  - [Parr_init w n]               array initialisation expression *)
 
 From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
@@ -138,6 +155,11 @@ Bind Scope jexpr_scope with pexpr.
 Declare Custom Entry jwsize.
 Notation "w" := w
   (in custom jwsize at level 0, w constr at level 0).
+
+(* Custom entry for velem: accepts any velem constructor or variable. *)
+Declare Custom Entry jvelem.
+Notation "ve" := ve
+  (in custom jvelem at level 0, ve constr at level 0).
 
 (* Custom entry for annotated types: b = abool, i = aint,
    ws = aword ws, or ws , len = aarr ws len. *)
@@ -163,14 +185,30 @@ Notation "aget[ w ]( v , i )" := (Pget Aligned AAscale w v i%E)
    i at level 99,
    format "aget[ w ]( v ,  i )") : jexpr_scope.
 
+Notation "agetX( al , sc , w , v , i )" := (Pget al sc w v i%E)
+  (at level 0, al constr at level 0, sc constr at level 0,
+   w constr at level 0, v constr at level 0,
+   i at level 99,
+   format "agetX( al ,  sc ,  w ,  v ,  i )") : jexpr_scope.
+
 Notation "sget[ w ]( v , len , i )" := (Psub AAscale w len v i%E)
   (at level 0, w constr at level 0, v constr at level 0,
    len constr at level 0, i at level 99,
    format "sget[ w ]( v ,  len ,  i )") : jexpr_scope.
 
+Notation "sget_direct( w , len , v , i )" := (Psub AAdirect w len v i%E)
+  (at level 0, w constr at level 0,
+   len constr at level 0, v constr at level 0,
+   i at level 99,
+   format "sget_direct( w ,  len ,  v ,  i )") : jexpr_scope.
+
 Notation "mget[ w ]( e )" := (Pload Unaligned w e%E)
   (at level 0, w constr at level 0, e at level 99,
    format "mget[ w ]( e )") : jexpr_scope.
+
+Notation "mget_al[ w ]( e )" := (Pload Aligned w e%E)
+  (at level 0, w constr at level 0, e at level 99,
+   format "mget_al[ w ]( e )") : jexpr_scope.
 
 (* -------------------------------------------------------------------------- *)
 (* Papp1 — Unary operators (level 30, right assoc) *)
@@ -536,15 +574,107 @@ Notation "ite[ t ]( e1 , e2 , e3 )" := (Pif t e1%E e2%E e3%E)
    format "ite[ t ]( e1 ,  e2 ,  e3 )") : jexpr_scope.
 
 (* -------------------------------------------------------------------------- *)
+(* PappN — pack and array literal *)
+
+Notation "pack[ ws , pe ] es" := (PappN (Opack ws pe) es)
+  (at level 10, ws constr at level 0, pe constr at level 0,
+   es constr at level 9,
+   format "pack[ ws ,  pe ]  es") : jexpr_scope.
+
+Notation "mkarr[ n ] es" := (PappN (Oarray n) es)
+  (at level 10, n constr at level 0,
+   es constr at level 9,
+   format "mkarr[ n ]  es") : jexpr_scope.
+
+(* -------------------------------------------------------------------------- *)
+(* PappN — combine_flags *)
+
+Notation "'_LTs' es" := (PappN (Ocombine_flags (CF_LT Signed)) es)
+  (at level 10, es constr at level 9,
+   format "'_LTs'  es") : jexpr_scope.
+Notation "'_LTu' es" := (PappN (Ocombine_flags (CF_LT Unsigned)) es)
+  (at level 10, es constr at level 9,
+   format "'_LTu'  es") : jexpr_scope.
+
+Notation "'_LEs' es" := (PappN (Ocombine_flags (CF_LE Signed)) es)
+  (at level 10, es constr at level 9,
+   format "'_LEs'  es") : jexpr_scope.
+Notation "'_LEu' es" := (PappN (Ocombine_flags (CF_LE Unsigned)) es)
+  (at level 10, es constr at level 9,
+   format "'_LEu'  es") : jexpr_scope.
+
+Notation "'_Eq' es" := (PappN (Ocombine_flags CF_EQ) es)
+  (at level 10, es constr at level 9,
+   format "'_Eq'  es") : jexpr_scope.
+Notation "'_NEq' es" := (PappN (Ocombine_flags CF_NEQ) es)
+  (at level 10, es constr at level 9,
+   format "'_NEq'  es") : jexpr_scope.
+
+Notation "'_GEs' es" := (PappN (Ocombine_flags (CF_GE Signed)) es)
+  (at level 10, es constr at level 9,
+   format "'_GEs'  es") : jexpr_scope.
+Notation "'_GEu' es" := (PappN (Ocombine_flags (CF_GE Unsigned)) es)
+  (at level 10, es constr at level 9,
+   format "'_GEu'  es") : jexpr_scope.
+
+Notation "'_GTs' es" := (PappN (Ocombine_flags (CF_GT Signed)) es)
+  (at level 10, es constr at level 9,
+   format "'_GTs'  es") : jexpr_scope.
+Notation "'_GTu' es" := (PappN (Ocombine_flags (CF_GT Unsigned)) es)
+  (at level 10, es constr at level 9,
+   format "'_GTu'  es") : jexpr_scope.
+
+(* -------------------------------------------------------------------------- *)
+(* Papp2 — Vector binary operators *)
+
+Notation "e1 +v[ ve , w ] e2" := (Papp2 (Ovadd ve w) e1%E e2%E)
+  (at level 50, left associativity,
+   ve custom jvelem at level 0, w custom jwsize at level 0,
+   format "e1  +v[ ve ,  w ]  e2") : jexpr_scope.
+
+Notation "e1 -v[ ve , w ] e2" := (Papp2 (Ovsub ve w) e1%E e2%E)
+  (at level 50, left associativity,
+   ve custom jvelem at level 0, w custom jwsize at level 0,
+   format "e1  -v[ ve ,  w ]  e2") : jexpr_scope.
+
+Notation "e1 *v[ ve , w ] e2" := (Papp2 (Ovmul ve w) e1%E e2%E)
+  (at level 40, left associativity,
+   ve custom jvelem at level 0, w custom jwsize at level 0,
+   format "e1  *v[ ve ,  w ]  e2") : jexpr_scope.
+
+Notation "e1 >>v[ ve , w ] e2" := (Papp2 (Ovlsr ve w) e1%E e2%E)
+  (at level 45, left associativity,
+   ve custom jvelem at level 0, w custom jwsize at level 0,
+   format "e1  >>v[ ve ,  w ]  e2") : jexpr_scope.
+
+Notation "e1 <<v[ ve , w ] e2" := (Papp2 (Ovlsl ve w) e1%E e2%E)
+  (at level 45, left associativity,
+   ve custom jvelem at level 0, w custom jwsize at level 0,
+   format "e1  <<v[ ve ,  w ]  e2") : jexpr_scope.
+
+Notation "e1 >>sv[ ve , w ] e2" := (Papp2 (Ovasr ve w) e1%E e2%E)
+  (at level 45, left associativity,
+   ve custom jvelem at level 0, w custom jwsize at level 0,
+   format "e1  >>sv[ ve ,  w ]  e2") : jexpr_scope.
+
+(* -------------------------------------------------------------------------- *)
 
 Section ExprTests.
 
 Context (x y z b : gvar).
 
 Goal (mget[U64](x))%E = Pload Unaligned U64 (Pvar x). done. Qed.
+Goal (mget_al[U64](x))%E = Pload Aligned U64 (Pvar x). done. Qed.
 
 Goal (aget[U64](x, 0))%E =
   Pget Aligned AAscale U64 x (Pconst 0). done. Qed.
+
+Goal (agetX(Aligned, AAdirect, U64, x, 0))%E =
+  Pget Aligned AAdirect U64 x (Pconst 0). done. Qed.
+Goal (agetX(Unaligned, AAscale, U64, x, 0))%E =
+  Pget Unaligned AAscale U64 x (Pconst 0). done. Qed.
+Goal (agetX(Unaligned, AAdirect, U64, x, 0))%E =
+  Pget Unaligned AAdirect U64 x (Pconst 0). done. Qed.
 
 Goal (-[i] 5)%E = Papp1 (Oneg Op_int) (Pconst 5). done. Qed.
 Goal (-[U64] x)%E = Papp1 (Oneg (Op_w U64)) (Pvar x). done. Qed.
@@ -664,6 +794,8 @@ Goal (x *[U256] y)%E =
 
 Goal (sget[U64](x, 4, 0))%E =
   Psub AAscale U64 4 x (Pconst 0). done. Qed.
+Goal (sget_direct(U64, 4, x, 0))%E =
+  Psub AAdirect U64 4 x (Pconst 0). done. Qed.
 
 Goal (x >[i] y)%E =
   Papp2 (Ogt Cmp_int) (Pvar x) (Pvar y). done. Qed.
@@ -788,5 +920,36 @@ Goal (10 %u[i] 3)%E =
   Papp2 (Omod Unsigned Op_int) (Pconst 10) (Pconst 3). done. Qed.
 Goal (10 %s[i] 3)%E =
   Papp2 (Omod Signed Op_int) (Pconst 10) (Pconst 3). done. Qed.
+
+Goal (pack[U64, PE8] [:: Pvar x; Pvar y])%E =
+  PappN (Opack U64 PE8) [:: Pvar x; Pvar y]. done. Qed.
+Goal (mkarr[2] [:: Pvar x; Pvar y])%E =
+  PappN (Oarray 2) [:: Pvar x; Pvar y]. done. Qed.
+
+Goal (_LTs [:: Pvar x; Pvar y])%E =
+  PappN (Ocombine_flags (CF_LT Signed)) [:: Pvar x; Pvar y]. done. Qed.
+Goal (_LTu [:: Pvar x; Pvar y])%E =
+  PappN (Ocombine_flags (CF_LT Unsigned)) [:: Pvar x; Pvar y]. done. Qed.
+Goal (_Eq [:: Pvar x; Pvar y])%E =
+  PappN (Ocombine_flags CF_EQ) [:: Pvar x; Pvar y]. done. Qed.
+Goal (_NEq [:: Pvar x; Pvar y])%E =
+  PappN (Ocombine_flags CF_NEQ) [:: Pvar x; Pvar y]. done. Qed.
+Goal (_GTs [:: Pvar x; Pvar y])%E =
+  PappN (Ocombine_flags (CF_GT Signed)) [:: Pvar x; Pvar y]. done. Qed.
+Goal (_GEu [:: Pvar x; Pvar y])%E =
+  PappN (Ocombine_flags (CF_GE Unsigned)) [:: Pvar x; Pvar y]. done. Qed.
+
+Goal (x +v[VE8, U128] y)%E =
+  Papp2 (Ovadd VE8 U128) (Pvar x) (Pvar y). done. Qed.
+Goal (x -v[VE16, U256] y)%E =
+  Papp2 (Ovsub VE16 U256) (Pvar x) (Pvar y). done. Qed.
+Goal (x *v[VE32, U128] y)%E =
+  Papp2 (Ovmul VE32 U128) (Pvar x) (Pvar y). done. Qed.
+Goal (x >>v[VE8, U128] y)%E =
+  Papp2 (Ovlsr VE8 U128) (Pvar x) (Pvar y). done. Qed.
+Goal (x <<v[VE16, U256] y)%E =
+  Papp2 (Ovlsl VE16 U256) (Pvar x) (Pvar y). done. Qed.
+Goal (x >>sv[VE32, U128] y)%E =
+  Papp2 (Ovasr VE32 U128) (Pvar x) (Pvar y). done. Qed.
 
 End ExprTests.
