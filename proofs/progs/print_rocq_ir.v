@@ -26,6 +26,8 @@ Definition show__list {A : Type} (show_aux : A -> string) (xs : list A) : string
 
 (** * Axioms for Opaque types *)
 
+(* TODO: provide extracted version for Axioms! *)
+
 Axiom show_ident : Show Ident.ident.
 Existing Instance show_ident.
 
