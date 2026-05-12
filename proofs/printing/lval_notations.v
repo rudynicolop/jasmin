@@ -3,10 +3,9 @@
   Activate with [lv%L] or [Open Scope jlval_scope].
   [gvar] values coerce to [lval] via [Lvar] (see [lvar_of_gvar]).
 
-
 * Discard (Lnone)
 
-  - [lnone[b]]          discard of type bool          (Lnone _ abool)
+  - [lnone[b]]          discard of type bool           (Lnone _ abool)
   - [lnone[i]]          discard of type int            (Lnone _ aint)
   - [lnone[ws]]         discard of type word [ws]      (Lnone _ (aword ws))
   - [lnone[ws, len]]    discard of type array          (Lnone _ (aarr ws len))
@@ -35,23 +34,17 @@
   - [Laset] with alignment other than [Aligned] or scale other than [AAscale]
   - [Lasub] with scale other than [AAscale] *)
 
-Set Implicit Arguments.
-Unset Strict Implicit.
-Unset Printing Implicit Defensive.
-
-From Stdlib Require Import ZArith.
+From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr.
 Require Import expr_notations.
 
-(* Bridge coercion: bare gvar in lval position elaborates to Lvar v.(gv) *)
-Definition lvar_of_gvar (v : gvar) : lval := Lvar v.(gv).
-Coercion lvar_of_gvar : gvar >-> lval.
-
 Declare Scope jlval_scope.
 Delimit Scope jlval_scope with L.
 Bind Scope jlval_scope with lval.
+
+Coercion gv : gvar >-> var_i.
 
 (* [jatype] doesn't work for some reason, so we do explicit cases. *)
 Notation "lnone[ 'b' ]" := (Lnone dummy_var_info abool)
@@ -76,13 +69,13 @@ Notation "mset[ w ]( e )" := (Lmem Unaligned w dummy_var_info e%E)
    format "mset[ w ]( e )") : jlval_scope.
 
 Notation "aset[ w ]( v , i )" :=
-  (Laset Aligned AAscale w v.(gv) i%E)
+  (Laset Aligned AAscale w v i%E)
   (at level 0, w custom jwsize at level 0, v constr at level 0,
    i at level 99,
    format "aset[ w ]( v ,  i )") : jlval_scope.
 
 Notation "sset[ w ]( v , len , i )" :=
-  (Lasub AAscale w len v.(gv) i%E)
+  (Lasub AAscale w len%positive v i%E)
   (at level 0, w custom jwsize at level 0, v constr at level 0,
    len constr at level 0, i at level 99,
    format "sset[ w ]( v ,  len ,  i )") : jlval_scope.
