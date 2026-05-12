@@ -4,8 +4,7 @@
   Integer literals are interpreted with a [Number Notation].
   [bool] and [gvar] values coerce to [pexpr] via [Pbool] and [Pvar].
 
-
-* Mgetory and arrays
+* Memory and arrays
 
   - [mget[w](e)]             unaligned memory load, word size [w], address [e]
   - [aget[w](v, i)]          aligned array read, word size [w], index [i]
@@ -52,11 +51,15 @@
   - [e1 +[i] e2]             addition              (level 50, left)
   - [e1 -[i] e2]             subtraction           (level 50, left)
   - [e1 *[i] e2]             multiplication        (level 40, left)
+  - [e1 /u[i] e2]            unsigned division     (level 40, left)
+  - [e1 /s[i] e2]            signed division       (level 40, left)
+  - [e1 %u[i] e2]            unsigned modulo       (level 40, left)
+  - [e1 %s[i] e2]            signed modulo         (level 40, left)
   - [e1 <<[i] e2]            logical shift left    (level 45, left)
-  - [e1 >>s[i] e2]           arithmetic shift right(level 45, left)
+  - [e1 >>s[i] e2]           arithmetic shift right (level 45, left)
   - [e1 ==[i] e2]  [e1 !=[i] e2]  equality/inequality (level 70, none)
-  - [e1 <[i] e2]   [e1 <=[i] e2]  less / less-or-equal
-  - [e1 >[i] e2]   [e1 >=[i] e2]  greater / greater-or-equal
+  - [e1 <[i] e2]   [e1 <=[i] e2]  less / less-or-equal       (level 70, none)
+  - [e1 >[i] e2]   [e1 >=[i] e2]  greater / greater-or-equal (level 70, none)
 
   Word (suffix [w] for word size; [u]/[s] for unsigned/signed):
   - [e1 +[w] e2]             addition              (level 50, left)
@@ -71,14 +74,14 @@
   - [e1 |[w] e2]             bitwise OR            (level 59, left)
   - [e1 <<[w] e2]            logical shift left    (level 45, left)
   - [e1 >>[w] e2]            logical shift right   (level 45, left)
-  - [e1 >>s[w] e2]           arithmetic shift right(level 45, left)
+  - [e1 >>s[w] e2]           arithmetic shift right (level 45, left)
   - [e1 <<r[w] e2]           rotate left           (level 45, left)
   - [e1 >>r[w] e2]           rotate right          (level 45, left)
   - [e1 ==[w] e2]  [e1 !=[w] e2]  equality/inequality (level 70, none)
-  - [e1 <u[w] e2]  [e1 <=u[w] e2] unsigned comparison
-  - [e1 <s[w] e2]  [e1 <=s[w] e2] signed comparison
-  - [e1 >u[w] e2]  [e1 >=u[w] e2] unsigned comparison
-  - [e1 >s[w] e2]  [e1 >=s[w] e2] signed comparison
+  - [e1 <u[w] e2]  [e1 <=u[w] e2] unsigned comparison (level 70, none)
+  - [e1 <s[w] e2]  [e1 <=s[w] e2] signed comparison   (level 70, none)
+  - [e1 >u[w] e2]  [e1 >=u[w] e2] unsigned comparison (level 70, none)
+  - [e1 >s[w] e2]  [e1 >=s[w] e2] signed comparison   (level 70, none)
 
   Wint binary (suffix [ui[N]]/[si[N]] for unsigned/signed wint of size [N]):
   - [e1 +ui[N] e2]           addition              (level 50, left)
@@ -89,8 +92,8 @@
   - [e1 <<ui[N] e2]          shift left            (level 45, left)
   - [e1 >>ui[N] e2]          shift right           (level 45, left)
   - [e1 ==ui[N] e2]  [e1 !=ui[N] e2]  equality/inequality (level 70, none)
-  - [e1 <ui[N] e2]   [e1 <=ui[N] e2]
-  - [e1 >ui[N] e2]   [e1 >=ui[N] e2]
+  - [e1 <ui[N] e2]   [e1 <=ui[N] e2]  less / less-or-equal       (level 70, none)
+  - [e1 >ui[N] e2]   [e1 >=ui[N] e2]  greater / greater-or-equal (level 70, none)
   (Replace [ui] with [si] for the signed wint variants.)
 
 * Conditional (Pif)
@@ -100,15 +103,29 @@
 
 * Not supported
 
-  - [Parr_init n]            array initialisation expression
-  - [PappN o es]             [Opack], [Oarray], [Ocombine_flags],
-                             [Ois_arr_init], [Ois_barr_init]
-  - [Pload Aligned w e]      aligned load ([Pload Unaligned] is covered)
-  - [Pget] / [Psub] with alignment <> [Aligned] or scale <> [AAscale]
-  - [Papp2] vector ops       [Ovadd], [Ovsub], [Ovmul],
-                             [Ovlsr], [Ovlsl], [Ovasr] *)
+  pexpr constructors:
+  - [Parr_init w n]               array initialisation expression
 
-From Stdlib Require Import ZArith.
+  - [Pget Aligned AAdirect w v e]   unscaled aligned array read
+  - [Pget Unaligned AAscale w v e]  scaled unaligned array read
+  - [Pget Unaligned AAdirect w v e] unscaled unaligned array read
+
+  - [Psub AAdirect w len v e]     unscaled array slice
+
+  - [Pload Aligned w e]           aligned memory load
+
+  - [Opack w pe]                  pack values into a word
+  - [Oarray n]                    array literal of length [n]
+  - [Ocombine_flags cf]           combine processor flags
+
+  - [Ovadd ve w]                  vector addition
+  - [Ovsub ve w]                  vector subtraction
+  - [Ovmul ve w]                  vector multiplication
+  - [Ovlsr ve w]                  vector logical shift right
+  - [Ovlsl ve w]                  vector logical shift left
+  - [Ovasr ve w]                  vector arithmetic shift right *)
+
+From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr.
@@ -289,6 +306,13 @@ Notation "e1 -[ w ] e2" := (Papp2 (Osub (Op_w w)) e1%E e2%E)
    w custom jwsize at level 0,
    format "e1  -[ w ]  e2") : jexpr_scope.
 
+Notation "e1 /u[i] e2" := (Papp2 (Odiv Unsigned Op_int) e1%E e2%E)
+  (at level 40, left associativity,
+   format "e1  /u[i]  e2") : jexpr_scope.
+Notation "e1 /s[i] e2" := (Papp2 (Odiv Signed Op_int) e1%E e2%E)
+  (at level 40, left associativity,
+   format "e1  /s[i]  e2") : jexpr_scope.
+
 Notation "e1 /u[ w ] e2" := (Papp2 (Odiv Unsigned (Op_w w)) e1%E e2%E)
   (at level 40, left associativity,
    w custom jwsize at level 0,
@@ -297,6 +321,13 @@ Notation "e1 /s[ w ] e2" := (Papp2 (Odiv Signed (Op_w w)) e1%E e2%E)
   (at level 40, left associativity,
    w custom jwsize at level 0,
    format "e1  /s[ w ]  e2") : jexpr_scope.
+
+Notation "e1 %u[i] e2" := (Papp2 (Omod Unsigned Op_int) e1%E e2%E)
+  (at level 40, left associativity,
+   format "e1  %u[i]  e2") : jexpr_scope.
+Notation "e1 %s[i] e2" := (Papp2 (Omod Signed Op_int) e1%E e2%E)
+  (at level 40, left associativity,
+   format "e1  %s[i]  e2") : jexpr_scope.
 
 Notation "e1 %u[ w ] e2" := (Papp2 (Omod Unsigned (Op_w w)) e1%E e2%E)
   (at level 40, left associativity,
@@ -748,5 +779,14 @@ Goal (x >=si[U32] y)%E =
 
 Goal (42 +[U64] x)%E =
   Papp2 (Oadd (Op_w U64)) (Pconst 42) (Pvar x). done. Qed.
+
+Goal (10 /u[i] 3)%E =
+  Papp2 (Odiv Unsigned Op_int) (Pconst 10) (Pconst 3). done. Qed.
+Goal (10 /s[i] 3)%E =
+  Papp2 (Odiv Signed Op_int) (Pconst 10) (Pconst 3). done. Qed.
+Goal (10 %u[i] 3)%E =
+  Papp2 (Omod Unsigned Op_int) (Pconst 10) (Pconst 3). done. Qed.
+Goal (10 %s[i] 3)%E =
+  Papp2 (Omod Signed Op_int) (Pconst 10) (Pconst 3). done. Qed.
 
 End ExprTests.
