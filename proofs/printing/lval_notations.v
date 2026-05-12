@@ -55,34 +55,39 @@ Bind Scope jlval_scope with lval.
 
 (* [jatype] doesn't work for some reason, so we do explicit cases. *)
 Notation "lnone[ 'b' ]" := (Lnone dummy_var_info abool)
-  (at level 0) : jlval_scope.
+  (at level 0,
+   format "lnone[ b ]") : jlval_scope.
 
 Notation "lnone[ 'i' ]" := (Lnone dummy_var_info aint)
-  (at level 0) : jlval_scope.
+  (at level 0,
+   format "lnone[ i ]") : jlval_scope.
 
 Notation "lnone[ ws ]" := (Lnone dummy_var_info (aword ws))
-  (at level 0, ws custom jwsize at level 0) : jlval_scope.
+  (at level 0, ws custom jwsize at level 0,
+   format "lnone[ ws ]") : jlval_scope.
 
 Notation "lnone[ ws , len ]" := (Lnone dummy_var_info (aarr ws len))
   (at level 0, ws custom jwsize at level 0,
-   len constr at level 0) : jlval_scope.
+   len constr at level 0,
+   format "lnone[ ws ,  len ]") : jlval_scope.
 
 Notation "mset[ w ]( e )" := (Lmem Unaligned w dummy_var_info e%E)
-  (at level 0, w custom jwsize at level 0, e at level 99) : jlval_scope.
+  (at level 0, w custom jwsize at level 0, e at level 99,
+   format "mset[ w ]( e )") : jlval_scope.
 
 Notation "aset[ w ]( v , i )" :=
   (Laset Aligned AAscale w v.(gv) i%E)
   (at level 0, w custom jwsize at level 0, v constr at level 0,
-   i at level 99) : jlval_scope.
+   i at level 99,
+   format "aset[ w ]( v ,  i )") : jlval_scope.
 
 Notation "sset[ w ]( v , len , i )" :=
   (Lasub AAscale w len v.(gv) i%E)
   (at level 0, w custom jwsize at level 0, v constr at level 0,
-   len constr at level 0, i at level 99) : jlval_scope.
+   len constr at level 0, i at level 99,
+   format "sset[ w ]( v ,  len ,  i )") : jlval_scope.
 
 Section LvalTests.
-
-#[local] Open Scope Z.
 
 Context (x y : gvar) (gx gy : gvar).
 

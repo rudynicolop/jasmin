@@ -1,7 +1,7 @@
 (* Display notations for Jasmin expressions (scope [%E])
 
   Activate with [e%E] or [Open Scope jexpr_scope].
-  Integer literals coerce to [pexpr] via [Pconst] (may need the [Z] scope).
+  Integer literals are interpreted with a [Number Notation].
   [bool] and [gvar] values coerce to [pexpr] via [Pbool] and [Pvar].
 
 
@@ -134,7 +134,12 @@ Notation "ws , len" := (aarr ws len)
    ws custom jwsize at level 0, len constr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Mgetory and arrays. *)
+(* Constants *)
+
+Number Notation pexpr Pconst is_const : jexpr_scope.
+
+(* -------------------------------------------------------------------------- *)
+(* Memory and arrays. *)
 
 Notation "aget[ w ]( v , i )" := (Pget Aligned AAscale w v i%E)
   (at level 0, w constr at level 0, v constr at level 0,
@@ -502,8 +507,6 @@ Notation "ite[ t ]( e1 , e2 , e3 )" := (Pif t e1%E e2%E e3%E)
 (* -------------------------------------------------------------------------- *)
 
 Section ExprTests.
-
-#[local] Open Scope Z.
 
 Context (x y z b : gvar).
 
