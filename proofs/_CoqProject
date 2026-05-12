@@ -215,6 +215,9 @@ progs/ininout_prog.v
 progs/identity_prog.v
 progs/succ_prog.v
 
+# Printer for Rocq IR
+progs/print_rocq_ir.v
+
 # Rudy's examples
 hoareExamples/simple.v
 hoareExamples/identity.v
