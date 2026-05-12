@@ -15,6 +15,15 @@ Local Set Warnings "-non-recursive".
 (* Fail QCDerive Show for _uprog. *)
 (* Error: Anomaly "Uncaught exception Failure("destIndRef")." Please report at http://rocq-prover.org/bugs/. *)
 
+(** * Manual Show Combinators *)
+
+(** Shorthand to avoid maually writing [_ ++ " " ++ _ ++ ...]. *)
+Notation show0 := (Basics.compose ShowFunctions.string_concat (ShowFunctions.intersperse " "%string)).
+
+(** The body of [Show (list A)], needed for nested recursive instances. *)
+Definition show__list {A : Type} (show_aux : A -> string) (xs : list A) : string :=
+  append "[" (append (contents show_aux xs) "]").
+
 (** * Axioms for Opaque types *)
 
 Axiom show_ident : Show Ident.ident.
@@ -70,15 +79,32 @@ QCDerive Show for pelem.
 QCDerive Show for combine_flags.
 QCDerive Show for opN.
 
-Print word.
+Global Instance word_show_word {n : nat} : Show (word.word.word n) :=
+  {| show w :=
+      (* NOTE: We erase the proof *)
+      show0 [:: "mkWord"%string; smart_paren (show w.(word.toword))] |}.
 
-(* QCDerive Show for word.word.word. *)
+Global Instance show_word {sz : wsize} : Show (word sz) :=
+  (* Bruh *)
+  {| show w := word_show_word.(show) w |}.
 
-(* QCDerive Show for WArray.array. *)
+(* TODO: this is an empty thing, avoiding printing
+   the underlying AVL tree type. *)
+Global Instance warray_show_array {s:positive} : Show (WArray.array s) :=
+  {| show _ := "BuilArray"%string |}.
 
-(* QCDerive Show for word. *)
+Global Instance show_glob_value : Show glob_value :=
+  {| show gv :=
+      match gv with
+      | Gword w => show0 [:: "Gword"; smart_paren (show w)]
+      | Garr arr => show0 [:: "Garr"; smart_paren (show arr)]
+      end%string |}.
 
-(* QCDerive Show for glob_value.  *)
+(* Error: Anomaly "Uncaught exception Failure("destIndRef")." *)
+(* Please report at http://rocq-prover.org/bugs/. *)
+(* Fail QCDerive Show for glob_decl. *)
+Global Instance show_glob_decl : Show glob_decl :=
+  {| show gd := show gd |}.
 
 (* But [Show] does exist for [list] ... *)
 Fail QCDerive Show for pexpr.
@@ -90,13 +116,6 @@ Module example.
   Fail QCDerive Show for pexpr.
 
 End example.
-
-(** Shorthand to avoid maually writing [_ ++ " " ++ _ ++ ...]. *)
-Notation show0 := (Basics.compose ShowFunctions.string_concat (ShowFunctions.intersperse " "%string)).
-
-(** The body of [Show (list A)], needed for nested recursive instances. *)
-Definition show__list {A : Type} (show_aux : A -> string) (xs : list A) : string :=
-  append "[" (append (contents show_aux xs) "]").
 
 (** FIXME: manually writing [Show expr] for now. *)
 Fixpoint show_pexpr_aux (e : pexpr) : string := 
@@ -320,7 +339,7 @@ Section ASM_OP.
     Global Instance show_fun_decl : Show fun_decl :=
       {| show fd := show fd |}.
 
-    Fail Global Instance show_prog : Show prog :=
+    Global Instance show_prog : Show prog :=
       {| show p :=
           show0 ("Build__prog"%string :: map smart_paren
                    [:: show p.(p_funcs);
