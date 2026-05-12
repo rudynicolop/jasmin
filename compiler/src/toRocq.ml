@@ -111,14 +111,15 @@ let pp_rocq_definition fmt pp_lhs lhs ty pp_rhs rhs =
   pp_rocq_definition_gen fmt pp_lhs lhs F.pp_print_string ty pp_rhs rhs
 
 let pp_rocq_require_import fmt = F.fprintf fmt "Require Import %s.@ "
+
 let pp_rocq_from_require_import fmt m =
   F.fprintf fmt "From %s %a" m pp_rocq_require_import
+
 let pp_rocq_existing_instance fmt = F.fprintf fmt "Existing Instance %s.@ "
 let pp_rocq_section fmt = F.fprintf fmt "Section %s.@ "
 let pp_rocq_end fmt = F.fprintf fmt "End %s.@ "
 let pp_rocq_context fmt = F.fprintf fmt "Context %s.@ "
 let pp_rocq_axiom fmt = F.fprintf fmt "Axiom %s : %s.@ "
-
 let pp_rocq_record pp fmt x = F.fprintf fmt "@[<v 0>{|@[<v 0>@ %a@]@ |}@]" pp x
 let pp_rocq_bool fmt = F.fprintf fmt "%B"
 let pp_rocq_z fmt z = F.fprintf fmt "(%a)%%Z" Z.pp_print z
@@ -490,7 +491,7 @@ let rec pp_instr_r ~loc pp_asm_op fmt = function
         pp_dir dir pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
   | Cwhile (_, c1, e, _, c2) ->
       F.fprintf fmt "@[<hv 2>cwhile@ %a@ (%a)@ %a@]" (pp_stmt pp_asm_op) c1
-      pp_expr e (pp_stmt pp_asm_op) c2
+        pp_expr e (pp_stmt pp_asm_op) c2
   | Ccall (lvs, fn, es) ->
       F.fprintf fmt "@[<h>ccall %a %a %a@]" pp_lvals lvs pp_fn fn pp_exprs es
 
@@ -645,10 +646,12 @@ let pp_prog_definition fmt name funcs =
 
 let pp_imports fmt =
   pp_rocq_from_require_import fmt "Coq" "ZArith";
-  pp_rocq_from_require_import fmt "mathcomp" "ssreflect ssrbool ssrfun ssrnat eqtype seq";
+  pp_rocq_from_require_import fmt "mathcomp"
+    "ssreflect ssrbool ssrfun ssrnat eqtype seq";
   pp_newline fmt;
-  pp_rocq_require_import fmt "expr ident var type global pseudo_operator sopn arch_extra";
-  pp_rocq_from_require_import fmt "Printing" "atoi syntax data"
+  pp_rocq_require_import fmt
+    "expr ident var type global pseudo_operator sopn arch_extra";
+  pp_rocq_from_require_import fmt "Printing" "atoi syntax data notations"
 
 let pp_oracles fmt =
   pp_rocq_axiom fmt "IdO" "IdentOracles";
