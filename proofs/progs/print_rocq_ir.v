@@ -11,7 +11,6 @@ Require Import QuickChick.QuickChick.
 (* Fail QCDerive Show for _uprog. *)
 (* Error: Anomaly "Uncaught exception Failure("destIndRef")." Please report at http://rocq-prover.org/bugs/. *)
 
-Fail QCDerive Show for pexpr.
 QCDerive Show for wsize.
 QCDerive Show for positive.
 QCDerive Show for atype.
@@ -40,8 +39,6 @@ Instance show_gvar : Show gvar :=
       end |}.
 QCDerive Show for aligned.
 QCDerive Show for arr_access.
-QCDerive Show for wsize.
-QCDerive Show for positive.
 QCDerive Show for signedness.
 QCDerive Show for op_kind.
 QCDerive Show for wiop1.
@@ -53,7 +50,30 @@ QCDerive Show for sop2.
 QCDerive Show for pelem.
 QCDerive Show for combine_flags.
 QCDerive Show for opN.
-Instance show_seq {A : Type} `{Show A} : Show (seq A) :=
-  showList.
-(* Bruh *)
+
+(* But [Show] does exist for [list] ... *)
 Fail QCDerive Show for pexpr.
+
+Module example.
+  (* Still fails if we explicitly add it? *)
+
+  Global Instance show_pexprs `{Show pexpr} : Show (seq pexpr) := showList.
+  Fail QCDerive Show for pexpr.
+
+End example.
+
+(** FIXME: manually writing [Show expr] for now. *)
+Fixpoint show_pexpr_aux (e : pexpr) : string := 
+  match e with
+  | Pconst z => "Pconst " ++ smart_paren (show z)
+  | Pbool b => "Pbool " ++ smart_paren (show b)
+  | Parr_init ws p => "Parr_init " ++ smart_paren (show ws) ++ " " ++ smart_paren (show p) 
+  | Pvar x => "Pvar " ++ smart_paren (show x)
+  | Pget al aa ws x e => "Pget " ++ smart_paren (show al) ++ " "  ++ smart_paren (show aa) ++ " "  ++ smart_paren (show ws) ++ " "  ++ smart_paren (show x) ++ " "  ++ smart_paren (show_pexpr_aux e)
+  | Psub aa ws len x e => "Psub " ++ smart_paren (show aa) ++ " "  ++ smart_paren (show ws) ++ " "  ++ smart_paren (show len) ++ " "  ++ smart_paren (show x) ++ " "  ++ smart_paren (show_pexpr_aux e)
+  | Pload al sz e => "Pload " ++ smart_paren (show al) ++ " "  ++ smart_paren (show sz) ++ " "  ++ smart_paren (show_pexpr_aux e)
+  | Papp1 op e => "Papp1 " ++ smart_paren (show op) ++ " " ++ smart_paren (show_pexpr_aux e)
+  | Papp2 op e1 e2 => "Papp2 " ++ smart_paren (show op) ++ " " ++ smart_paren (show_pexpr_aux e1) ++ " " ++ smart_paren (show_pexpr_aux e2)
+  | PappN op es => "PappN " ++ smart_paren (show op) ++ " " ++ append "[" (append (contents show_pexpr_aux es) "]")
+  | Pif t e e1 e2 => "Pif " ++ smart_paren (show t) ++ " " ++ smart_paren (show_pexpr_aux e) ++ " " ++ smart_paren (show_pexpr_aux e1) ++ " " ++ smart_paren (show_pexpr_aux e2)
+  end%string.
