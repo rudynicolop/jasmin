@@ -5,12 +5,12 @@
   [bool] and [gvar] values coerce to [pexpr] via [Pbool] and [Pvar].
 
 
-* Memory and arrays
+* Mgetory and arrays
 
-  - [mem[w](e)]              unaligned load, word size [w], address [e]
+  - [mget[w](e)]             unaligned memory load, word size [w], address [e]
   - [aget[w](v, i)]          aligned array read, word size [w], index [i]
-  - [asub[w](v, len, i)]     aligned array sub-slice, word size [w],
-                             length [len], index [i]
+  - [sget[w](v, len, i)]     aligned array slice, word size [w], length [len],
+                             index [i]
 
 * Unary operators (Papp1) — level 30, right-associative
 
@@ -123,29 +123,32 @@ Notation "w" := w
   (in custom jwsize at level 0, w constr at level 0).
 
 (* Custom entry for annotated types: b = abool, i = aint,
-   or a wsize constructor ws = aword ws. *)
+   ws = aword ws, or ws , len = aarr ws len. *)
 Declare Custom Entry jatype.
 Notation "'b'" := abool (in custom jatype at level 0).
 Notation "'i'" := aint (in custom jatype at level 0).
 Notation "ws" := (aword ws)
   (in custom jatype at level 0, ws custom jwsize at level 0).
+Notation "ws , len" := (aarr ws len)
+  (in custom jatype at level 1,
+   ws custom jwsize at level 0, len constr at level 0).
 
 (* -------------------------------------------------------------------------- *)
-(* Memory and arrays. *)
+(* Mgetory and arrays. *)
 
 Notation "aget[ w ]( v , i )" := (Pget Aligned AAscale w v i%E)
   (at level 0, w constr at level 0, v constr at level 0,
    i at level 99,
    format "aget[ w ]( v ,  i )") : jexpr_scope.
 
-Notation "asub[ w ]( v , len , i )" := (Psub AAscale w len v i%E)
+Notation "sget[ w ]( v , len , i )" := (Psub AAscale w len v i%E)
   (at level 0, w constr at level 0, v constr at level 0,
    len constr at level 0, i at level 99,
-   format "asub[ w ]( v ,  len ,  i )") : jexpr_scope.
+   format "sget[ w ]( v ,  len ,  i )") : jexpr_scope.
 
-Notation "mem[ w ]( e )" := (Pload Unaligned w e%E)
+Notation "mget[ w ]( e )" := (Pload Unaligned w e%E)
   (at level 0, w constr at level 0, e at level 99,
-   format "mem[ w ]( e )") : jexpr_scope.
+   format "mget[ w ]( e )") : jexpr_scope.
 
 (* -------------------------------------------------------------------------- *)
 (* Papp1 — Unary operators (level 30, right assoc) *)
@@ -504,7 +507,7 @@ Section ExprTests.
 
 Context (x y z b : gvar).
 
-Goal (mem[U64](x))%E = Pload Unaligned U64 (Pvar x). done. Qed.
+Goal (mget[U64](x))%E = Pload Unaligned U64 (Pvar x). done. Qed.
 
 Goal (aget[U64](x, 0))%E =
   Pget Aligned AAscale U64 x (Pconst 0). done. Qed.
@@ -625,7 +628,7 @@ Goal (x *[U128] y)%E =
 Goal (x *[U256] y)%E =
   Papp2 (Omul (Op_w U256)) (Pvar x) (Pvar y). done. Qed.
 
-Goal (asub[U64](x, 4, 0))%E =
+Goal (sget[U64](x, 4, 0))%E =
   Psub AAscale U64 4 x (Pconst 0). done. Qed.
 
 Goal (x >[i] y)%E =
@@ -641,12 +644,12 @@ Goal (x >=u[U64] y)%E =
 Goal (x >=s[U64] y)%E =
   Papp2 (Oge (Cmp_w Signed U64)) (Pvar x) (Pvar y). done. Qed.
 
-Goal (mem[U8](x))%E = Pload Unaligned U8 (Pvar x). done. Qed.
-Goal (mem[U16](x))%E = Pload Unaligned U16 (Pvar x). done. Qed.
-Goal (mem[U32](x))%E = Pload Unaligned U32 (Pvar x). done. Qed.
-Goal (mem[U128](x))%E = Pload Unaligned U128 (Pvar x). done. Qed.
-Goal (mem[U256](x))%E = Pload Unaligned U256 (Pvar x). done. Qed.
-Goal (mem[U64](x +[U64] y))%E =
+Goal (mget[U8](x))%E = Pload Unaligned U8 (Pvar x). done. Qed.
+Goal (mget[U16](x))%E = Pload Unaligned U16 (Pvar x). done. Qed.
+Goal (mget[U32](x))%E = Pload Unaligned U32 (Pvar x). done. Qed.
+Goal (mget[U128](x))%E = Pload Unaligned U128 (Pvar x). done. Qed.
+Goal (mget[U256](x))%E = Pload Unaligned U256 (Pvar x). done. Qed.
+Goal (mget[U64](x +[U64] y))%E =
   Pload Unaligned U64
     (Papp2 (Oadd (Op_w U64)) (Pvar x) (Pvar y)).
 done. Qed.

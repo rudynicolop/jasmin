@@ -173,6 +173,8 @@ Notation "'call' lvs ':=' f '(' es ')'" :=
 
 Section CmdTests.
 
+#[local] Open Scope Z.
+
 Context
   {asm_op: Type}
   {asmop : asmOp asm_op}
