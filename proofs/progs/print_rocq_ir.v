@@ -62,18 +62,25 @@ Module example.
 
 End example.
 
+(** Shorthand to avoid maually writing [_ ++ " " ++ _ ++ ...]. *)
+Notation show0 := (Basics.compose ShowFunctions.string_concat (ShowFunctions.intersperse " "%string)).
+
+(** The body of [Show (list A)], needed for nested recursive instances. *)
+Definition show__list {A : Type} (show_aux : A -> string) (xs : list A) : string :=
+  append "[" (append (contents show_aux xs) "]").
+
 (** FIXME: manually writing [Show expr] for now. *)
 Fixpoint show_pexpr_aux (e : pexpr) : string := 
   match e with
   | Pconst z => "Pconst " ++ smart_paren (show z)
   | Pbool b => "Pbool " ++ smart_paren (show b)
-  | Parr_init ws p => "Parr_init " ++ smart_paren (show ws) ++ " " ++ smart_paren (show p) 
+  | Parr_init ws p => show0 ("Parr_init" :: map smart_paren [:: show ws; show p]) 
   | Pvar x => "Pvar " ++ smart_paren (show x)
-  | Pget al aa ws x e => "Pget " ++ smart_paren (show al) ++ " "  ++ smart_paren (show aa) ++ " "  ++ smart_paren (show ws) ++ " "  ++ smart_paren (show x) ++ " "  ++ smart_paren (show_pexpr_aux e)
-  | Psub aa ws len x e => "Psub " ++ smart_paren (show aa) ++ " "  ++ smart_paren (show ws) ++ " "  ++ smart_paren (show len) ++ " "  ++ smart_paren (show x) ++ " "  ++ smart_paren (show_pexpr_aux e)
-  | Pload al sz e => "Pload " ++ smart_paren (show al) ++ " "  ++ smart_paren (show sz) ++ " "  ++ smart_paren (show_pexpr_aux e)
-  | Papp1 op e => "Papp1 " ++ smart_paren (show op) ++ " " ++ smart_paren (show_pexpr_aux e)
-  | Papp2 op e1 e2 => "Papp2 " ++ smart_paren (show op) ++ " " ++ smart_paren (show_pexpr_aux e1) ++ " " ++ smart_paren (show_pexpr_aux e2)
-  | PappN op es => "PappN " ++ smart_paren (show op) ++ " " ++ append "[" (append (contents show_pexpr_aux es) "]")
-  | Pif t e e1 e2 => "Pif " ++ smart_paren (show t) ++ " " ++ smart_paren (show_pexpr_aux e) ++ " " ++ smart_paren (show_pexpr_aux e1) ++ " " ++ smart_paren (show_pexpr_aux e2)
+  | Pget al aa ws x e => show0 ("Pget" :: map smart_paren [:: show al; show aa; show ws; show x; show_pexpr_aux e])
+  | Psub aa ws len x e => show0 ("Pget" :: map smart_paren [:: show aa; show ws; show len; show x; show_pexpr_aux e])
+  | Pload al sz e => show0 ("Pload" :: map smart_paren [:: show al; show sz; show_pexpr_aux e])
+  | Papp1 op e =>  show0 ("Papp1" :: map smart_paren [:: show op; show_pexpr_aux e])
+  | Papp2 op e1 e2 => show0 ("Papp2" :: map smart_paren [:: show op; show_pexpr_aux e1; show_pexpr_aux e2])
+  | PappN op es => "PappN " ++ smart_paren (show op) ++ " " ++ show__list show_pexpr_aux es
+  | Pif t e e1 e2 => show0 ("Pif" :: map smart_paren [:: show t; show_pexpr_aux e; show_pexpr_aux e1; show_pexpr_aux e2])
   end%string.
