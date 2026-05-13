@@ -1,0 +1,131 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi syntax data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+
+Section IDO.
+Context {IdO : IdentOracles}.
+
+(* __schoolbook16x *)
+(* Local variables *)
+Definition are : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14218).
+Definition aim : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14219).
+Definition bre : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14220).
+Definition bim : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14221).
+Definition zeta : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14222).
+Definition zetaqinv : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14223).
+Definition qx16_14224 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14224).
+Definition qinvx16_14225 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14225).
+Definition sign : gvar := mk_rocq_gvar Slocal (aint) (mkident 14226).
+Definition x0_14227 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14227).
+Definition y0_14228 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14228).
+Definition zaim : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14229).
+Definition ac0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14230).
+Definition ac1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14231).
+Definition ad0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14232).
+Definition ad1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14233).
+Definition bc0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14234).
+Definition bc1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14235).
+Definition zbd0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14236).
+Definition zbd1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14237).
+Definition x1_14238 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14238).
+Definition y1_14239 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14239).
+Definition _zero_14240 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 14240).
+
+(* Signature *)
+Definition tyin___schoolbook16x : seq atype :=
+  [:: aword U256
+    ; aword U256
+    ; aword U256
+    ; aword U256
+    ; aword U256
+    ; aword U256
+    ; aword U256
+    ; aword U256
+    ; aint ].
+Definition args___schoolbook16x : seq var_i :=
+  [:: are.(gv)
+    ; aim.(gv)
+    ; bre.(gv)
+    ; bim.(gv)
+    ; zeta.(gv)
+    ; zetaqinv.(gv)
+    ; qx16_14224.(gv)
+    ; qinvx16_14225.(gv)
+    ; sign.(gv) ].
+Definition tyout___schoolbook16x : seq atype := [:: aword U256; aword U256 ].
+Definition res___schoolbook16x : seq var_i :=
+  [:: x0_14227.(gv); y0_14228.(gv) ].
+
+(* Body *)
+Definition body___schoolbook16x : cmd :=
+  [:: ccall [:: Lvar zaim.(gv) ] __fqmulprecomp16x [:: Pvar aim
+                                                     ; Pvar zetaqinv
+                                                     ; Pvar zeta
+                                                     ; Pvar qx16_14224 ]
+    ; ccall [:: Lvar ac0.(gv); Lvar ac1.(gv) ] __wmul_16u16 [:: Pvar are
+                                                              ; Pvar bre ]
+    ; ccall [:: Lvar ad0.(gv); Lvar ad1.(gv) ] __wmul_16u16 [:: Pvar are
+                                                              ; Pvar bim ]
+    ; ccall [:: Lvar bc0.(gv); Lvar bc1.(gv) ] __wmul_16u16 [:: Pvar aim
+                                                              ; Pvar bre ]
+    ; ccall [:: Lvar zbd0.(gv); Lvar zbd1.(gv) ] __wmul_16u16 [:: Pvar zaim
+                                                                ; Pvar bim ]
+    ; cif
+        (Papp2 (Oeq (Op_int)) (Pvar sign) (Pconst (0)%Z))
+        [:: copn [:: Lvar x0_14227.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar ac0
+                                                                    ; Pvar zbd0 ]
+          ; copn [:: Lvar x1_14238.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar ac1
+                                                                    ; Pvar zbd1 ] ]
+        [:: copn [:: Lvar x0_14227.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE32 U256))))) [:: Pvar ac0
+                                                                    ; Pvar zbd0 ]
+          ; copn [:: Lvar x1_14238.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE32 U256))))) [:: Pvar ac1
+                                                                    ; Pvar zbd1 ] ]
+    ; copn [:: Lvar y0_14228.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar bc0
+                                                                    ; Pvar ad0 ]
+    ; copn [:: Lvar y1_14239.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar bc1
+                                                                    ; Pvar ad1 ]
+    ; copn [:: Lvar _zero_14240.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::]
+    ; ccall [:: Lvar x0_14227.(gv); Lvar x1_14238.(gv) ] __w256_deinterleave_u16 [:: Pvar _zero_14240
+                                                                    ; Pvar x0_14227
+                                                                    ; Pvar x1_14238 ]
+    ; ccall [:: Lvar y0_14228.(gv); Lvar y1_14239.(gv) ] __w256_deinterleave_u16 [:: Pvar _zero_14240
+                                                                    ; Pvar y0_14228
+                                                                    ; Pvar y1_14239 ]
+    ; ccall [:: Lvar x0_14227.(gv) ] __mont_red [:: Pvar x0_14227
+                                                  ; Pvar x1_14238
+                                                  ; Pvar qx16_14224
+                                                  ; Pvar qinvx16_14225 ]
+    ; ccall [:: Lvar y0_14228.(gv) ] __mont_red [:: Pvar y0_14228
+                                                  ; Pvar y1_14239
+                                                  ; Pvar qx16_14224
+                                                  ; Pvar qinvx16_14225 ] ].
+
+Definition fd___schoolbook16x : ufundef :=
+  {|
+    f_info := FunInfo.witness;
+    f_contract := None;
+    f_tyin := tyin___schoolbook16x;
+    f_params := args___schoolbook16x;
+    f_body := body___schoolbook16x;
+    f_tyout := tyout___schoolbook16x;
+    f_res := res___schoolbook16x;
+    f_extra := tt;
+  |}.
+
+End IDO.

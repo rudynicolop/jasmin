@@ -1,0 +1,56 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi syntax data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+
+Section IDO.
+Context {IdO : IdentOracles}.
+
+(* __fqmulprecomp16x *)
+(* Local variables *)
+Definition b_19054 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19054).
+Definition al : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19055).
+Definition ah : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19056).
+Definition qx16_19057 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 19057).
+Definition x_19058 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19058).
+
+(* Signature *)
+Definition tyin___fqmulprecomp16x : seq atype :=
+  [:: aword U256; aword U256; aword U256; aword U256 ].
+Definition args___fqmulprecomp16x : seq var_i :=
+  [:: b_19054.(gv); al.(gv); ah.(gv); qx16_19057.(gv) ].
+Definition tyout___fqmulprecomp16x : seq atype := [:: aword U256 ].
+Definition res___fqmulprecomp16x : seq var_i := [:: b_19054.(gv) ].
+
+(* Body *)
+Definition body___fqmulprecomp16x : cmd :=
+  [:: copn [:: Lvar x_19058.(gv) ] (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar al
+                                                                    ; Pvar b_19054 ]
+    ; copn [:: Lvar b_19054.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar ah
+                                                                    ; Pvar b_19054 ]
+    ; copn [:: Lvar x_19058.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_19058
+                                                                    ; Pvar qx16_19057 ]
+    ; copn [:: Lvar b_19054.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar b_19054
+                                                                    ; Pvar x_19058 ] ].
+
+Definition fd___fqmulprecomp16x : ufundef :=
+  {|
+    f_info := FunInfo.witness;
+    f_contract := None;
+    f_tyin := tyin___fqmulprecomp16x;
+    f_params := args___fqmulprecomp16x;
+    f_body := body___fqmulprecomp16x;
+    f_tyout := tyout___fqmulprecomp16x;
+    f_res := res___fqmulprecomp16x;
+    f_extra := tt;
+  |}.
+
+End IDO.

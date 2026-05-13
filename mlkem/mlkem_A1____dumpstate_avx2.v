@@ -1,0 +1,264 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi syntax data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+
+Section IDO.
+Context {IdO : IdentOracles}.
+
+(* A1____dumpstate_avx2 *)
+(* Local variables *)
+Definition buf_18201 : gvar :=
+  mk_rocq_gvar Slocal (aarr U8 1) (mkident 18201).
+Definition offset_18202 : gvar :=
+  mk_rocq_gvar Slocal (aword U64) (mkident 18202).
+Definition _LEN_18203 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18203).
+Definition st_18204 : gvar :=
+  mk_rocq_gvar Slocal (aarr U256 7) (mkident 18204).
+Definition DELTA_18205 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18205).
+Definition t128_0_18206 : gvar :=
+  mk_rocq_gvar Slocal (aword U128) (mkident 18206).
+Definition t128_1_18207 : gvar :=
+  mk_rocq_gvar Slocal (aword U128) (mkident 18207).
+Definition t_18208 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 18208).
+Definition t256_0_18209 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 18209).
+Definition t256_1_18210 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 18210).
+Definition t256_2_18211 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 18211).
+Definition t256_3_18212 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 18212).
+Definition t256_4_18213 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 18213).
+
+(* Signature *)
+Definition tyin_A1____dumpstate_avx2 : seq atype :=
+  [:: aarr U8 1; aword U64; aint; aarr U256 7 ].
+Definition args_A1____dumpstate_avx2 : seq var_i :=
+  [:: buf_18201.(gv); offset_18202.(gv); _LEN_18203.(gv); st_18204.(gv) ].
+Definition tyout_A1____dumpstate_avx2 : seq atype :=
+  [:: aarr U8 1; aword U64 ].
+Definition res_A1____dumpstate_avx2 : seq var_i :=
+  [:: buf_18201.(gv); offset_18202.(gv) ].
+
+(* Body *)
+Definition body_A1____dumpstate_avx2 : cmd :=
+  [:: cassgn (Lvar DELTA_18205.(gv)) (aint) (Pconst (0)%Z)
+    ; cif
+        (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar _LEN_18203))
+        [:: ccall [:: Lvar buf_18201.(gv)
+                    ; Lvar DELTA_18205.(gv)
+                    ; Lnone dummy_var_info (aint) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pconst (8)%Z
+                                                                    ; Pget Aligned AAscale U256 st_18204 (Pconst (0)%Z) ]
+          ; cassgn (Lvar _LEN_18203.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_18203) (Pconst (8)%Z)) ]
+        [:: ccall [:: Lvar buf_18201.(gv)
+                    ; Lvar DELTA_18205.(gv)
+                    ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pget Aligned AAscale U256 st_18204 (Pconst (0)%Z) ] ]
+    ; ccall [:: Lvar buf_18201.(gv)
+              ; Lvar DELTA_18205.(gv)
+              ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                   ; Pvar offset_18202
+                                                                   ; Pvar DELTA_18205
+                                                                   ; Pvar _LEN_18203
+                                                                   ; Pget Aligned AAscale U256 st_18204 (Pconst (1)%Z) ]
+    ; cif
+        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+        [:: cassgn (Lvar t128_0_18206.(gv)) (aword U128) (Pget Aligned AAscale U256 st_18204 (Pconst (2)%Z))
+          ; copn [:: Lvar t128_1_18207.(gv) ] (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pget Aligned AAscale U256 st_18204 (Pconst (2)%Z)
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]
+          ; cassgn (Lvar t_18208.(gv)) (aword U64) (Pvar t128_1_18207)
+          ; ccall [:: Lvar buf_18201.(gv)
+                    ; Lvar DELTA_18205.(gv)
+                    ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto8 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t_18208 ]
+          ; copn [:: Lvar t128_1_18207.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U128))))) [:: Pvar t128_1_18207
+                                                                    ; Pvar t128_1_18207 ]
+          ; cif
+              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+              [:: copn [:: Lvar t256_0_18209.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_18204 (Pconst (3)%Z)
+                                                                    ; Pget Aligned AAscale U256 st_18204 (Pconst (4)%Z)
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z ] ]
+                ; copn [:: Lvar t256_1_18210.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_18204 (Pconst (4)%Z)
+                                                                    ; Pget Aligned AAscale U256 st_18204 (Pconst (3)%Z)
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z ] ]
+                ; copn [:: Lvar t256_2_18211.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_18204 (Pconst (5)%Z)
+                                                                    ; Pget Aligned AAscale U256 st_18204 (Pconst (6)%Z)
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z ] ]
+                ; copn [:: Lvar t256_3_18212.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_18204 (Pconst (6)%Z)
+                                                                    ; Pget Aligned AAscale U256 st_18204 (Pconst (5)%Z)
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z ] ]
+                ; copn [:: Lvar t256_4_18213.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_18209
+                                                                    ; Pvar t256_3_18212
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z ] ]
+                ; ccall [:: Lvar buf_18201.(gv)
+                          ; Lvar DELTA_18205.(gv)
+                          ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t256_4_18213 ]
+                ; cif
+                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+                    [:: cassgn (Lvar t_18208.(gv)) (aword U64) (Pvar t128_0_18206)
+                      ; ccall [:: Lvar buf_18201.(gv)
+                                ; Lvar DELTA_18205.(gv)
+                                ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto8 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t_18208 ]
+                      ; copn [:: Lvar t128_0_18206.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U128))))) [:: Pvar t128_0_18206
+                                                                    ; Pvar t128_0_18206 ] ]
+                    [::]
+                ; cif
+                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+                    [:: copn [:: Lvar t256_4_18213.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_3_18212
+                                                                    ; Pvar t256_1_18210
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z ] ]
+                      ; ccall [:: Lvar buf_18201.(gv)
+                                ; Lvar DELTA_18205.(gv)
+                                ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t256_4_18213 ] ]
+                    [::]
+                ; cif
+                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+                    [:: cassgn (Lvar t_18208.(gv)) (aword U64) (Pvar t128_1_18207)
+                      ; ccall [:: Lvar buf_18201.(gv)
+                                ; Lvar DELTA_18205.(gv)
+                                ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto8 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t_18208 ] ]
+                    [::]
+                ; cif
+                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+                    [:: copn [:: Lvar t256_4_18213.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_18211
+                                                                    ; Pvar t256_0_18209
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z ] ]
+                      ; ccall [:: Lvar buf_18201.(gv)
+                                ; Lvar DELTA_18205.(gv)
+                                ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t256_4_18213 ] ]
+                    [::]
+                ; cif
+                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+                    [:: cassgn (Lvar t_18208.(gv)) (aword U64) (Pvar t128_0_18206)
+                      ; ccall [:: Lvar buf_18201.(gv)
+                                ; Lvar DELTA_18205.(gv)
+                                ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto8 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t_18208 ] ]
+                    [::]
+                ; cif
+                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_18203))
+                    [:: copn [:: Lvar t256_4_18213.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_18210
+                                                                    ; Pvar t256_2_18211
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (0)%Z
+                                                                    ; Pconst (1)%Z
+                                                                    ; Pconst (1)%Z ] ]
+                      ; ccall [:: Lvar buf_18201.(gv)
+                                ; Lvar DELTA_18205.(gv)
+                                ; Lvar _LEN_18203.(gv) ] A1____a_ilen_write_upto32 [:: Pvar buf_18201
+                                                                    ; Pvar offset_18202
+                                                                    ; Pvar DELTA_18205
+                                                                    ; Pvar _LEN_18203
+                                                                    ; Pvar t256_4_18213 ] ]
+                    [::] ]
+              [::] ]
+        [::]
+    ; cassgn (Lvar offset_18202.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_18202) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_18205))) ].
+
+Definition fd_A1____dumpstate_avx2 : ufundef :=
+  {|
+    f_info := FunInfo.witness;
+    f_contract := None;
+    f_tyin := tyin_A1____dumpstate_avx2;
+    f_params := args_A1____dumpstate_avx2;
+    f_body := body_A1____dumpstate_avx2;
+    f_tyout := tyout_A1____dumpstate_avx2;
+    f_res := res_A1____dumpstate_avx2;
+    f_extra := tt;
+  |}.
+
+End IDO.

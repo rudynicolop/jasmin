@@ -1,0 +1,83 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi syntax data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+
+Section IDO.
+Context {IdO : IdentOracles}.
+
+(* A1120____a_ilen_write_upto8 *)
+(* Local variables *)
+Definition buf_15409 : gvar :=
+  mk_rocq_gvar Slocal (aarr U8 1120) (mkident 15409).
+Definition offset_15410 : gvar :=
+  mk_rocq_gvar Slocal (aword U64) (mkident 15410).
+Definition DELTA_15411 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15411).
+Definition LEN_15412 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15412).
+Definition w_15413 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15413).
+
+(* Signature *)
+Definition tyin_A1120____a_ilen_write_upto8 : seq atype :=
+  [:: aarr U8 1120; aword U64; aint; aint; aword U64 ].
+Definition args_A1120____a_ilen_write_upto8 : seq var_i :=
+  [:: buf_15409.(gv)
+    ; offset_15410.(gv)
+    ; DELTA_15411.(gv)
+    ; LEN_15412.(gv)
+    ; w_15413.(gv) ].
+Definition tyout_A1120____a_ilen_write_upto8 : seq atype :=
+  [:: aarr U8 1120; aint; aint ].
+Definition res_A1120____a_ilen_write_upto8 : seq var_i :=
+  [:: buf_15409.(gv); DELTA_15411.(gv); LEN_15412.(gv) ].
+
+(* Body *)
+Definition body_A1120____a_ilen_write_upto8 : cmd :=
+  [:: cif
+        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LEN_15412))
+        [:: cif
+              (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar LEN_15412))
+              [:: cassgn (Laset Unaligned AAdirect U64 buf_15409.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15410) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15411))))) (aword U64) (Pvar w_15413)
+                ; cassgn (Lvar DELTA_15411.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15411) (Pconst (8)%Z))
+                ; cassgn (Lvar LEN_15412.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15412) (Pconst (8)%Z)) ]
+              [:: cif
+                    (Papp2 (Ole (Cmp_int)) (Pconst (4)%Z) (Pvar LEN_15412))
+                    [:: cassgn (Laset Unaligned AAdirect U32 buf_15409.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15410) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15411))))) (aword U32) (Pvar w_15413)
+                      ; cassgn (Lvar w_15413.(gv)) (aword U64) (Papp2 (Olsr U64) (Pvar w_15413) (Papp1 (Oword_of_int U8) (Pconst (32)%Z)))
+                      ; cassgn (Lvar DELTA_15411.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15411) (Pconst (4)%Z))
+                      ; cassgn (Lvar LEN_15412.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15412) (Pconst (4)%Z)) ]
+                    [::]
+                ; cif
+                    (Papp2 (Ole (Cmp_int)) (Pconst (2)%Z) (Pvar LEN_15412))
+                    [:: cassgn (Laset Unaligned AAdirect U16 buf_15409.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15410) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15411))))) (aword U16) (Pvar w_15413)
+                      ; cassgn (Lvar w_15413.(gv)) (aword U64) (Papp2 (Olsr U64) (Pvar w_15413) (Papp1 (Oword_of_int U8) (Pconst (16)%Z)))
+                      ; cassgn (Lvar DELTA_15411.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15411) (Pconst (2)%Z))
+                      ; cassgn (Lvar LEN_15412.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15412) (Pconst (2)%Z)) ]
+                    [::]
+                ; cif
+                    (Papp2 (Ole (Cmp_int)) (Pconst (1)%Z) (Pvar LEN_15412))
+                    [:: cassgn (Laset Unaligned AAdirect U8 buf_15409.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15410) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15411))))) (aword U8) (Pvar w_15413)
+                      ; cassgn (Lvar DELTA_15411.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15411) (Pconst (1)%Z))
+                      ; cassgn (Lvar LEN_15412.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15412) (Pconst (1)%Z)) ]
+                    [::] ] ]
+        [::] ].
+
+Definition fd_A1120____a_ilen_write_upto8 : ufundef :=
+  {|
+    f_info := FunInfo.witness;
+    f_contract := None;
+    f_tyin := tyin_A1120____a_ilen_write_upto8;
+    f_params := args_A1120____a_ilen_write_upto8;
+    f_body := body_A1120____a_ilen_write_upto8;
+    f_tyout := tyout_A1120____a_ilen_write_upto8;
+    f_res := res_A1120____a_ilen_write_upto8;
+    f_extra := tt;
+  |}.
+
+End IDO.

@@ -1,0 +1,97 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi syntax data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+
+Section IDO.
+Context {IdO : IdentOracles}.
+
+(* A64____a_ilen_read_bcast_upto8_at *)
+(* Local variables *)
+Definition buf_16815 : gvar :=
+  mk_rocq_gvar Slocal (aarr U8 64) (mkident 16815).
+Definition offset_16816 : gvar :=
+  mk_rocq_gvar Slocal (aword U64) (mkident 16816).
+Definition DELTA_16817 : gvar := mk_rocq_gvar Slocal (aint) (mkident 16817).
+Definition LEN_16818 : gvar := mk_rocq_gvar Slocal (aint) (mkident 16818).
+Definition TRAIL_16819 : gvar := mk_rocq_gvar Slocal (aint) (mkident 16819).
+Definition CUR_16820 : gvar := mk_rocq_gvar Slocal (aint) (mkident 16820).
+Definition AT_16821 : gvar := mk_rocq_gvar Slocal (aint) (mkident 16821).
+Definition w256_16822 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 16822).
+Definition AT8_16823 : gvar := mk_rocq_gvar Slocal (aint) (mkident 16823).
+Definition w_16824 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 16824).
+Definition t128_16825 : gvar :=
+  mk_rocq_gvar Slocal (aword U128) (mkident 16825).
+
+(* Signature *)
+Definition tyin_A64____a_ilen_read_bcast_upto8_at : seq atype :=
+  [:: aarr U8 64; aword U64; aint; aint; aint; aint; aint ].
+Definition args_A64____a_ilen_read_bcast_upto8_at : seq var_i :=
+  [:: buf_16815.(gv)
+    ; offset_16816.(gv)
+    ; DELTA_16817.(gv)
+    ; LEN_16818.(gv)
+    ; TRAIL_16819.(gv)
+    ; CUR_16820.(gv)
+    ; AT_16821.(gv) ].
+Definition tyout_A64____a_ilen_read_bcast_upto8_at : seq atype :=
+  [:: aint; aint; aint; aint; aword U256 ].
+Definition res_A64____a_ilen_read_bcast_upto8_at : seq var_i :=
+  [:: DELTA_16817.(gv)
+    ; LEN_16818.(gv)
+    ; TRAIL_16819.(gv)
+    ; AT_16821.(gv)
+    ; w256_16822.(gv) ].
+
+(* Body *)
+Definition body_A64____a_ilen_read_bcast_upto8_at : cmd :=
+  [:: cif
+        (Papp2 (Oor) (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pvar AT_16821) (Pvar CUR_16820)) (Papp2 (Ole (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar CUR_16820) (Pconst (8)%Z)) (Pvar AT_16821))) (Papp2 (Oand) (Papp2 (Oeq (Op_int)) (Pvar LEN_16818) (Pconst (0)%Z)) (Papp2 (Oeq (Op_int)) (Pvar TRAIL_16819) (Pconst (0)%Z))))
+        [:: copn [:: Lvar w256_16822.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::] ]
+        [:: cif
+              (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar LEN_16818))
+              [:: cassgn (Lvar AT8_16823.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar AT_16821) (Pvar CUR_16820))
+                ; copn [:: Lvar w256_16822.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Unaligned AAdirect U64 buf_16815 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16816) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16817)))) ]
+                ; ccall [:: Lvar w256_16822.(gv) ] __SHLQ_256 [:: Pvar w256_16822
+                                                                ; Pvar AT8_16823 ]
+                ; cassgn (Lvar DELTA_16817.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_16817) (Papp2 (Osub (Op_int)) (Pconst (8)%Z) (Pvar AT8_16823)))
+                ; cassgn (Lvar LEN_16818.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_16818) (Papp2 (Osub (Op_int)) (Pconst (8)%Z) (Pvar AT8_16823)))
+                ; cassgn (Lvar AT_16821.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar CUR_16820) (Pconst (8)%Z)) ]
+              [:: cassgn (Lvar AT8_16823.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar AT_16821) (Pvar CUR_16820))
+                ; ccall [:: Lvar DELTA_16817.(gv)
+                          ; Lvar LEN_16818.(gv)
+                          ; Lvar TRAIL_16819.(gv)
+                          ; Lvar AT_16821.(gv)
+                          ; Lvar w_16824.(gv) ] A64____a_ilen_read_upto8_at [:: Pvar buf_16815
+                                                                    ; Pvar offset_16816
+                                                                    ; Pvar DELTA_16817
+                                                                    ; Pvar LEN_16818
+                                                                    ; Pvar TRAIL_16819
+                                                                    ; Pvar CUR_16820
+                                                                    ; Pvar AT_16821 ]
+                ; cassgn (Lvar t128_16825.(gv)) (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar w_16824))
+                ; copn [:: Lvar w256_16822.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar t128_16825 ]
+                ; ccall [:: Lvar w256_16822.(gv) ] __SHLQ_256 [:: Pvar w256_16822
+                                                                ; Pvar AT8_16823 ] ] ] ].
+
+Definition fd_A64____a_ilen_read_bcast_upto8_at : ufundef :=
+  {|
+    f_info := FunInfo.witness;
+    f_contract := None;
+    f_tyin := tyin_A64____a_ilen_read_bcast_upto8_at;
+    f_params := args_A64____a_ilen_read_bcast_upto8_at;
+    f_body := body_A64____a_ilen_read_bcast_upto8_at;
+    f_tyout := tyout_A64____a_ilen_read_bcast_upto8_at;
+    f_res := res_A64____a_ilen_read_bcast_upto8_at;
+    f_extra := tt;
+  |}.
+
+End IDO.

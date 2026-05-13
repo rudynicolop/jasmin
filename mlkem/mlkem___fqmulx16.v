@@ -1,0 +1,60 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi syntax data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+
+Section IDO.
+Context {IdO : IdentOracles}.
+
+(* __fqmulx16 *)
+(* Local variables *)
+Definition a_19047 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19047).
+Definition b_19048 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19048).
+Definition qx16_19049 : gvar :=
+  mk_rocq_gvar Slocal (aword U256) (mkident 19049).
+Definition qinvx16 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19050).
+Definition rd : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19051).
+Definition rhi : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19052).
+Definition rlo : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19053).
+
+(* Signature *)
+Definition tyin___fqmulx16 : seq atype :=
+  [:: aword U256; aword U256; aword U256; aword U256 ].
+Definition args___fqmulx16 : seq var_i :=
+  [:: a_19047.(gv); b_19048.(gv); qx16_19049.(gv); qinvx16.(gv) ].
+Definition tyout___fqmulx16 : seq atype := [:: aword U256 ].
+Definition res___fqmulx16 : seq var_i := [:: rd.(gv) ].
+
+(* Body *)
+Definition body___fqmulx16 : cmd :=
+  [:: copn [:: Lvar rhi.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar a_19047
+                                                                    ; Pvar b_19048 ]
+    ; copn [:: Lvar rlo.(gv) ] (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar a_19047
+                                                                    ; Pvar b_19048 ]
+    ; copn [:: Lvar rlo.(gv) ] (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar rlo
+                                                                    ; Pvar qinvx16 ]
+    ; copn [:: Lvar rlo.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar rlo
+                                                                    ; Pvar qx16_19049 ]
+    ; copn [:: Lvar rd.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rhi
+                                                                    ; Pvar rlo ] ].
+
+Definition fd___fqmulx16 : ufundef :=
+  {|
+    f_info := FunInfo.witness;
+    f_contract := None;
+    f_tyin := tyin___fqmulx16;
+    f_params := args___fqmulx16;
+    f_body := body___fqmulx16;
+    f_tyout := tyout___fqmulx16;
+    f_res := res___fqmulx16;
+    f_extra := tt;
+  |}.
+
+End IDO.
