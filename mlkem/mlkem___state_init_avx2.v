@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -27,10 +27,10 @@ Definition res___state_init_avx2 : seq var_i := [:: st_18861.(gv) ].
 
 (* Body *)
 Definition body___state_init_avx2 : cmd :=
-  [:: cfor
-        (i_18862.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (7)%Z)
-        [:: copn [:: Laset Aligned AAscale U256 st_18861.(gv) (Pvar i_18862) ] (Oasm ((ExtOp (Oset0 U256)))) [::] ] ].
+  [:: MkI dummy_instr_info (Cfor
+                              (i_18862.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (7)%Z)
+                              [:: MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 st_18861.(gv) (Pvar i_18862) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::]) ]) ].
 
 Definition fd___state_init_avx2 : ufundef :=
   {|

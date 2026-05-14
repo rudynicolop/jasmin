@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -27,14 +27,14 @@ Definition res___csubq : seq var_i := [:: r.(gv) ].
 
 (* Body *)
 Definition body___csubq : cmd :=
-  [:: copn [:: Lvar r.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar r
-                                                                    ; Pvar qx16 ]
-    ; copn [:: Lvar t.(gv) ] (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar r
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ]
-    ; copn [:: Lvar t.(gv) ] (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar t
-                                                                    ; Pvar qx16 ]
-    ; copn [:: Lvar r.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar t
-                                                                    ; Pvar r ] ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar r.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar r
+                                                                    ; Pvar qx16 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar r
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar t
+                                                                    ; Pvar qx16 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar r.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar t
+                                                                    ; Pvar r ]) ].
 
 Definition fd___csubq : ufundef :=
   {|

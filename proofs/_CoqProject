@@ -216,7 +216,6 @@ lang/warray_.v
 lang/word.v
 lang/wsize.v
 printing/atoi.v
-printing/syntax.v
 printing/data.v
 printing/expr_notations.v
 printing/lval_notations.v

@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -43,51 +43,55 @@ Definition res_A32____absorb_avx2 : seq var_i :=
 
 (* Body *)
 Definition body_A32____absorb_avx2 : cmd :=
-  [:: cassgn (Lvar offset_17461.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-    ; cassgn (Lvar _LEN_17462.(gv)) (aint) (Pconst (32)%Z)
-    ; cif
-        (Papp2 (Oge (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar AT_17457) (Pvar _LEN_17462)) (Pvar _RATE8_17460))
-        [:: ccall [:: Lvar st_17456.(gv)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar offset_17461.(gv) ] A32____addstate_avx2 [:: Pvar st_17456
+  [:: MkI dummy_instr_info (Cassgn (Lvar offset_17461.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_17462.(gv)) AT_none (aint) (Pconst (32)%Z))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oge (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar AT_17457) (Pvar _LEN_17462)) (Pvar _RATE8_17460))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_17456.(gv)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar offset_17461.(gv) ] A32____addstate_avx2 [:: Pvar st_17456
                                                                     ; Pvar AT_17457
                                                                     ; Pvar buf_17458
                                                                     ; Pvar offset_17461
                                                                     ; Papp2 (Osub (Op_int)) (Pvar _RATE8_17460) (Pvar AT_17457)
-                                                                    ; Pconst (0)%Z ]
-          ; cassgn (Lvar _LEN_17462.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_17462) (Papp2 (Osub (Op_int)) (Pvar _RATE8_17460) (Pvar AT_17457)))
-          ; cassgn (Lvar AT_17457.(gv)) (aint) (Pconst (0)%Z)
-          ; ccall [:: Lvar st_17456.(gv) ] _keccakf1600_avx2 [:: Pvar st_17456 ]
-          ; cassgn (Lvar ITERS_17463.(gv)) (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_17462) (Pvar _RATE8_17460))
-          ; cassgn (Lvar i_17464.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-          ; cwhile
-              [::]
-              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_17464) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_17463)))
-              [:: ccall [:: Lvar st_17456.(gv)
-                          ; Lnone dummy_var_info (aint)
-                          ; Lvar offset_17461.(gv) ] A32____addstate_avx2 [:: Pvar st_17456
+                                                                    ; Pconst (0)%Z ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_17462.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_17462) (Papp2 (Osub (Op_int)) (Pvar _RATE8_17460) (Pvar AT_17457))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar AT_17457.(gv)) AT_none (aint) (Pconst (0)%Z))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar st_17456.(gv) ] _keccakf1600_avx2 [:: Pvar st_17456 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar ITERS_17463.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_17462) (Pvar _RATE8_17460)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar i_17464.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+                                ; MkI dummy_instr_info (Cwhile Align
+                                                          [::]
+                                                          (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_17464) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_17463)))
+                                                          dummy_instr_info
+                                                          [:: MkI dummy_instr_info (
+                                                          Ccall [:: Lvar st_17456.(gv)
+                                                                  ; Lnone dummy_var_info (aint)
+                                                                  ; Lvar offset_17461.(gv) ] A32____addstate_avx2 [:: Pvar st_17456
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar buf_17458
                                                                     ; Pvar offset_17461
                                                                     ; Pvar _RATE8_17460
-                                                                    ; Pconst (0)%Z ]
-                ; ccall [:: Lvar st_17456.(gv) ] _keccakf1600_avx2 [:: Pvar st_17456 ]
-                ; cassgn (Lvar i_17464.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_17464) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))) ]
-          ; cassgn (Lvar _LEN_17462.(gv)) (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_17462) (Pvar _RATE8_17460)) ]
-        [::]
-    ; ccall [:: Lvar st_17456.(gv)
-              ; Lvar AT_17457.(gv)
-              ; Lnone dummy_var_info (aword U64) ] A32____addstate_avx2 [:: Pvar st_17456
+                                                                    ; Pconst (0)%Z ])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar st_17456.(gv) ] _keccakf1600_avx2 [:: Pvar st_17456 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar i_17464.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_17464) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_17462.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_17462) (Pvar _RATE8_17460))) ]
+                              [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_17456.(gv)
+                                    ; Lvar AT_17457.(gv)
+                                    ; Lnone dummy_var_info (aword U64) ] A32____addstate_avx2 [:: Pvar st_17456
                                                                     ; Pvar AT_17457
                                                                     ; Pvar buf_17458
                                                                     ; Pvar offset_17461
                                                                     ; Pvar _LEN_17462
-                                                                    ; Pvar _TRAILB_17459 ]
-    ; cif
-        (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_17459) (Pconst (0)%Z))
-        [:: ccall [:: Lvar st_17456.(gv) ] __addratebit_avx2 [:: Pvar st_17456
-                                                               ; Pvar _RATE8_17460 ] ]
-        [::] ].
+                                                                    ; Pvar _TRAILB_17459 ])
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_17459) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_17456.(gv) ] __addratebit_avx2 [:: Pvar st_17456
+                                                                    ; Pvar _RATE8_17460 ]) ]
+                              [::]) ].
 
 Definition fd_A32____absorb_avx2 : ufundef :=
   {|

@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -27,10 +27,10 @@ Definition res___polyvec_reduce : seq var_i := [:: r_13938.(gv) ].
 
 (* Body *)
 Definition body___polyvec_reduce : cmd :=
-  [:: cfor
-        (i_13939.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (3)%Z)
-        [:: ccall [:: Lasub AAscale U16 256 r_13938.(gv) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13939)) ] __poly_reduce [:: Psub AAscale U16 256 r_13938 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13939)) ] ] ].
+  [:: MkI dummy_instr_info (Cfor
+                              (i_13939.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (3)%Z)
+                              [:: MkI dummy_instr_info (Ccall [:: Lasub AAscale U16 256 r_13938.(gv) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13939)) ] __poly_reduce [:: Psub AAscale U16 256 r_13938 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13939)) ]) ]) ].
 
 Definition fd___polyvec_reduce : ufundef :=
   {|

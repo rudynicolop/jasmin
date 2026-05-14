@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -53,58 +53,69 @@ Definition res_A128____a_ilen_read_upto32_at : seq var_i :=
 
 (* Body *)
 Definition body_A128____a_ilen_read_upto32_at : cmd :=
-  [:: cif
-        (Papp2 (Oor) (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pvar AT_16597) (Pvar CUR_16596)) (Papp2 (Ole (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar CUR_16596) (Pconst (32)%Z)) (Pvar AT_16597))) (Papp2 (Oand) (Papp2 (Oeq (Op_int)) (Pvar LEN_16594) (Pconst (0)%Z)) (Papp2 (Oeq (Op_int)) (Pvar TRAIL_16595) (Pconst (0)%Z))))
-        [:: copn [:: Lvar w_16598.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::] ]
-        [:: cassgn (Lvar AT32_16599.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar AT_16597) (Pvar CUR_16596))
-          ; cif
-              (Papp2 (Oand) (Papp2 (Oeq (Op_int)) (Pvar AT32_16599) (Pconst (0)%Z)) (Papp2 (Ole (Cmp_int)) (Pconst (32)%Z) (Pvar LEN_16594)))
-              [:: cassgn (Lvar w_16598.(gv)) (aword U256) (Pget Unaligned AAdirect U256 buf_16591 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16592) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16593)))))
-                ; cassgn (Lvar AT32_16599.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar AT32_16599) (Pconst (32)%Z))
-                ; cassgn (Lvar DELTA_16593.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_16593) (Pconst (32)%Z))
-                ; cassgn (Lvar LEN_16594.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_16594) (Pconst (32)%Z)) ]
-              [:: cif
-                    (Papp2 (Ole (Cmp_int)) (Pconst (16)%Z) (Pvar AT32_16599))
-                    [:: copn [:: Lvar w_16598.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::]
-                      ; ccall [:: Lvar DELTA_16593.(gv)
-                                ; Lvar LEN_16594.(gv)
-                                ; Lvar TRAIL_16595.(gv)
-                                ; Lvar AT32_16599.(gv)
-                                ; Lvar t128_1_16601.(gv) ] A128____a_ilen_read_upto16_at [:: Pvar buf_16591
+  [:: MkI dummy_instr_info (Cif
+                              (Papp2 (Oor) (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pvar AT_16597) (Pvar CUR_16596)) (Papp2 (Ole (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar CUR_16596) (Pconst (32)%Z)) (Pvar AT_16597))) (Papp2 (Oand) (Papp2 (Oeq (Op_int)) (Pvar LEN_16594) (Pconst (0)%Z)) (Papp2 (Oeq (Op_int)) (Pvar TRAIL_16595) (Pconst (0)%Z))))
+                              [:: MkI dummy_instr_info (Copn [:: Lvar w_16598.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::]) ]
+                              [:: MkI dummy_instr_info (Cassgn (Lvar AT32_16599.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar AT_16597) (Pvar CUR_16596)))
+                                ; MkI dummy_instr_info (Cif
+                                                          (Papp2 (Oand) (Papp2 (Oeq (Op_int)) (Pvar AT32_16599) (Pconst (0)%Z)) (Papp2 (Ole (Cmp_int)) (Pconst (32)%Z) (Pvar LEN_16594)))
+                                                          [:: MkI dummy_instr_info (
+                                                          Cassgn (Lvar w_16598.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 buf_16591 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16592) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16593))))))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar AT32_16599.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar AT32_16599) (Pconst (32)%Z)))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar DELTA_16593.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_16593) (Pconst (32)%Z)))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar LEN_16594.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_16594) (Pconst (32)%Z))) ]
+                                                          [:: MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Ole (Cmp_int)) (Pconst (16)%Z) (Pvar AT32_16599))
+                                                            [:: MkI dummy_instr_info (
+                                                            Copn [:: Lvar w_16598.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::])
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar DELTA_16593.(gv)
+                                                                    ; Lvar LEN_16594.(gv)
+                                                                    ; Lvar TRAIL_16595.(gv)
+                                                                    ; Lvar AT32_16599.(gv)
+                                                                    ; Lvar t128_1_16601.(gv) ] A128____a_ilen_read_upto16_at [:: Pvar buf_16591
                                                                     ; Pvar offset_16592
                                                                     ; Pvar DELTA_16593
                                                                     ; Pvar LEN_16594
                                                                     ; Pvar TRAIL_16595
                                                                     ; Pconst (16)%Z
-                                                                    ; Pvar AT32_16599 ]
-                      ; copn [:: Lvar w_16598.(gv) ] (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar w_16598
+                                                                    ; Pvar AT32_16599 ])
+                                                              ; MkI dummy_instr_info (
+                                                            Copn [:: Lvar w_16598.(gv) ] AT_none (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar w_16598
                                                                     ; Pvar t128_1_16601
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ] ]
-                    [:: ccall [:: Lvar DELTA_16593.(gv)
-                                ; Lvar LEN_16594.(gv)
-                                ; Lvar TRAIL_16595.(gv)
-                                ; Lvar AT32_16599.(gv)
-                                ; Lvar t128_0_16600.(gv) ] A128____a_ilen_read_upto16_at [:: Pvar buf_16591
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]) ]
+                                                            [:: MkI dummy_instr_info (
+                                                            Ccall [:: Lvar DELTA_16593.(gv)
+                                                                    ; Lvar LEN_16594.(gv)
+                                                                    ; Lvar TRAIL_16595.(gv)
+                                                                    ; Lvar AT32_16599.(gv)
+                                                                    ; Lvar t128_0_16600.(gv) ] A128____a_ilen_read_upto16_at [:: Pvar buf_16591
                                                                     ; Pvar offset_16592
                                                                     ; Pvar DELTA_16593
                                                                     ; Pvar LEN_16594
                                                                     ; Pvar TRAIL_16595
                                                                     ; Pconst (0)%Z
-                                                                    ; Pvar AT32_16599 ]
-                      ; ccall [:: Lvar DELTA_16593.(gv)
-                                ; Lvar LEN_16594.(gv)
-                                ; Lvar TRAIL_16595.(gv)
-                                ; Lvar AT32_16599.(gv)
-                                ; Lvar t128_1_16601.(gv) ] A128____a_ilen_read_upto16_at [:: Pvar buf_16591
+                                                                    ; Pvar AT32_16599 ])
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar DELTA_16593.(gv)
+                                                                    ; Lvar LEN_16594.(gv)
+                                                                    ; Lvar TRAIL_16595.(gv)
+                                                                    ; Lvar AT32_16599.(gv)
+                                                                    ; Lvar t128_1_16601.(gv) ] A128____a_ilen_read_upto16_at [:: Pvar buf_16591
                                                                     ; Pvar offset_16592
                                                                     ; Pvar DELTA_16593
                                                                     ; Pvar LEN_16594
                                                                     ; Pvar TRAIL_16595
                                                                     ; Pconst (16)%Z
-                                                                    ; Pvar AT32_16599 ]
-                      ; cassgn (Lvar w_16598.(gv)) (aword U256) (PappN (Opack U256 PE128) [:: Papp1 (Oint_of_word Unsigned U128) (Pvar t128_1_16601)
-                                                                    ; Papp1 (Oint_of_word Unsigned U128) (Pvar t128_0_16600) ]) ] ]
-          ; cassgn (Lvar AT_16597.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar CUR_16596) (Pvar AT32_16599)) ] ].
+                                                                    ; Pvar AT32_16599 ])
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar w_16598.(gv)) AT_none (aword U256) (PappN (Opack U256 PE128) [:: Papp1 (Oint_of_word Unsigned U128) (Pvar t128_1_16601)
+                                                                    ; Papp1 (Oint_of_word Unsigned U128) (Pvar t128_0_16600) ])) ]) ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar AT_16597.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar CUR_16596) (Pvar AT32_16599))) ]) ].
 
 Definition fd_A128____a_ilen_read_upto32_at : ufundef :=
   {|

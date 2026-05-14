@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -47,15 +47,16 @@ Definition res__poly_basemul : seq var_i := [:: rp_14203.(gv) ].
 
 (* Body *)
 Definition body__poly_basemul : cmd :=
-  [:: cassgn (Lvar qx16_14206.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jqx16 (Pconst (0)%Z))
-    ; cassgn (Lvar qinvx16_14207.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jqinvx16 (Pconst (0)%Z))
-    ; cassgn (Lvar zetaqinv_14208.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (272)%Z))
-    ; cassgn (Lvar zeta_14209.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (304)%Z))
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (0)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (1)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (0)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (1)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+  [:: MkI dummy_instr_info (Cassgn (Lvar qx16_14206.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jqx16 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar qinvx16_14207.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jqinvx16 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar zetaqinv_14208.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (272)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar zeta_14209.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (304)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (0)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (1)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (0)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (1)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -63,14 +64,15 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (0)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (0)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (1)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (2)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (3)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (2)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (3)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (0)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (0)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (1)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (2)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (3)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (2)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (3)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -78,16 +80,17 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (1)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (2)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (3)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar zetaqinv_14208.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (336)%Z))
-    ; cassgn (Lvar zeta_14209.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (368)%Z))
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (4)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (5)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (4)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (5)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (1)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (2)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (3)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar zetaqinv_14208.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (336)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar zeta_14209.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (368)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (4)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (5)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (4)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (5)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -95,14 +98,15 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (0)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (4)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (5)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (6)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (7)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (6)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (7)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (0)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (4)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (5)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (6)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (7)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (6)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (7)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -110,16 +114,17 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (1)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (6)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (7)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar zetaqinv_14208.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (664)%Z))
-    ; cassgn (Lvar zeta_14209.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (696)%Z))
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (9)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (9)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (1)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (6)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (7)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar zetaqinv_14208.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (664)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar zeta_14209.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (696)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (9)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (9)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -127,14 +132,15 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (0)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (9)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (10)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (11)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (10)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (11)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (0)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (9)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (10)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (11)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (10)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (11)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -142,16 +148,17 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (1)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (10)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (11)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar zetaqinv_14208.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (728)%Z))
-    ; cassgn (Lvar zeta_14209.(gv)) (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (760)%Z))
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (12)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (13)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (12)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (13)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (1)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (10)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (11)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar zetaqinv_14208.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (728)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar zeta_14209.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 jzetas_exp (Pconst (760)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (12)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (13)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (12)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (13)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -159,14 +166,15 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (0)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (12)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (13)%Z))) (aword U256) (Pvar aim_14211)
-    ; cassgn (Lvar are_14210.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (14)%Z)))
-    ; cassgn (Lvar aim_14211.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (15)%Z)))
-    ; cassgn (Lvar bre_14212.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (14)%Z)))
-    ; cassgn (Lvar bim_14213.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (15)%Z)))
-    ; ccall [:: Lvar are_14210.(gv); Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
+                                                                    ; Pconst (0)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (12)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (13)%Z))) AT_none (aword U256) (Pvar aim_14211))
+    ; MkI dummy_instr_info (Cassgn (Lvar are_14210.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (14)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar aim_14211.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ap (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (15)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bre_14212.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (14)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar bim_14213.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp_14205 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (15)%Z))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar are_14210.(gv)
+                                    ; Lvar aim_14211.(gv) ] __schoolbook16x [:: Pvar are_14210
                                                                     ; Pvar aim_14211
                                                                     ; Pvar bre_14212
                                                                     ; Pvar bim_14213
@@ -174,9 +182,9 @@ Definition body__poly_basemul : cmd :=
                                                                     ; Pvar zetaqinv_14208
                                                                     ; Pvar qx16_14206
                                                                     ; Pvar qinvx16_14207
-                                                                    ; Pconst (1)%Z ]
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (14)%Z))) (aword U256) (Pvar are_14210)
-    ; cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (15)%Z))) (aword U256) (Pvar aim_14211) ].
+                                                                    ; Pconst (1)%Z ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (14)%Z))) AT_none (aword U256) (Pvar are_14210))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14203.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pconst (15)%Z))) AT_none (aword U256) (Pvar aim_14211)) ].
 
 Definition fd__poly_basemul : ufundef :=
   {|

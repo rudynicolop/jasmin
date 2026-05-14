@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -34,16 +34,16 @@ Definition res___shuffle1 : seq var_i := [:: r0_19085.(gv); r1_19086.(gv) ].
 
 (* Body *)
 Definition body___shuffle1 : cmd :=
-  [:: copn [:: Lvar t0_19087.(gv) ] (Oasm ((BaseOp ((None), (VPSLL VE32 U256))))) [:: Pvar b_19084
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (16)%Z) ]
-    ; copn [:: Lvar r0_19085.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar a_19083
+  [:: MkI dummy_instr_info (Copn [:: Lvar t0_19087.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLL VE32 U256))))) [:: Pvar b_19084
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (16)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar r0_19085.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar a_19083
                                                                     ; Pvar t0_19087
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ]
-    ; copn [:: Lvar t1_19088.(gv) ] (Oasm ((BaseOp ((None), (VPSRL VE32 U256))))) [:: Pvar a_19083
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (16)%Z) ]
-    ; copn [:: Lvar r1_19086.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar t1_19088
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t1_19088.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE32 U256))))) [:: Pvar a_19083
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (16)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar r1_19086.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar t1_19088
                                                                     ; Pvar b_19084
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ] ].
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ]) ].
 
 Definition fd___shuffle1 : ufundef :=
   {|

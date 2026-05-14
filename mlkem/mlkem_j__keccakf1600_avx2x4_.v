@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -26,9 +26,9 @@ Definition res_j__keccakf1600_avx2x4_ : seq var_i := [:: a_18648.(gv) ].
 
 (* Body *)
 Definition body_j__keccakf1600_avx2x4_ : cmd :=
-  [:: cassgn (Lvar a_18648.(gv)) (aarr U256 25) (Pvar a_18648)
-    ; ccall [:: Lvar a_18648.(gv) ] _keccakf1600_avx2x4 [:: Pvar a_18648 ]
-    ; cassgn (Lvar a_18648.(gv)) (aarr U256 25) (Pvar a_18648) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar a_18648.(gv)) AT_none (aarr U256 25) (Pvar a_18648))
+    ; MkI dummy_instr_info (Ccall [:: Lvar a_18648.(gv) ] _keccakf1600_avx2x4 [:: Pvar a_18648 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar a_18648.(gv)) AT_none (aarr U256 25) (Pvar a_18648)) ].
 
 Definition fd_j__keccakf1600_avx2x4_ : ufundef :=
   {|

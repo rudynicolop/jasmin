@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -44,26 +44,26 @@ Definition res___4u64x4_u256x4 : seq var_i :=
 
 (* Body *)
 Definition body___4u64x4_u256x4 : cmd :=
-  [:: copn [:: Lvar x0_18616.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y0_18612
+  [:: MkI dummy_instr_info (Copn [:: Lvar x0_18616.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y0_18612
                                                                     ; Pvar y2_18614
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ]
-    ; copn [:: Lvar x1_18617.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y1_18613
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar x1_18617.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y1_18613
                                                                     ; Pvar y3_18615
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ]
-    ; copn [:: Lvar x2_18618.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y0_18612
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar x2_18618.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y0_18612
                                                                     ; Pvar y2_18614
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ]
-    ; copn [:: Lvar x3_18619.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y1_18613
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar x3_18619.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar y1_18613
                                                                     ; Pvar y3_18615
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ]
-    ; copn [:: Lvar y0_18612.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar x0_18616
-                                                                    ; Pvar x1_18617 ]
-    ; copn [:: Lvar y1_18613.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar x0_18616
-                                                                    ; Pvar x1_18617 ]
-    ; copn [:: Lvar y2_18614.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar x2_18618
-                                                                    ; Pvar x3_18619 ]
-    ; copn [:: Lvar y3_18615.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar x2_18618
-                                                                    ; Pvar x3_18619 ] ].
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar y0_18612.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar x0_18616
+                                                                    ; Pvar x1_18617 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar y1_18613.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar x0_18616
+                                                                    ; Pvar x1_18617 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar y2_18614.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar x2_18618
+                                                                    ; Pvar x3_18619 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar y3_18615.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar x2_18618
+                                                                    ; Pvar x3_18619 ]) ].
 
 Definition fd___4u64x4_u256x4 : ufundef :=
   {|

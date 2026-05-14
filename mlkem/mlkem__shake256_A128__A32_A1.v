@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -32,20 +32,23 @@ Definition res__shake256_A128__A32_A1 : seq var_i := [:: out_14348.(gv) ].
 
 (* Body *)
 Definition body__shake256_A128__A32_A1 : cmd :=
-  [:: ccall [:: Lvar st_14351.(gv) ] __state_init_avx2 [::]
-    ; ccall [:: Lvar st_14351.(gv); Lnone dummy_var_info (aint) ] A32____absorb_avx2 [:: Pvar st_14351
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st_14351.(gv) ] __state_init_avx2 [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14351.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A32____absorb_avx2 [:: Pvar st_14351
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar seed
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (136)%Z ]
-    ; ccall [:: Lvar st_14351.(gv); Lnone dummy_var_info (aint) ] A1____absorb_avx2 [:: Pvar st_14351
+                                                                    ; Pconst (136)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14351.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A1____absorb_avx2 [:: Pvar st_14351
                                                                     ; Pconst (32)%Z
                                                                     ; Pvar nonce
                                                                     ; Pconst (31)%Z
-                                                                    ; Pconst (136)%Z ]
-    ; ccall [:: Lnone dummy_var_info (aarr U256 7); Lvar out_14348.(gv) ] A128____squeeze_avx2 [:: Pvar st_14351
+                                                                    ; Pconst (136)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aarr U256 7)
+                                    ; Lvar out_14348.(gv) ] A128____squeeze_avx2 [:: Pvar st_14351
                                                                     ; Pvar out_14348
-                                                                    ; Pconst (136)%Z ] ].
+                                                                    ; Pconst (136)%Z ]) ].
 
 Definition fd__shake256_A128__A32_A1 : ufundef :=
   {|

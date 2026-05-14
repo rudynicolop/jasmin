@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -26,7 +26,7 @@ Definition res__keccakf1600_avx2 : seq var_i := [:: state_19015.(gv) ].
 
 (* Body *)
 Definition body__keccakf1600_avx2 : cmd :=
-  [:: ccall [:: Lvar state_19015.(gv) ] __keccakf1600_avx2 [:: Pvar state_19015 ] ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar state_19015.(gv) ] __keccakf1600_avx2 [:: Pvar state_19015 ]) ].
 
 Definition fd__keccakf1600_avx2 : ufundef :=
   {|

@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -29,22 +29,22 @@ Definition res___u64_to_u256 : seq var_i := [:: t256.(gv) ].
 
 (* Body *)
 Definition body___u64_to_u256 : cmd :=
-  [:: cif
-        (Papp2 (Oeq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar L) (Pconst (2)%Z)) (Pconst (0)%Z))
-        [:: cassgn (Lvar t128_18866.(gv)) (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar x_18863)) ]
-        [:: copn [:: Lvar t128_18866.(gv) ] (Oasm ((ExtOp (Oset0 U128)))) [::]
-          ; copn [:: Lvar t128_18866.(gv) ] (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_18866
+  [:: MkI dummy_instr_info (Cif
+                              (Papp2 (Oeq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar L) (Pconst (2)%Z)) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar t128_18866.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar x_18863))) ]
+                              [:: MkI dummy_instr_info (Copn [:: Lvar t128_18866.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U128)))) [::])
+                                ; MkI dummy_instr_info (Copn [:: Lvar t128_18866.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_18866
                                                                     ; Pvar x_18863
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ] ]
-    ; copn [:: Lvar t256.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::]
-    ; cif
-        (Papp2 (Oeq (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Pvar L) (Pconst (2)%Z)) (Pconst (0)%Z))
-        [:: copn [:: Lvar t256.(gv) ] (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar t256
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::])
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oeq (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Pvar L) (Pconst (2)%Z)) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Copn [:: Lvar t256.(gv) ] AT_none (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar t256
                                                                     ; Pvar t128_18866
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (0)%Z) ] ]
-        [:: copn [:: Lvar t256.(gv) ] (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar t256
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (0)%Z) ]) ]
+                              [:: MkI dummy_instr_info (Copn [:: Lvar t256.(gv) ] AT_none (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar t256
                                                                     ; Pvar t128_18866
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ] ] ].
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]) ]) ].
 
 Definition fd___u64_to_u256 : ufundef :=
   {|

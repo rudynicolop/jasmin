@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -27,9 +27,9 @@ Definition res__shake128_next_state : seq var_i := [:: buf_14306.(gv) ].
 
 (* Body *)
 Definition body__shake128_next_state : cmd :=
-  [:: cassgn (Lvar pst.(gv)) (aarr U64 25) (Psub AAscale U64 25 buf_14306 (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pconst (168)%Z) (Pconst (8)%Z))))
-    ; ccall [:: Lvar pst.(gv) ] _keccakf1600_st25_avx2 [:: Pvar pst ]
-    ; cassgn (Lasub AAscale U64 25 buf_14306.(gv) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pconst (168)%Z) (Pconst (8)%Z)))) (aarr U64 25) (Pvar pst) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar pst.(gv)) AT_none (aarr U64 25) (Psub AAscale U64 25 buf_14306 (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pconst (168)%Z) (Pconst (8)%Z)))))
+    ; MkI dummy_instr_info (Ccall [:: Lvar pst.(gv) ] _keccakf1600_st25_avx2 [:: Pvar pst ])
+    ; MkI dummy_instr_info (Cassgn (Lasub AAscale U64 25 buf_14306.(gv) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pconst (168)%Z) (Pconst (8)%Z)))) AT_none (aarr U64 25) (Pvar pst)) ].
 
 Definition fd__shake128_next_state : ufundef :=
   {|

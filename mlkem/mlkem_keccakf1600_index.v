@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -27,7 +27,7 @@ Definition res_keccakf1600_index : seq var_i := [:: r_19046.(gv) ].
 
 (* Body *)
 Definition body_keccakf1600_index : cmd :=
-  [:: cassgn (Lvar r_19046.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar x_19044) (Pconst (5)%Z)) (Papp2 (Omul (Op_int)) (Pconst (5)%Z) (Papp2 (Omod Unsigned (Op_int)) (Pvar y) (Pconst (5)%Z)))) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar r_19046.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar x_19044) (Pconst (5)%Z)) (Papp2 (Omul (Op_int)) (Pconst (5)%Z) (Papp2 (Omod Unsigned (Op_int)) (Pvar y) (Pconst (5)%Z))))) ].
 
 Definition fd_keccakf1600_index : ufundef :=
   {|

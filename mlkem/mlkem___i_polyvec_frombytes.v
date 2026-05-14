@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -29,11 +29,11 @@ Definition res___i_polyvec_frombytes : seq var_i := [:: r_13936.(gv) ].
 
 (* Body *)
 Definition body___i_polyvec_frombytes : cmd :=
-  [:: cfor
-        (i_13937.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (3)%Z)
-        [:: ccall [:: Lasub AAscale U16 256 r_13936.(gv) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13937)) ] _i_poly_frombytes [:: Psub AAscale U16 256 r_13936 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13937))
-                                                                    ; Psub AAscale U8 384 a_13935 (Papp2 (Omul (Op_int)) (Pconst (384)%Z) (Pvar i_13937)) ] ] ].
+  [:: MkI dummy_instr_info (Cfor
+                              (i_13937.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (3)%Z)
+                              [:: MkI dummy_instr_info (Ccall [:: Lasub AAscale U16 256 r_13936.(gv) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13937)) ] _i_poly_frombytes [:: Psub AAscale U16 256 r_13936 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13937))
+                                                                    ; Psub AAscale U8 384 a_13935 (Papp2 (Omul (Op_int)) (Pconst (384)%Z) (Pvar i_13937)) ]) ]) ].
 
 Definition fd___i_polyvec_frombytes : ufundef :=
   {|

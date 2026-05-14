@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -34,16 +34,17 @@ Definition res_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : seq var_i :=
 
 (* Body *)
 Definition body_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : cmd :=
-  [:: copn [:: Lnone dummy_var_info (aword U64) ] (Oslh (SLHinit)) [::]
-    ; ccall [:: Lvar public_key.(gv); Lvar secret_key.(gv) ] __crypto_kem_keypair_jazz [:: Pvar public_key
+  [:: MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (aword U64) ] AT_none (Oslh (SLHinit)) [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar public_key.(gv)
+                                    ; Lvar secret_key.(gv) ] __crypto_kem_keypair_jazz [:: Pvar public_key
                                                                     ; Pvar secret_key
-                                                                    ; Pvar coins ]
-    ; copn [:: Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lvar r_13608.(gv) ] (Oasm ((ExtOp (Oset0 U64)))) [::] ].
+                                                                    ; Pvar coins ])
+    ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lvar r_13608.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U64)))) [::]) ].
 
 Definition fd_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : ufundef :=
   {|

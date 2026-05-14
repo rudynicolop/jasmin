@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -38,13 +38,14 @@ Definition res___gen_matrix_sample_one_polynomial : seq var_i :=
 
 (* Body *)
 Definition body___gen_matrix_sample_one_polynomial : cmd :=
-  [:: cassgn (Laset Aligned AAscale U16 pos_13748.(gv) (Pconst (0)%Z)) (aword U16) (Pvar rc_13747)
-    ; ccall [:: Lvar stavx2.(gv) ] _shake128_absorb_A32_A2 [:: Pvar rho_13746
-                                                             ; Pvar pos_13748 ]
-    ; ccall [:: Lvar buf_13745.(gv) ] _shake128_squeeze3blocks [:: Pvar buf_13745
-                                                                 ; Pvar stavx2 ]
-    ; ccall [:: Lvar pol_13744.(gv); Lvar buf_13745.(gv) ] __gen_matrix_fill_polynomial [:: Pvar pol_13744
-                                                                    ; Pvar buf_13745 ] ].
+  [:: MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U16 pos_13748.(gv) (Pconst (0)%Z)) AT_none (aword U16) (Pvar rc_13747))
+    ; MkI dummy_instr_info (Ccall [:: Lvar stavx2.(gv) ] _shake128_absorb_A32_A2 [:: Pvar rho_13746
+                                                                    ; Pvar pos_13748 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_13745.(gv) ] _shake128_squeeze3blocks [:: Pvar buf_13745
+                                                                    ; Pvar stavx2 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar pol_13744.(gv)
+                                    ; Lvar buf_13745.(gv) ] __gen_matrix_fill_polynomial [:: Pvar pol_13744
+                                                                    ; Pvar buf_13745 ]) ].
 
 Definition fd___gen_matrix_sample_one_polynomial : ufundef :=
   {|

@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -30,8 +30,8 @@ Definition res___poly_cbd_eta1 : seq var_i := [:: rp_14135.(gv) ].
 
 (* Body *)
 Definition body___poly_cbd_eta1 : cmd :=
-  [:: ccall [:: Lvar rp_14135.(gv) ] __cbd2 [:: Pvar rp_14135
-                                              ; Psub AAscale U8 128 buf_14136 (Pconst (0)%Z) ] ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar rp_14135.(gv) ] __cbd2 [:: Pvar rp_14135
+                                                                    ; Psub AAscale U8 128 buf_14136 (Pconst (0)%Z) ]) ].
 
 Definition fd___poly_cbd_eta1 : ufundef :=
   {|

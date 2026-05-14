@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -34,16 +34,16 @@ Definition res___fqmulx16 : seq var_i := [:: rd.(gv) ].
 
 (* Body *)
 Definition body___fqmulx16 : cmd :=
-  [:: copn [:: Lvar rhi.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar a_19047
-                                                                    ; Pvar b_19048 ]
-    ; copn [:: Lvar rlo.(gv) ] (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar a_19047
-                                                                    ; Pvar b_19048 ]
-    ; copn [:: Lvar rlo.(gv) ] (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar rlo
-                                                                    ; Pvar qinvx16 ]
-    ; copn [:: Lvar rlo.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar rlo
-                                                                    ; Pvar qx16_19049 ]
-    ; copn [:: Lvar rd.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rhi
-                                                                    ; Pvar rlo ] ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar rhi.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar a_19047
+                                                                    ; Pvar b_19048 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar a_19047
+                                                                    ; Pvar b_19048 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar rlo
+                                                                    ; Pvar qinvx16 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar rlo
+                                                                    ; Pvar qx16_19049 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar rd.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rhi
+                                                                    ; Pvar rlo ]) ].
 
 Definition fd___fqmulx16 : ufundef :=
   {|

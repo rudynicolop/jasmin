@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -32,15 +32,17 @@ Definition res__sha3_256A_A1184 : seq var_i := [:: out_14289.(gv) ].
 
 (* Body *)
 Definition body__sha3_256A_A1184 : cmd :=
-  [:: ccall [:: Lvar st_14291.(gv) ] __state_init_avx2 [::]
-    ; ccall [:: Lvar st_14291.(gv); Lnone dummy_var_info (aint) ] A1184____absorb_avx2 [:: Pvar st_14291
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st_14291.(gv) ] __state_init_avx2 [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14291.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A1184____absorb_avx2 [:: Pvar st_14291
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar j_in_14290
                                                                     ; Pconst (6)%Z
-                                                                    ; Pconst (136)%Z ]
-    ; ccall [:: Lnone dummy_var_info (aarr U256 7); Lvar out_14289.(gv) ] A32____squeeze_avx2 [:: Pvar st_14291
+                                                                    ; Pconst (136)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aarr U256 7)
+                                    ; Lvar out_14289.(gv) ] A32____squeeze_avx2 [:: Pvar st_14291
                                                                     ; Pvar out_14289
-                                                                    ; Pconst (136)%Z ] ].
+                                                                    ; Pconst (136)%Z ]) ].
 
 Definition fd__sha3_256A_A1184 : ufundef :=
   {|

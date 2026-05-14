@@ -1,3 +1,28 @@
+(* Print Jasmin programs as Rocq terms.
+   The following information is lost or approximated in the output:
+
+   - Identifier uniqueness: variable and function names are sanitized and
+     deduplicated among themselves, but may clash with other generated
+     identifiers (e.g., the program name or identifiers derived from it).
+
+   - Assignment and [Copn] tags: the annotation tag (second field of [Cassgn]
+     and [Copn]) is always printed as [AT_none].
+
+   - [Cwhile] alignment: the alignment field is always printed as [Align].
+
+   - [instr_info]: every instruction is wrapped with [MkI dummy_instr_info];
+     the actual [instr_info] is discarded, including the inner [instr_info] of
+     [Cwhile].
+
+   - [var_info]: every occurrence of [var_info] (in [Lnone], [Lmem]) is
+     replaced by [dummy_var_info].
+
+   - Function declarations: [f_info] is set to [FunInfo.witness], [f_contract]
+     to [None], and [f_extra] to [tt].
+
+   - Programs: [p_extra] is set to [tt], and the program is always printed as
+     a [uprog]. *)
+
 open Utils
 open Prog
 open Wsize
@@ -126,9 +151,7 @@ let pp_rocq_z fmt z = F.fprintf fmt "(%a)%%Z" Z.pp_print z
 
 let pp_rocq_cz fmt z = pp_rocq_z fmt (Conv.z_of_cz z)
 
-(* We are relying on the string scope being inferred, otherwise we need
-   `%string`. *)
-let pp_rocq_string fmt = F.fprintf fmt "%S"
+let pp_rocq_string fmt = F.fprintf fmt "%S%%string"
 
 let pp_rocq_seq pp fmt xs =
   if xs = [] then F.fprintf fmt "[::]"
@@ -441,6 +464,9 @@ let rec pp_eassert fmt = function
       F.fprintf fmt "Pis_mem_init (%a) (%a)" pp_expr e1 pp_expr e2
   | Pand (a1, a2) -> F.fprintf fmt "Pand (%a) (%a)" pp_eassert a1 pp_eassert a2
 
+let pp_assertion fmt (label, e) =
+  F.fprintf fmt "(%a, %a)" pp_rocq_string label pp_eassert e
+
 (* -------------------------------------------------------------------------- *)
 (* Lvals *)
 
@@ -465,36 +491,38 @@ let pp_lvals fmt lvs = pp_rocq_seq pp_lval fmt lvs
 (* [Cif], [Cfor], and [Cwhile] always break the line, the rest never do. *)
 let rec pp_instr_r ~loc pp_asm_op fmt = function
   | Cassgn (lv, _, ty, e) ->
-      F.fprintf fmt "@[<h>cassgn (%a) (%a) (%a)@]" pp_lval lv pp_atype ty
-        pp_expr e
+      F.fprintf fmt "@[<h>Cassgn (%a) AT_none (%a) (%a)@]" pp_lval lv pp_atype
+        ty pp_expr e
   | Copn (lvs, _, op, es) ->
-      F.fprintf fmt "@[<h>copn %a (%a) %a@]" pp_lvals lvs (pp_sopn pp_asm_op) op
-        pp_exprs es
+      F.fprintf fmt "@[<h>Copn %a AT_none (%a) %a@]" pp_lvals lvs
+        (pp_sopn pp_asm_op) op pp_exprs es
   | Csyscall (lvs, sc, es) -> begin
       match sc with
       | RandomBytes (ws, n) -> (
           match (lvs, es) with
           | [ lv ], [ e ] ->
-              F.fprintf fmt "@[<h>crandombytes (%a) %a %a (%a)@]" pp_lval lv
-                pp_wsize ws pp_rocq_cz n pp_expr e
+              F.fprintf fmt
+                "@[<h>Csyscall [:: (%a)] (RandomBytes %a %a) [:: (%a)]@]"
+                pp_lval lv pp_wsize ws pp_rocq_cz n pp_expr e
           | _ -> randombytes_invalid_args loc)
     end
-  | Cassert (label, e) ->
-      F.fprintf fmt "@[<h>cassert %a (%a)@]" pp_rocq_string label pp_eassert e
+  | Cassert a -> F.fprintf fmt "@[<h>Cassert %a@]" pp_assertion a
   | Cif (e, c1, c2) ->
-      F.fprintf fmt "@[<hv 2>cif@ (%a)@ %a@ %a@]" pp_expr e (pp_stmt pp_asm_op)
+      F.fprintf fmt "@[<hv 2>Cif@ (%a)@ %a@ %a@]" pp_expr e (pp_stmt pp_asm_op)
         c1 (pp_stmt pp_asm_op) c2
   | Cfor (x, (dir, lo, hi), c) ->
-      F.fprintf fmt "@[<hv 2>cfor@ (%a)@ (%a, %a, %a)@ %a@]" pp_gv_var_i x
+      F.fprintf fmt "@[<hv 2>Cfor@ (%a)@ (%a, %a, %a)@ %a@]" pp_gv_var_i x
         pp_dir dir pp_expr lo pp_expr hi (pp_stmt pp_asm_op) c
   | Cwhile (_, c1, e, _, c2) ->
-      F.fprintf fmt "@[<hv 2>cwhile@ %a@ (%a)@ %a@]" (pp_stmt pp_asm_op) c1
-        pp_expr e (pp_stmt pp_asm_op) c2
+      F.fprintf fmt "@[<hv 2>Cwhile Align@ %a@ (%a)@ dummy_instr_info@ %a@]"
+        (pp_stmt pp_asm_op) c1 pp_expr e (pp_stmt pp_asm_op) c2
   | Ccall (lvs, fn, es) ->
-      F.fprintf fmt "@[<h>ccall %a %a %a@]" pp_lvals lvs pp_fn fn pp_exprs es
+      F.fprintf fmt "@[<h>Ccall %a %a %a@]" pp_lvals lvs pp_fn fn pp_exprs es
 
 and pp_instr pp_asm_op fmt i =
-  F.fprintf fmt "%a" (pp_instr_r ~loc:i.i_loc pp_asm_op) i.i_desc
+  F.fprintf fmt "MkI dummy_instr_info (%a)"
+    (pp_instr_r ~loc:i.i_loc pp_asm_op)
+    i.i_desc
 
 and pp_stmt pp_asm_op fmt c = pp_rocq_seq (pp_instr pp_asm_op) fmt c
 
@@ -649,7 +677,7 @@ let pp_imports fmt =
   pp_newline fmt;
   pp_rocq_require_import fmt
     "expr ident var type global pseudo_operator sopn arch_extra";
-  pp_rocq_from_require_import fmt "Printing" "atoi syntax data notations"
+  pp_rocq_from_require_import fmt "Printing" "atoi data notations"
 
 let pp_oracles fmt =
   pp_rocq_axiom fmt "IdO" "IdentOracles";

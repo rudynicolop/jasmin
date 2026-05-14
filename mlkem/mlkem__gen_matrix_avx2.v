@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -44,35 +44,37 @@ Definition res__gen_matrix_avx2 : seq var_i := [:: matrix.(gv) ].
 
 (* Body *)
 Definition body__gen_matrix_avx2 : cmd :=
-  [:: copn [::] (Opseudo_op (Ospill Spill [:: aword U64 ])) [:: Pvar transposed_13731 ]
-    ; cassgn (Lvar buf_13733.(gv)) (aarr U8 2144) (Pvar buf_s)
-    ; cfor
-        (i_13734.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (2)%Z)
-        [:: cassgn (Lvar pos_entry_13735.(gv)) (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar i_13734)))
-          ; cassgn (Lvar polx4_13736.(gv)) (aarr U16 1024) (Psub AAscale U16 1024 matrix (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_13734)) (Pconst (256)%Z)))
-          ; copn [::] (Opseudo_op (Ospill Unspill [:: aword U64 ])) [:: Pvar transposed_13731 ]
-          ; ccall [:: Lvar polx4_13736.(gv); Lvar buf_13733.(gv) ] _gen_matrix_sample_four_polynomials [:: Pvar polx4_13736
+  [:: MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Spill [:: aword U64 ])) [:: Pvar transposed_13731 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar buf_13733.(gv)) AT_none (aarr U8 2144) (Pvar buf_s))
+    ; MkI dummy_instr_info (Cfor
+                              (i_13734.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (2)%Z)
+                              [:: MkI dummy_instr_info (Cassgn (Lvar pos_entry_13735.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar i_13734))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar polx4_13736.(gv)) AT_none (aarr U16 1024) (Psub AAscale U16 1024 matrix (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_13734)) (Pconst (256)%Z))))
+                                ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aword U64 ])) [:: Pvar transposed_13731 ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar polx4_13736.(gv)
+                                                                ; Lvar buf_13733.(gv) ] _gen_matrix_sample_four_polynomials [:: Pvar polx4_13736
                                                                     ; Pvar buf_13733
                                                                     ; Pvar rho_13730
                                                                     ; Pvar pos_entry_13735
-                                                                    ; Pvar transposed_13731 ]
-          ; cassgn (Lasub AAscale U16 1024 matrix.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pvar i_13734) (Pconst (4)%Z)) (Pconst (256)%Z))) (aarr U16 1024) (Pvar polx4_13736) ]
-    ; cassgn (Lvar pol_13737.(gv)) (aarr U16 256) (Psub AAscale U16 256 matrix (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pconst (256)%Z)))
-    ; cassgn (Lvar rc_13738.(gv)) (aword U16) (Papp1 (Oword_of_int U16) (Pconst (514)%Z))
-    ; ccall [:: Lvar pol_13737.(gv)
-              ; Lasub AAscale U8 536 buf_13733.(gv) (Papp2 (Omul (Op_int)) (Pconst (536)%Z) (Pconst (0)%Z)) ] __gen_matrix_sample_one_polynomial [:: Pvar pol_13737
+                                                                    ; Pvar transposed_13731 ])
+                                ; MkI dummy_instr_info (Cassgn (Lasub AAscale U16 1024 matrix.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pvar i_13734) (Pconst (4)%Z)) (Pconst (256)%Z))) AT_none (aarr U16 1024) (Pvar polx4_13736)) ])
+    ; MkI dummy_instr_info (Cassgn (Lvar pol_13737.(gv)) AT_none (aarr U16 256) (Psub AAscale U16 256 matrix (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pconst (256)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar rc_13738.(gv)) AT_none (aword U16) (Papp1 (Oword_of_int U16) (Pconst (514)%Z)))
+    ; MkI dummy_instr_info (Ccall [:: Lvar pol_13737.(gv)
+                                    ; Lasub AAscale U8 536 buf_13733.(gv) (Papp2 (Omul (Op_int)) (Pconst (536)%Z) (Pconst (0)%Z)) ] __gen_matrix_sample_one_polynomial [:: Pvar pol_13737
                                                                     ; Psub AAscale U8 536 buf_13733 (Papp2 (Omul (Op_int)) (Pconst (536)%Z) (Pconst (0)%Z))
                                                                     ; Pvar rho_13730
-                                                                    ; Pvar rc_13738 ]
-    ; cassgn (Lasub AAscale U16 256 matrix.(gv) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pconst (256)%Z))) (aarr U16 256) (Pvar pol_13737)
-    ; cfor
-        (i_13734.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (3)%Z)
-        [:: cfor
-              (j.(gv))
-              (UpTo, Pconst (0)%Z, Pconst (3)%Z)
-              [:: ccall [:: Lasub AAscale U16 256 matrix.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pvar i_13734) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (256)%Z))) (Papp2 (Omul (Op_int)) (Pvar j) (Pconst (256)%Z))) ] _nttunpack [:: Psub AAscale U16 256 matrix (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pvar i_13734) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (256)%Z))) (Papp2 (Omul (Op_int)) (Pvar j) (Pconst (256)%Z))) ] ] ] ].
+                                                                    ; Pvar rc_13738 ])
+    ; MkI dummy_instr_info (Cassgn (Lasub AAscale U16 256 matrix.(gv) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pconst (256)%Z))) AT_none (aarr U16 256) (Pvar pol_13737))
+    ; MkI dummy_instr_info (Cfor
+                              (i_13734.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (3)%Z)
+                              [:: MkI dummy_instr_info (Cfor
+                                                          (j.(gv))
+                                                          (UpTo, Pconst (0)%Z, Pconst (3)%Z)
+                                                          [:: MkI dummy_instr_info (
+                                                          Ccall [:: Lasub AAscale U16 256 matrix.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pvar i_13734) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (256)%Z))) (Papp2 (Omul (Op_int)) (Pvar j) (Pconst (256)%Z))) ] _nttunpack [:: Psub AAscale U16 256 matrix (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pvar i_13734) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (256)%Z))) (Papp2 (Omul (Op_int)) (Pvar j) (Pconst (256)%Z))) ]) ]) ]) ].
 
 Definition fd__gen_matrix_avx2 : ufundef :=
   {|

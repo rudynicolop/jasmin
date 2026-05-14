@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -33,10 +33,10 @@ Definition res___w256_interleave_u16 : seq var_i := [:: a0.(gv); a1.(gv) ].
 
 (* Body *)
 Definition body___w256_interleave_u16 : cmd :=
-  [:: copn [:: Lvar a0.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKL VE16 U256))))) [:: Pvar al_14257
-                                                                    ; Pvar ah_14258 ]
-    ; copn [:: Lvar a1.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE16 U256))))) [:: Pvar al_14257
-                                                                    ; Pvar ah_14258 ] ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar a0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE16 U256))))) [:: Pvar al_14257
+                                                                    ; Pvar ah_14258 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar a1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE16 U256))))) [:: Pvar al_14257
+                                                                    ; Pvar ah_14258 ]) ].
 
 Definition fd___w256_interleave_u16 : ufundef :=
   {|

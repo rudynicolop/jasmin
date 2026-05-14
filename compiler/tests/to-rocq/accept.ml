@@ -119,6 +119,7 @@ end
 module RunArch (D : ArchDriver) = struct
   let generate (dir, name) =
     let full_path = Filename.concat dir name in
+    Utils.nowarning ();
     let p = D.load_file full_path in
     let out_name = make_out_name D.dir_name dir name in
     let oc = open_out out_name in

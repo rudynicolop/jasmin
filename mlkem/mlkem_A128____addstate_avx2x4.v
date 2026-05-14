@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -67,130 +67,131 @@ Definition res_A128____addstate_avx2x4 : seq var_i :=
 
 (* Body *)
 Definition body_A128____addstate_avx2x4 : cmd :=
-  [:: cassgn (Lvar DELTA_16359.(gv)) (aint) (Pconst (0)%Z)
-    ; cassgn (Lvar AT8_16360.(gv)) (aint) (Pvar AT_16351)
-    ; cassgn (Lvar AT_16351.(gv)) (aint) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z)))
-    ; cif
-        (Papp2 (Oneq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar AT8_16360) (Pconst (8)%Z)) (Pconst (0)%Z))
-        [:: ccall [:: Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar t0_16361.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf0_16352
+  [:: MkI dummy_instr_info (Cassgn (Lvar DELTA_16359.(gv)) AT_none (aint) (Pconst (0)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar AT8_16360.(gv)) AT_none (aint) (Pvar AT_16351))
+    ; MkI dummy_instr_info (Cassgn (Lvar AT_16351.(gv)) AT_none (aint) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oneq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar AT8_16360) (Pconst (8)%Z)) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar t0_16361.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf0_16352
                                                                     ; Pvar offset_16356
                                                                     ; Pvar DELTA_16359
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT8_16360 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (0)%Z))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (0)%Z))) (Pvar t0_16361))
-          ; ccall [:: Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar t1_16362.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf1_16353
+                                                                    ; Pvar AT8_16360 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (0)%Z))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (0)%Z))) (Pvar t0_16361)))
+                                ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar t1_16362.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf1_16353
                                                                     ; Pvar offset_16356
                                                                     ; Pvar DELTA_16359
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT8_16360 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (1)%Z))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (1)%Z))) (Pvar t1_16362))
-          ; ccall [:: Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar t2_16363.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf2_16354
+                                                                    ; Pvar AT8_16360 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (1)%Z))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (1)%Z))) (Pvar t1_16362)))
+                                ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar t2_16363.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf2_16354
                                                                     ; Pvar offset_16356
                                                                     ; Pvar DELTA_16359
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT8_16360 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (2)%Z))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (2)%Z))) (Pvar t2_16363))
-          ; ccall [:: Lvar DELTA_16359.(gv)
-                    ; Lvar _LEN_16357.(gv)
-                    ; Lvar _TRAILB_16358.(gv)
-                    ; Lvar AT8_16360.(gv)
-                    ; Lvar t3_16364.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf3_16355
+                                                                    ; Pvar AT8_16360 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (2)%Z))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (2)%Z))) (Pvar t2_16363)))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar DELTA_16359.(gv)
+                                                                ; Lvar _LEN_16357.(gv)
+                                                                ; Lvar _TRAILB_16358.(gv)
+                                                                ; Lvar AT8_16360.(gv)
+                                                                ; Lvar t3_16364.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf3_16355
                                                                     ; Pvar offset_16356
                                                                     ; Pvar DELTA_16359
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT8_16360 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (3)%Z))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (3)%Z))) (Pvar t3_16364))
-          ; cassgn (Lvar AT_16351.(gv)) (aint) (Pvar AT8_16360) ]
-        [::]
-    ; cassgn (Lvar offset_16356.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16356) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16359)))
-    ; cassgn (Lvar j_at_16365.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))))
-    ; cwhile
-        [::]
-        (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_16357) (Pconst (8)%Z))))))
-        [:: cassgn (Lvar t0_16361.(gv)) (aword U64) (Pget Unaligned AAdirect U64 buf0_16352 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356)))
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) (Pvar t0_16361))
-          ; cassgn (Lvar t1_16362.(gv)) (aword U64) (Pget Unaligned AAdirect U64 buf1_16353 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356)))
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) (Pvar t1_16362))
-          ; cassgn (Lvar t2_16363.(gv)) (aword U64) (Pget Unaligned AAdirect U64 buf2_16354 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356)))
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) (Pvar t2_16363))
-          ; cassgn (Lvar t3_16364.(gv)) (aword U64) (Pget Unaligned AAdirect U64 buf3_16355 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356)))
-          ; cassgn (Lvar offset_16356.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16356) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (8)%Z)))
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) (Pvar t3_16364))
-          ; cassgn (Lvar j_at_16365.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (4)%Z))) ]
-    ; cassgn (Lvar AT_16351.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar AT_16351) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_16357) (Pconst (8)%Z))))
-    ; cassgn (Lvar _LEN_16357.(gv)) (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_16357) (Pconst (8)%Z))
-    ; cif
-        (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16357)) (Papp2 (Oneq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar _TRAILB_16358) (Pconst (256)%Z)) (Pconst (0)%Z)))
-        [:: ccall [:: Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar t0_16361.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf0_16352
+                                                                    ; Pvar AT8_16360 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (3)%Z))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Pconst (3)%Z))) (Pvar t3_16364)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar AT_16351.(gv)) AT_none (aint) (Pvar AT8_16360)) ]
+                              [::])
+    ; MkI dummy_instr_info (Cassgn (Lvar offset_16356.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16356) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16359))))
+    ; MkI dummy_instr_info (Cassgn (Lvar j_at_16365.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z)))))
+    ; MkI dummy_instr_info (Cwhile Align
+                              [::]
+                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar AT_16351) (Pconst (8)%Z))) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_16357) (Pconst (8)%Z))))))
+                              dummy_instr_info
+                              [:: MkI dummy_instr_info (Cassgn (Lvar t0_16361.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 buf0_16352 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) (Pvar t0_16361)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar t1_16362.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 buf1_16353 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) (Pvar t1_16362)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar t2_16363.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 buf2_16354 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) (Pvar t2_16363)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar t3_16364.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 buf3_16355 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar offset_16356))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar offset_16356.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16356) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (8)%Z))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) (Pvar t3_16364)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar j_at_16365.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (4)%Z)))) ])
+    ; MkI dummy_instr_info (Cassgn (Lvar AT_16351.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar AT_16351) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_16357) (Pconst (8)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_16357.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_16357) (Pconst (8)%Z)))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16357)) (Papp2 (Oneq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar _TRAILB_16358) (Pconst (256)%Z)) (Pconst (0)%Z)))
+                              [:: MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar t0_16361.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf0_16352
                                                                     ; Pvar offset_16356
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT_16351 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) (Pvar t0_16361))
-          ; ccall [:: Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar t1_16362.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf1_16353
+                                                                    ; Pvar AT_16351 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))))) (Pvar t0_16361)))
+                                ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar t1_16362.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf1_16353
                                                                     ; Pvar offset_16356
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT_16351 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) (Pvar t1_16362))
-          ; ccall [:: Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar t2_16363.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf2_16354
+                                                                    ; Pvar AT_16351 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))) (Pvar t1_16362)))
+                                ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar t2_16363.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf2_16354
                                                                     ; Pvar offset_16356
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT_16351 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) (Pvar t2_16363))
-          ; ccall [:: Lvar DELTA_16359.(gv)
-                    ; Lvar _LEN_16357.(gv)
-                    ; Lvar _TRAILB_16358.(gv)
-                    ; Lvar AT_16351.(gv)
-                    ; Lvar t3_16364.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf3_16355
+                                                                    ; Pvar AT_16351 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))) (Pvar t2_16363)))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar DELTA_16359.(gv)
+                                                                ; Lvar _LEN_16357.(gv)
+                                                                ; Lvar _TRAILB_16358.(gv)
+                                                                ; Lvar AT_16351.(gv)
+                                                                ; Lvar t3_16364.(gv) ] A128____a_ilen_read_upto8_at [:: Pvar buf3_16355
                                                                     ; Pvar offset_16356
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar _LEN_16357
                                                                     ; Pvar _TRAILB_16358
                                                                     ; Pvar AT_16351
-                                                                    ; Pvar AT_16351 ]
-          ; cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) (Pvar t3_16364))
-          ; cassgn (Lvar offset_16356.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16356) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16359))) ]
-        [::] ].
+                                                                    ; Pvar AT_16351 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st_16350.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) AT_none (aword U64) (Papp2 (Olxor U64) (Pget Aligned AAscale U64 st_16350 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar j_at_16365) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (3)%Z))))) (Pvar t3_16364)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar offset_16356.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16356) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16359)))) ]
+                              [::]) ].
 
 Definition fd_A128____addstate_avx2x4 : ufundef :=
   {|

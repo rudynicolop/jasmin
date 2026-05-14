@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -48,31 +48,33 @@ Definition res__shake256x4_A128__A32_A1 : seq var_i :=
 
 (* Body *)
 Definition body__shake256x4_A128__A32_A1 : cmd :=
-  [:: cassgn (Lvar st_14337.(gv)) (aarr U256 25) (Pvar st_s)
-    ; ccall [:: Lvar st_14337.(gv) ] __state_init_avx2x4 [:: Pvar st_14337 ]
-    ; ccall [:: Lvar st_14337.(gv); Lnone dummy_var_info (aint) ] A32____absorb_bcast_avx2x4 [:: Pvar st_14337
+  [:: MkI dummy_instr_info (Cassgn (Lvar st_14337.(gv)) AT_none (aarr U256 25) (Pvar st_s))
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14337.(gv) ] __state_init_avx2x4 [:: Pvar st_14337 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14337.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A32____absorb_bcast_avx2x4 [:: Pvar st_14337
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar seed_14334
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (136)%Z ]
-    ; ccall [:: Lvar st_14337.(gv); Lnone dummy_var_info (aint) ] A1____absorb_avx2x4 [:: Pvar st_14337
+                                                                    ; Pconst (136)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14337.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A1____absorb_avx2x4 [:: Pvar st_14337
                                                                     ; Pconst (32)%Z
                                                                     ; Psub AAscale U8 1 nonces (Pconst (0)%Z)
                                                                     ; Psub AAscale U8 1 nonces (Pconst (1)%Z)
                                                                     ; Psub AAscale U8 1 nonces (Pconst (2)%Z)
                                                                     ; Psub AAscale U8 1 nonces (Pconst (3)%Z)
                                                                     ; Pconst (31)%Z
-                                                                    ; Pconst (136)%Z ]
-    ; ccall [:: Lvar st_14337.(gv)
-              ; Lvar out0.(gv)
-              ; Lvar out1.(gv)
-              ; Lvar out2.(gv)
-              ; Lvar out3.(gv) ] A128____squeeze_avx2x4 [:: Pvar st_14337
-                                                          ; Pvar out0
-                                                          ; Pvar out1
-                                                          ; Pvar out2
-                                                          ; Pvar out3
-                                                          ; Pconst (136)%Z ] ].
+                                                                    ; Pconst (136)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14337.(gv)
+                                    ; Lvar out0.(gv)
+                                    ; Lvar out1.(gv)
+                                    ; Lvar out2.(gv)
+                                    ; Lvar out3.(gv) ] A128____squeeze_avx2x4 [:: Pvar st_14337
+                                                                    ; Pvar out0
+                                                                    ; Pvar out1
+                                                                    ; Pvar out2
+                                                                    ; Pvar out3
+                                                                    ; Pconst (136)%Z ]) ].
 
 Definition fd__shake256x4_A128__A32_A1 : ufundef :=
   {|

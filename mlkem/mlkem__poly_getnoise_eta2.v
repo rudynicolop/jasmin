@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -35,14 +35,14 @@ Definition res__poly_getnoise_eta2 : seq var_i := [:: rp_14126.(gv) ].
 
 (* Body *)
 Definition body__poly_getnoise_eta2 : cmd :=
-  [:: copn [::] (Opseudo_op (Ospill Spill [:: aarr U16 256%positive ])) [:: Pvar rp_14126 ]
-    ; cassgn (Laset Aligned AAscale U8 nonce_s.(gv) (Pconst (0)%Z)) (aword U8) (Pvar nonce_14128)
-    ; ccall [:: Lvar buf_14130.(gv) ] _shake256_A128__A32_A1 [:: Pvar buf_14130
-                                                               ; Pvar seed_14127
-                                                               ; Pvar nonce_s ]
-    ; copn [::] (Opseudo_op (Ospill Unspill [:: aarr U16 256%positive ])) [:: Pvar rp_14126 ]
-    ; ccall [:: Lvar rp_14126.(gv) ] __poly_cbd_eta1 [:: Pvar rp_14126
-                                                       ; Pvar buf_14130 ] ].
+  [:: MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Spill [:: aarr U16 256%positive ])) [:: Pvar rp_14126 ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonce_s.(gv) (Pconst (0)%Z)) AT_none (aword U8) (Pvar nonce_14128))
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_14130.(gv) ] _shake256_A128__A32_A1 [:: Pvar buf_14130
+                                                                    ; Pvar seed_14127
+                                                                    ; Pvar nonce_s ])
+    ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aarr U16 256%positive ])) [:: Pvar rp_14126 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar rp_14126.(gv) ] __poly_cbd_eta1 [:: Pvar rp_14126
+                                                                    ; Pvar buf_14130 ]) ].
 
 Definition fd__poly_getnoise_eta2 : ufundef :=
   {|

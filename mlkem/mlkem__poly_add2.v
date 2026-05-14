@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -31,14 +31,14 @@ Definition res__poly_add2 : seq var_i := [:: rp_14265.(gv) ].
 
 (* Body *)
 Definition body__poly_add2 : cmd :=
-  [:: cfor
-        (i_14267.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (16)%Z)
-        [:: cassgn (Lvar a_14268.(gv)) (aword U256) (Pget Unaligned AAdirect U256 rp_14265 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14267)))
-          ; cassgn (Lvar b_14269.(gv)) (aword U256) (Pget Unaligned AAdirect U256 bp (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14267)))
-          ; copn [:: Lvar r_14270.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar a_14268
-                                                                    ; Pvar b_14269 ]
-          ; cassgn (Laset Unaligned AAdirect U256 rp_14265.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14267))) (aword U256) (Pvar r_14270) ] ].
+  [:: MkI dummy_instr_info (Cfor
+                              (i_14267.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (16)%Z)
+                              [:: MkI dummy_instr_info (Cassgn (Lvar a_14268.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 rp_14265 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14267))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar b_14269.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 bp (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14267))))
+                                ; MkI dummy_instr_info (Copn [:: Lvar r_14270.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar a_14268
+                                                                    ; Pvar b_14269 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14265.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14267))) AT_none (aword U256) (Pvar r_14270)) ]) ].
 
 Definition fd__poly_add2 : ufundef :=
   {|

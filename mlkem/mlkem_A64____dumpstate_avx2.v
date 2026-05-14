@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -51,49 +51,50 @@ Definition res_A64____dumpstate_avx2 : seq var_i :=
 
 (* Body *)
 Definition body_A64____dumpstate_avx2 : cmd :=
-  [:: cassgn (Lvar DELTA_16677.(gv)) (aint) (Pconst (0)%Z)
-    ; cif
-        (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar _LEN_16675))
-        [:: ccall [:: Lvar buf_16673.(gv)
-                    ; Lvar DELTA_16677.(gv)
-                    ; Lnone dummy_var_info (aint) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+  [:: MkI dummy_instr_info (Cassgn (Lvar DELTA_16677.(gv)) AT_none (aint) (Pconst (0)%Z))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar _LEN_16675))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar buf_16673.(gv)
+                                                                ; Lvar DELTA_16677.(gv)
+                                                                ; Lnone dummy_var_info (aint) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pconst (8)%Z
-                                                                    ; Pget Aligned AAscale U256 st_16676 (Pconst (0)%Z) ]
-          ; cassgn (Lvar _LEN_16675.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_16675) (Pconst (8)%Z)) ]
-        [:: ccall [:: Lvar buf_16673.(gv)
-                    ; Lvar DELTA_16677.(gv)
-                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+                                                                    ; Pget Aligned AAscale U256 st_16676 (Pconst (0)%Z) ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_16675.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_16675) (Pconst (8)%Z))) ]
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar buf_16673.(gv)
+                                                                ; Lvar DELTA_16677.(gv)
+                                                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pget Aligned AAscale U256 st_16676 (Pconst (0)%Z) ] ]
-    ; ccall [:: Lvar buf_16673.(gv)
-              ; Lvar DELTA_16677.(gv)
-              ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+                                                                    ; Pget Aligned AAscale U256 st_16676 (Pconst (0)%Z) ]) ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_16673.(gv)
+                                    ; Lvar DELTA_16677.(gv)
+                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pget Aligned AAscale U256 st_16676 (Pconst (1)%Z) ]
-    ; cif
-        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-        [:: cassgn (Lvar t128_0_16678.(gv)) (aword U128) (Pget Aligned AAscale U256 st_16676 (Pconst (2)%Z))
-          ; copn [:: Lvar t128_1_16679.(gv) ] (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (2)%Z)
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]
-          ; cassgn (Lvar t_16680.(gv)) (aword U64) (Pvar t128_1_16679)
-          ; ccall [:: Lvar buf_16673.(gv)
-                    ; Lvar DELTA_16677.(gv)
-                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
+                                                                    ; Pget Aligned AAscale U256 st_16676 (Pconst (1)%Z) ])
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar t128_0_16678.(gv)) AT_none (aword U128) (Pget Aligned AAscale U256 st_16676 (Pconst (2)%Z)))
+                                ; MkI dummy_instr_info (Copn [:: Lvar t128_1_16679.(gv) ] AT_none (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (2)%Z)
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar t_16680.(gv)) AT_none (aword U64) (Pvar t128_1_16679))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_16673.(gv)
+                                                                ; Lvar DELTA_16677.(gv)
+                                                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t_16680 ]
-          ; copn [:: Lvar t128_1_16679.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U128))))) [:: Pvar t128_1_16679
-                                                                    ; Pvar t128_1_16679 ]
-          ; cif
-              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-              [:: copn [:: Lvar t256_0_16681.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (3)%Z)
+                                                                    ; Pvar t_16680 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar t128_1_16679.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U128))))) [:: Pvar t128_1_16679
+                                                                    ; Pvar t128_1_16679 ])
+                                ; MkI dummy_instr_info (Cif
+                                                          (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                          [:: MkI dummy_instr_info (
+                                                          Copn [:: Lvar t256_0_16681.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (3)%Z)
                                                                     ; Pget Aligned AAscale U256 st_16676 (Pconst (4)%Z)
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -102,8 +103,9 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-                ; copn [:: Lvar t256_1_16682.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (4)%Z)
+                                                                    ; Pconst (0)%Z ] ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [:: Lvar t256_1_16682.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (4)%Z)
                                                                     ; Pget Aligned AAscale U256 st_16676 (Pconst (3)%Z)
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -112,8 +114,9 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-                ; copn [:: Lvar t256_2_16683.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (5)%Z)
+                                                                    ; Pconst (0)%Z ] ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [:: Lvar t256_2_16683.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (5)%Z)
                                                                     ; Pget Aligned AAscale U256 st_16676 (Pconst (6)%Z)
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -122,8 +125,9 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-                ; copn [:: Lvar t256_3_16684.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (6)%Z)
+                                                                    ; Pconst (0)%Z ] ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [:: Lvar t256_3_16684.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 st_16676 (Pconst (6)%Z)
                                                                     ; Pget Aligned AAscale U256 st_16676 (Pconst (5)%Z)
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -132,8 +136,9 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-                ; copn [:: Lvar t256_4_16685.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_16681
+                                                                    ; Pconst (0)%Z ] ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [:: Lvar t256_4_16685.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_16681
                                                                     ; Pvar t256_3_16684
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -142,30 +147,37 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-                ; ccall [:: Lvar buf_16673.(gv)
-                          ; Lvar DELTA_16677.(gv)
-                          ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+                                                                    ; Pconst (1)%Z ] ])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar buf_16673.(gv)
+                                                                  ; Lvar DELTA_16677.(gv)
+                                                                  ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t256_4_16685 ]
-                ; cif
-                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-                    [:: cassgn (Lvar t_16680.(gv)) (aword U64) (Pvar t128_0_16678)
-                      ; ccall [:: Lvar buf_16673.(gv)
-                                ; Lvar DELTA_16677.(gv)
-                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
+                                                                    ; Pvar t256_4_16685 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Lvar t_16680.(gv)) AT_none (aword U64) (Pvar t128_0_16678))
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar buf_16673.(gv)
+                                                                    ; Lvar DELTA_16677.(gv)
+                                                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t_16680 ]
-                      ; copn [:: Lvar t128_0_16678.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U128))))) [:: Pvar t128_0_16678
-                                                                    ; Pvar t128_0_16678 ] ]
-                    [::]
-                ; cif
-                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-                    [:: copn [:: Lvar t256_4_16685.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_3_16684
+                                                                    ; Pvar t_16680 ])
+                                                              ; MkI dummy_instr_info (
+                                                            Copn [:: Lvar t128_0_16678.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U128))))) [:: Pvar t128_0_16678
+                                                                    ; Pvar t128_0_16678 ]) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                            [:: MkI dummy_instr_info (
+                                                            Copn [:: Lvar t256_4_16685.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_3_16684
                                                                     ; Pvar t256_1_16682
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -174,29 +186,35 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-                      ; ccall [:: Lvar buf_16673.(gv)
-                                ; Lvar DELTA_16677.(gv)
-                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+                                                                    ; Pconst (1)%Z ] ])
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar buf_16673.(gv)
+                                                                    ; Lvar DELTA_16677.(gv)
+                                                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t256_4_16685 ] ]
-                    [::]
-                ; cif
-                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-                    [:: cassgn (Lvar t_16680.(gv)) (aword U64) (Pvar t128_1_16679)
-                      ; ccall [:: Lvar buf_16673.(gv)
-                                ; Lvar DELTA_16677.(gv)
-                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
+                                                                    ; Pvar t256_4_16685 ]) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Lvar t_16680.(gv)) AT_none (aword U64) (Pvar t128_1_16679))
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar buf_16673.(gv)
+                                                                    ; Lvar DELTA_16677.(gv)
+                                                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t_16680 ] ]
-                    [::]
-                ; cif
-                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-                    [:: copn [:: Lvar t256_4_16685.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_16683
+                                                                    ; Pvar t_16680 ]) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                            [:: MkI dummy_instr_info (
+                                                            Copn [:: Lvar t256_4_16685.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_16683
                                                                     ; Pvar t256_0_16681
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -205,29 +223,35 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-                      ; ccall [:: Lvar buf_16673.(gv)
-                                ; Lvar DELTA_16677.(gv)
-                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+                                                                    ; Pconst (1)%Z ] ])
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar buf_16673.(gv)
+                                                                    ; Lvar DELTA_16677.(gv)
+                                                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t256_4_16685 ] ]
-                    [::]
-                ; cif
-                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-                    [:: cassgn (Lvar t_16680.(gv)) (aword U64) (Pvar t128_0_16678)
-                      ; ccall [:: Lvar buf_16673.(gv)
-                                ; Lvar DELTA_16677.(gv)
-                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
+                                                                    ; Pvar t256_4_16685 ]) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Lvar t_16680.(gv)) AT_none (aword U64) (Pvar t128_0_16678))
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar buf_16673.(gv)
+                                                                    ; Lvar DELTA_16677.(gv)
+                                                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto8 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t_16680 ] ]
-                    [::]
-                ; cif
-                    (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
-                    [:: copn [:: Lvar t256_4_16685.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_16682
+                                                                    ; Pvar t_16680 ]) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_16675))
+                                                            [:: MkI dummy_instr_info (
+                                                            Copn [:: Lvar t256_4_16685.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_16682
                                                                     ; Pvar t256_2_16683
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -236,18 +260,19 @@ Definition body_A64____dumpstate_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-                      ; ccall [:: Lvar buf_16673.(gv)
-                                ; Lvar DELTA_16677.(gv)
-                                ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
+                                                                    ; Pconst (1)%Z ] ])
+                                                              ; MkI dummy_instr_info (
+                                                            Ccall [:: Lvar buf_16673.(gv)
+                                                                    ; Lvar DELTA_16677.(gv)
+                                                                    ; Lvar _LEN_16675.(gv) ] A64____a_ilen_write_upto32 [:: Pvar buf_16673
                                                                     ; Pvar offset_16674
                                                                     ; Pvar DELTA_16677
                                                                     ; Pvar _LEN_16675
-                                                                    ; Pvar t256_4_16685 ] ]
-                    [::] ]
-              [::] ]
-        [::]
-    ; cassgn (Lvar offset_16674.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16674) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16677))) ].
+                                                                    ; Pvar t256_4_16685 ]) ]
+                                                            [::]) ]
+                                                          [::]) ]
+                              [::])
+    ; MkI dummy_instr_info (Cassgn (Lvar offset_16674.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_16674) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_16677)))) ].
 
 Definition fd_A64____dumpstate_avx2 : ufundef :=
   {|

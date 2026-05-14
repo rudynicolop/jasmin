@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -34,12 +34,12 @@ Definition res___addratebit_avx2x4 : seq var_i := [:: st_18559.(gv) ].
 
 (* Body *)
 Definition body___addratebit_avx2x4 : cmd :=
-  [:: cassgn (Lvar t64_18561.(gv)) (aword U64) (Papp1 (Oword_of_int U64) (Pconst (1)%Z))
-    ; cassgn (Lvar t64_18561.(gv)) (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t64_18561) (Papp1 (Oword_of_int U8) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar RATE8)) (Pconst (1)%Z)) (Pconst (64)%Z))))
-    ; cassgn (Lvar t128_18562.(gv)) (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_18561))
-    ; copn [:: Lvar t256_18563.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar t128_18562 ]
-    ; cassgn (Lvar t256_18563.(gv)) (aword U256) (Papp2 (Olxor U256) (Pvar t256_18563) (Pget Aligned AAscale U256 st_18559 (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z))))
-    ; cassgn (Laset Aligned AAscale U256 st_18559.(gv) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z))) (aword U256) (Pvar t256_18563) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar t64_18561.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (1)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar t64_18561.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t64_18561) (Papp1 (Oword_of_int U8) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar RATE8)) (Pconst (1)%Z)) (Pconst (64)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Lvar t128_18562.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_18561)))
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_18563.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar t128_18562 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar t256_18563.(gv)) AT_none (aword U256) (Papp2 (Olxor U256) (Pvar t256_18563) (Pget Aligned AAscale U256 st_18559 (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18559.(gv) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z))) AT_none (aword U256) (Pvar t256_18563)) ].
 
 Definition fd___addratebit_avx2x4 : ufundef :=
   {|

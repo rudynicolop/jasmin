@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -46,94 +46,86 @@ Definition res___perm_reg3456_avx2 : seq var_i :=
 
 (* Body *)
 Definition body___perm_reg3456_avx2 : cmd :=
-  [:: copn [:: Lvar t256_0_18858.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r3_18850
+  [:: MkI dummy_instr_info (Copn [:: Lvar t256_0_18858.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r3_18850
                                                                     ; Pvar r5_18852
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Lvar t256_1_18859.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r6_18853
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_1_18859.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r6_18853
                                                                     ; Pvar r4_18851
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Lvar t256_2_18860.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r4_18851
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_2_18860.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r4_18851
                                                                     ; Pvar r3_18850
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Lvar st3.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_18858
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar st3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_18858
                                                                     ; Pvar t256_1_18859
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-    ; copn [:: Lvar st4.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_18859
+                                                                    ; Pconst (0)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar st4.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_18859
                                                                     ; Pvar t256_0_18858
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-    ; copn [:: Lvar t256_0_18858.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r5_18852
+                                                                    ; Pconst (0)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_0_18858.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar r5_18852
                                                                     ; Pvar r6_18853
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Lvar st5.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_18858
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar st5.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_18858
                                                                     ; Pvar t256_2_18860
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-    ; copn [:: Lvar st6.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_18860
+                                                                    ; Pconst (0)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar st6.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_18860
                                                                     ; Pvar t256_0_18858
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ] ].
+                                                                    ; Pconst (0)%Z ] ]) ].
 
 Definition fd___perm_reg3456_avx2 : ufundef :=
   {|

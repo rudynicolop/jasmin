@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -74,47 +74,49 @@ Definition res___schoolbook16x : seq var_i :=
 
 (* Body *)
 Definition body___schoolbook16x : cmd :=
-  [:: ccall [:: Lvar zaim.(gv) ] __fqmulprecomp16x [:: Pvar aim
-                                                     ; Pvar zetaqinv
-                                                     ; Pvar zeta
-                                                     ; Pvar qx16_14224 ]
-    ; ccall [:: Lvar ac0.(gv); Lvar ac1.(gv) ] __wmul_16u16 [:: Pvar are
-                                                              ; Pvar bre ]
-    ; ccall [:: Lvar ad0.(gv); Lvar ad1.(gv) ] __wmul_16u16 [:: Pvar are
-                                                              ; Pvar bim ]
-    ; ccall [:: Lvar bc0.(gv); Lvar bc1.(gv) ] __wmul_16u16 [:: Pvar aim
-                                                              ; Pvar bre ]
-    ; ccall [:: Lvar zbd0.(gv); Lvar zbd1.(gv) ] __wmul_16u16 [:: Pvar zaim
-                                                                ; Pvar bim ]
-    ; cif
-        (Papp2 (Oeq (Op_int)) (Pvar sign) (Pconst (0)%Z))
-        [:: copn [:: Lvar x0_14227.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar ac0
-                                                                    ; Pvar zbd0 ]
-          ; copn [:: Lvar x1_14238.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar ac1
-                                                                    ; Pvar zbd1 ] ]
-        [:: copn [:: Lvar x0_14227.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE32 U256))))) [:: Pvar ac0
-                                                                    ; Pvar zbd0 ]
-          ; copn [:: Lvar x1_14238.(gv) ] (Oasm ((BaseOp ((None), (VPSUB VE32 U256))))) [:: Pvar ac1
-                                                                    ; Pvar zbd1 ] ]
-    ; copn [:: Lvar y0_14228.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar bc0
-                                                                    ; Pvar ad0 ]
-    ; copn [:: Lvar y1_14239.(gv) ] (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar bc1
-                                                                    ; Pvar ad1 ]
-    ; copn [:: Lvar _zero_14240.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::]
-    ; ccall [:: Lvar x0_14227.(gv); Lvar x1_14238.(gv) ] __w256_deinterleave_u16 [:: Pvar _zero_14240
+  [:: MkI dummy_instr_info (Ccall [:: Lvar zaim.(gv) ] __fqmulprecomp16x [:: Pvar aim
+                                                                    ; Pvar zetaqinv
+                                                                    ; Pvar zeta
+                                                                    ; Pvar qx16_14224 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar ac0.(gv); Lvar ac1.(gv) ] __wmul_16u16 [:: Pvar are
+                                                                    ; Pvar bre ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar ad0.(gv); Lvar ad1.(gv) ] __wmul_16u16 [:: Pvar are
+                                                                    ; Pvar bim ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar bc0.(gv); Lvar bc1.(gv) ] __wmul_16u16 [:: Pvar aim
+                                                                    ; Pvar bre ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar zbd0.(gv); Lvar zbd1.(gv) ] __wmul_16u16 [:: Pvar zaim
+                                                                    ; Pvar bim ])
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oeq (Op_int)) (Pvar sign) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Copn [:: Lvar x0_14227.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar ac0
+                                                                    ; Pvar zbd0 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar x1_14238.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar ac1
+                                                                    ; Pvar zbd1 ]) ]
+                              [:: MkI dummy_instr_info (Copn [:: Lvar x0_14227.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE32 U256))))) [:: Pvar ac0
+                                                                    ; Pvar zbd0 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar x1_14238.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE32 U256))))) [:: Pvar ac1
+                                                                    ; Pvar zbd1 ]) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar y0_14228.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar bc0
+                                                                    ; Pvar ad0 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar y1_14239.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE32 U256))))) [:: Pvar bc1
+                                                                    ; Pvar ad1 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar _zero_14240.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar x0_14227.(gv)
+                                    ; Lvar x1_14238.(gv) ] __w256_deinterleave_u16 [:: Pvar _zero_14240
                                                                     ; Pvar x0_14227
-                                                                    ; Pvar x1_14238 ]
-    ; ccall [:: Lvar y0_14228.(gv); Lvar y1_14239.(gv) ] __w256_deinterleave_u16 [:: Pvar _zero_14240
+                                                                    ; Pvar x1_14238 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar y0_14228.(gv)
+                                    ; Lvar y1_14239.(gv) ] __w256_deinterleave_u16 [:: Pvar _zero_14240
                                                                     ; Pvar y0_14228
-                                                                    ; Pvar y1_14239 ]
-    ; ccall [:: Lvar x0_14227.(gv) ] __mont_red [:: Pvar x0_14227
-                                                  ; Pvar x1_14238
-                                                  ; Pvar qx16_14224
-                                                  ; Pvar qinvx16_14225 ]
-    ; ccall [:: Lvar y0_14228.(gv) ] __mont_red [:: Pvar y0_14228
-                                                  ; Pvar y1_14239
-                                                  ; Pvar qx16_14224
-                                                  ; Pvar qinvx16_14225 ] ].
+                                                                    ; Pvar y1_14239 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar x0_14227.(gv) ] __mont_red [:: Pvar x0_14227
+                                                                    ; Pvar x1_14238
+                                                                    ; Pvar qx16_14224
+                                                                    ; Pvar qinvx16_14225 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar y0_14228.(gv) ] __mont_red [:: Pvar y0_14228
+                                                                    ; Pvar y1_14239
+                                                                    ; Pvar qx16_14224
+                                                                    ; Pvar qinvx16_14225 ]) ].
 
 Definition fd___schoolbook16x : ufundef :=
   {|

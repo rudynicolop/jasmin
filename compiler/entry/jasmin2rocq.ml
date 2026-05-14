@@ -138,6 +138,16 @@ let () =
          $(i,tyin_f), $(i,args_f), $(i,tyout_f), $(i,res_f), $(i,body_f), and \
          $(i,fd_f); (3) the program name $(i,p) produces two definitions: \
          $(i,p_gds) and $(i,p).";
+      `S "APPROXIMATIONS";
+      `P
+        "The output is always a $(b,uprog). The following information is \
+         dropped or replaced by a default: annotation tags of assignments and \
+         $(b,Copn)s (replaced by $(b,AT_none)); alignment of $(b,Cwhile) \
+         (replaced by $(b,Align)); all $(b,instr_info) fields (replaced by \
+         $(b,dummy_instr_info)); all $(b,var_info) fields (replaced by \
+         $(b,dummy_var_info)); function $(b,f_info) ($(b,FunInfo.witness)), \
+         $(b,f_contract) ($(b,None)), and $(b,f_extra) ($(b,tt)); program \
+         $(b,p_extra) ($(b,tt)).";
       `S "ARGUMENTS";
       `P
         "Positional arguments are required in this order: $(i,JAZZ) then \

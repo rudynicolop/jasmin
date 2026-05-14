@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -30,10 +30,10 @@ Definition res___shuffle4 : seq var_i := [:: r0_19095.(gv); r1_19096.(gv) ].
 
 (* Body *)
 Definition body___shuffle4 : cmd :=
-  [:: copn [:: Lvar r0_19095.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar a_19093
-                                                                    ; Pvar b_19094 ]
-    ; copn [:: Lvar r1_19096.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar a_19093
-                                                                    ; Pvar b_19094 ] ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar r0_19095.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar a_19093
+                                                                    ; Pvar b_19094 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar r1_19096.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar a_19093
+                                                                    ; Pvar b_19094 ]) ].
 
 Definition fd___shuffle4 : ufundef :=
   {|

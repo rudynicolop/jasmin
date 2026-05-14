@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -32,22 +32,25 @@ Definition res__shake128_squeeze3blocks : seq var_i := [:: buf_14310.(gv) ].
 
 (* Body *)
 Definition body__shake128_squeeze3blocks : cmd :=
-  [:: ccall [:: Lvar st_14311.(gv) ] _keccakf1600_avx2 [:: Pvar st_14311 ]
-    ; cassgn (Lvar offset_14312.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-    ; ccall [:: Lvar buf_14310.(gv); Lvar offset_14312.(gv) ] ABUFLEN____dumpstate_avx2 [:: Pvar buf_14310
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st_14311.(gv) ] _keccakf1600_avx2 [:: Pvar st_14311 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar offset_14312.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_14310.(gv)
+                                    ; Lvar offset_14312.(gv) ] ABUFLEN____dumpstate_avx2 [:: Pvar buf_14310
                                                                     ; Pvar offset_14312
                                                                     ; Pconst (168)%Z
-                                                                    ; Pvar st_14311 ]
-    ; ccall [:: Lvar st_14311.(gv) ] _keccakf1600_avx2 [:: Pvar st_14311 ]
-    ; ccall [:: Lvar buf_14310.(gv); Lvar offset_14312.(gv) ] ABUFLEN____dumpstate_avx2 [:: Pvar buf_14310
+                                                                    ; Pvar st_14311 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14311.(gv) ] _keccakf1600_avx2 [:: Pvar st_14311 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_14310.(gv)
+                                    ; Lvar offset_14312.(gv) ] ABUFLEN____dumpstate_avx2 [:: Pvar buf_14310
                                                                     ; Pvar offset_14312
                                                                     ; Pconst (168)%Z
-                                                                    ; Pvar st_14311 ]
-    ; ccall [:: Lvar st_14311.(gv) ] _keccakf1600_avx2 [:: Pvar st_14311 ]
-    ; ccall [:: Lvar buf_14310.(gv); Lvar offset_14312.(gv) ] ABUFLEN____dumpstate_avx2 [:: Pvar buf_14310
+                                                                    ; Pvar st_14311 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14311.(gv) ] _keccakf1600_avx2 [:: Pvar st_14311 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_14310.(gv)
+                                    ; Lvar offset_14312.(gv) ] ABUFLEN____dumpstate_avx2 [:: Pvar buf_14310
                                                                     ; Pvar offset_14312
                                                                     ; Pconst (200)%Z
-                                                                    ; Pvar st_14311 ] ].
+                                                                    ; Pvar st_14311 ]) ].
 
 Definition fd__shake128_squeeze3blocks : ufundef :=
   {|

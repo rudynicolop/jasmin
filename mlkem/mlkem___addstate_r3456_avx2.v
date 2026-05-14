@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -40,17 +40,17 @@ Definition res___addstate_r3456_avx2 : seq var_i := [:: st_18833.(gv) ].
 
 (* Body *)
 Definition body___addstate_r3456_avx2 : cmd :=
-  [:: ccall [:: Lvar r3_18834.(gv)
-              ; Lvar r4_18835.(gv)
-              ; Lvar r5_18836.(gv)
-              ; Lvar r6_18837.(gv) ] __perm_reg3456_avx2 [:: Pvar r3_18834
-                                                           ; Pvar r4_18835
-                                                           ; Pvar r5_18836
-                                                           ; Pvar r6_18837 ]
-    ; cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (3)%Z)) (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (3)%Z)) (Pvar r3_18834))
-    ; cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (4)%Z)) (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (4)%Z)) (Pvar r4_18835))
-    ; cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (5)%Z)) (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (5)%Z)) (Pvar r5_18836))
-    ; cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (6)%Z)) (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (6)%Z)) (Pvar r6_18837)) ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar r3_18834.(gv)
+                                    ; Lvar r4_18835.(gv)
+                                    ; Lvar r5_18836.(gv)
+                                    ; Lvar r6_18837.(gv) ] __perm_reg3456_avx2 [:: Pvar r3_18834
+                                                                    ; Pvar r4_18835
+                                                                    ; Pvar r5_18836
+                                                                    ; Pvar r6_18837 ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (3)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (3)%Z)) (Pvar r3_18834)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (4)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (4)%Z)) (Pvar r4_18835)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (5)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (5)%Z)) (Pvar r5_18836)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (6)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (6)%Z)) (Pvar r6_18837))) ].
 
 Definition fd___addstate_r3456_avx2 : ufundef :=
   {|

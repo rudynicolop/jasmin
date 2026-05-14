@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -54,25 +54,29 @@ Definition res__gen_matrix_buf_rejection : seq var_i :=
 
 (* Body *)
 Definition body__gen_matrix_buf_rejection : cmd :=
-  [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHinit)) [::]
-    ; cassgn (Lvar load_shuffle_13792.(gv)) (aword U256) (Pget Aligned AAscale U256 sample_load_shuffle (Pconst (0)%Z))
-    ; cassgn (Lvar mask_13793.(gv)) (aword U256) (Pvar sample_mask)
-    ; cassgn (Lvar bounds_13794.(gv)) (aword U256) (Pvar sample_q)
-    ; cassgn (Lvar ones_13795.(gv)) (aword U256) (Pvar sample_ones)
-    ; cassgn (Lvar sst_13796.(gv)) (aarr U8 2048) (Pvar sample_shuffle_table)
-    ; cassgn (Lvar saved_buf_offset.(gv)) (aword U64) (Pvar buf_offset_13790)
-    ; cassgn (Lvar buf_offset_13790.(gv)) (aword U64) (Pvar buf_offset_13790)
-    ; cwhile
-        [:: cassgn (Lvar condition_loop.(gv)) (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar buf_offset_13790) (Papp1 (Oword_of_int U64) (Papp2 (Oadd (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z)) (Pconst (48)%Z)) (Pconst (1)%Z)))) ]
-        (Pvar condition_loop)
-        [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Pvar condition_loop
-                                                               ; Pvar ms_13791 ]
-          ; cassgn (Lvar condition_loop.(gv)) (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar counter_13788) (Papp1 (Oword_of_int U64) (Papp2 (Oadd (Op_int)) (Papp2 (Osub (Op_int)) (Pconst (256)%Z) (Pconst (32)%Z)) (Pconst (1)%Z))))
-          ; cif
-              (Pvar condition_loop)
-              [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Pvar condition_loop
-                                                                    ; Pvar ms_13791 ]
-                ; ccall [:: Lvar pol_13787.(gv); Lvar counter_13788.(gv) ] __gen_matrix_buf_rejection_filter48 [:: Pvar pol_13787
+  [:: MkI dummy_instr_info (Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHinit)) [::])
+    ; MkI dummy_instr_info (Cassgn (Lvar load_shuffle_13792.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 sample_load_shuffle (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar mask_13793.(gv)) AT_none (aword U256) (Pvar sample_mask))
+    ; MkI dummy_instr_info (Cassgn (Lvar bounds_13794.(gv)) AT_none (aword U256) (Pvar sample_q))
+    ; MkI dummy_instr_info (Cassgn (Lvar ones_13795.(gv)) AT_none (aword U256) (Pvar sample_ones))
+    ; MkI dummy_instr_info (Cassgn (Lvar sst_13796.(gv)) AT_none (aarr U8 2048) (Pvar sample_shuffle_table))
+    ; MkI dummy_instr_info (Cassgn (Lvar saved_buf_offset.(gv)) AT_none (aword U64) (Pvar buf_offset_13790))
+    ; MkI dummy_instr_info (Cassgn (Lvar buf_offset_13790.(gv)) AT_none (aword U64) (Pvar buf_offset_13790))
+    ; MkI dummy_instr_info (Cwhile Align
+                              [:: MkI dummy_instr_info (Cassgn (Lvar condition_loop.(gv)) AT_none (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar buf_offset_13790) (Papp1 (Oword_of_int U64) (Papp2 (Oadd (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z)) (Pconst (48)%Z)) (Pconst (1)%Z))))) ]
+                              (Pvar condition_loop)
+                              dummy_instr_info
+                              [:: MkI dummy_instr_info (Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Pvar condition_loop
+                                                                    ; Pvar ms_13791 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar condition_loop.(gv)) AT_none (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar counter_13788) (Papp1 (Oword_of_int U64) (Papp2 (Oadd (Op_int)) (Papp2 (Osub (Op_int)) (Pconst (256)%Z) (Pconst (32)%Z)) (Pconst (1)%Z)))))
+                                ; MkI dummy_instr_info (Cif
+                                                          (Pvar condition_loop)
+                                                          [:: MkI dummy_instr_info (
+                                                          Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Pvar condition_loop
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar pol_13787.(gv)
+                                                                  ; Lvar counter_13788.(gv) ] __gen_matrix_buf_rejection_filter48 [:: Pvar pol_13787
                                                                     ; Pvar counter_13788
                                                                     ; Pvar buf_13789
                                                                     ; Pvar buf_offset_13790
@@ -81,33 +85,42 @@ Definition body__gen_matrix_buf_rejection : cmd :=
                                                                     ; Pvar bounds_13794
                                                                     ; Pvar sst_13796
                                                                     ; Pvar ones_13795
-                                                                    ; Pvar ms_13791 ]
-                ; cassgn (Lvar saved_buf_offset.(gv)) (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar saved_buf_offset) (Papp1 (Oword_of_int U64) (Pconst (48)%Z)))
-                ; cassgn (Lvar buf_offset_13790.(gv)) (aword U64) (Pvar saved_buf_offset)
-                ; copn [:: Lvar buf_offset_13790.(gv) ] (Oslh (SLHprotect U64)) [:: Pvar buf_offset_13790
-                                                                    ; Pvar ms_13791 ] ]
-              [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Papp1 (Onot) (Pvar condition_loop)
-                                                                    ; Pvar ms_13791 ]
-                ; cassgn (Lvar buf_offset_13790.(gv)) (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z))) ] ]
-    ; copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Papp1 (Onot) (Pvar condition_loop)
-                                                         ; Pvar ms_13791 ]
-    ; cassgn (Lvar buf_offset_13790.(gv)) (aword U64) (Pvar saved_buf_offset)
-    ; copn [:: Lvar buf_offset_13790.(gv) ] (Oslh (SLHprotect U64)) [:: Pvar buf_offset_13790
-                                                                    ; Pvar ms_13791 ]
-    ; cwhile
-        [:: cassgn (Lvar condition_loop.(gv)) (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar buf_offset_13790) (Papp1 (Oword_of_int U64) (Papp2 (Oadd (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z)) (Pconst (24)%Z)) (Pconst (1)%Z)))) ]
-        (Pvar condition_loop)
-        [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Pvar condition_loop
-                                                               ; Pvar ms_13791 ]
-          ; cassgn (Lvar condition_loop.(gv)) (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar counter_13788) (Papp1 (Oword_of_int U64) (Pconst (256)%Z)))
-          ; cif
-              (Pvar condition_loop)
-              [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Pvar condition_loop
-                                                                    ; Pvar ms_13791 ]
-                ; copn [::] (Opseudo_op (Ospill Spill [:: aword U64 ])) [:: Pvar buf_offset_13790 ]
-                ; ccall [:: Lvar pol_13787.(gv)
-                          ; Lvar counter_13788.(gv)
-                          ; Lvar ms_13791.(gv) ] __gen_matrix_buf_rejection_filter24 [:: Pvar pol_13787
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar saved_buf_offset.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar saved_buf_offset) (Papp1 (Oword_of_int U64) (Pconst (48)%Z))))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar buf_offset_13790.(gv)) AT_none (aword U64) (Pvar saved_buf_offset))
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [:: Lvar buf_offset_13790.(gv) ] AT_none (Oslh (SLHprotect U64)) [:: Pvar buf_offset_13790
+                                                                    ; Pvar ms_13791 ]) ]
+                                                          [:: MkI dummy_instr_info (
+                                                          Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Papp1 (Onot) (Pvar condition_loop)
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar buf_offset_13790.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z)))) ]) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Papp1 (Onot) (Pvar condition_loop)
+                                                                    ; Pvar ms_13791 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar buf_offset_13790.(gv)) AT_none (aword U64) (Pvar saved_buf_offset))
+    ; MkI dummy_instr_info (Copn [:: Lvar buf_offset_13790.(gv) ] AT_none (Oslh (SLHprotect U64)) [:: Pvar buf_offset_13790
+                                                                    ; Pvar ms_13791 ])
+    ; MkI dummy_instr_info (Cwhile Align
+                              [:: MkI dummy_instr_info (Cassgn (Lvar condition_loop.(gv)) AT_none (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar buf_offset_13790) (Papp1 (Oword_of_int U64) (Papp2 (Oadd (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z)) (Pconst (24)%Z)) (Pconst (1)%Z))))) ]
+                              (Pvar condition_loop)
+                              dummy_instr_info
+                              [:: MkI dummy_instr_info (Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Pvar condition_loop
+                                                                    ; Pvar ms_13791 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar condition_loop.(gv)) AT_none (abool) (Papp2 (Olt (Cmp_w Unsigned U64)) (Pvar counter_13788) (Papp1 (Oword_of_int U64) (Pconst (256)%Z))))
+                                ; MkI dummy_instr_info (Cif
+                                                          (Pvar condition_loop)
+                                                          [:: MkI dummy_instr_info (
+                                                          Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Pvar condition_loop
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [::] AT_none (Opseudo_op (Ospill Spill [:: aword U64 ])) [:: Pvar buf_offset_13790 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar pol_13787.(gv)
+                                                                  ; Lvar counter_13788.(gv)
+                                                                  ; Lvar ms_13791.(gv) ] __gen_matrix_buf_rejection_filter24 [:: Pvar pol_13787
                                                                     ; Pvar counter_13788
                                                                     ; Pvar buf_13789
                                                                     ; Pvar buf_offset_13790
@@ -116,14 +129,19 @@ Definition body__gen_matrix_buf_rejection : cmd :=
                                                                     ; Pvar bounds_13794
                                                                     ; Pvar sst_13796
                                                                     ; Pvar ones_13795
-                                                                    ; Pvar ms_13791 ]
-                ; copn [::] (Opseudo_op (Ospill Unspill [:: aword U64 ])) [:: Pvar buf_offset_13790 ]
-                ; copn [:: Lvar buf_offset_13790.(gv) ] (Oslh (SLHprotect U64)) [:: Pvar buf_offset_13790
-                                                                    ; Pvar ms_13791 ]
-                ; cassgn (Lvar buf_offset_13790.(gv)) (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar buf_offset_13790) (Papp1 (Oword_of_int U64) (Pconst (24)%Z))) ]
-              [:: copn [:: Lvar ms_13791.(gv) ] (Oslh (SLHupdate)) [:: Papp1 (Onot) (Pvar condition_loop)
-                                                                    ; Pvar ms_13791 ]
-                ; cassgn (Lvar buf_offset_13790.(gv)) (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z))) ] ] ].
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aword U64 ])) [:: Pvar buf_offset_13790 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Copn [:: Lvar buf_offset_13790.(gv) ] AT_none (Oslh (SLHprotect U64)) [:: Pvar buf_offset_13790
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar buf_offset_13790.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar buf_offset_13790) (Papp1 (Oword_of_int U64) (Pconst (24)%Z)))) ]
+                                                          [:: MkI dummy_instr_info (
+                                                          Copn [:: Lvar ms_13791.(gv) ] AT_none (Oslh (SLHupdate)) [:: Papp1 (Onot) (Pvar condition_loop)
+                                                                    ; Pvar ms_13791 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar buf_offset_13790.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (168)%Z)))) ]) ]) ].
 
 Definition fd__gen_matrix_buf_rejection : ufundef :=
   {|

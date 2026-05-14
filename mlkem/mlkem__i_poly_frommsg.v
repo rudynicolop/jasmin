@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -42,65 +42,65 @@ Definition res__i_poly_frommsg : seq var_i := [:: rp_14159.(gv) ].
 
 (* Body *)
 Definition body__i_poly_frommsg : cmd :=
-  [:: cassgn (Lvar hqs.(gv)) (aword U256) (Pget Aligned AAscale U256 hqx16_p1 (Pconst (0)%Z))
-    ; copn [:: Lvar shift.(gv) ] (Oasm ((BaseOp ((None), VBROADCASTI128)))) [:: Pget Aligned AAscale U128 pfm_shift_s (Pconst (0)%Z) ]
-    ; copn [:: Lvar idx.(gv) ] (Oasm ((BaseOp ((None), VBROADCASTI128)))) [:: Pget Aligned AAscale U128 pfm_idx_s (Pconst (0)%Z) ]
-    ; cassgn (Lvar f.(gv)) (aword U256) (Pget Aligned AAscale U256 ap_14160 (Pconst (0)%Z))
-    ; cfor
-        (i_14165.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (4)%Z)
-        [:: copn [:: Lvar g3.(gv) ] (Oasm ((BaseOp ((None), (VPSHUFD U256))))) [:: Pvar f
-                                                                    ; Papp1 (Oword_of_int U8) (Papp2 (Omul (Op_int)) (Pconst (85)%Z) (Pvar i_14165)) ]
-          ; copn [:: Lvar g3.(gv) ] (Oasm ((BaseOp ((None), (VPSLLV VE32 U256))))) [:: Pvar g3
-                                                                    ; Pvar shift ]
-          ; copn [:: Lvar g3.(gv) ] (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar g3
-                                                                    ; Pvar idx ]
-          ; copn [:: Lvar g0.(gv) ] (Oasm ((BaseOp ((None), (VPSLL VE16 U256))))) [:: Pvar g3
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (12)%Z) ]
-          ; copn [:: Lvar g1.(gv) ] (Oasm ((BaseOp ((None), (VPSLL VE16 U256))))) [:: Pvar g3
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (8)%Z) ]
-          ; copn [:: Lvar g2.(gv) ] (Oasm ((BaseOp ((None), (VPSLL VE16 U256))))) [:: Pvar g3
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (4)%Z) ]
-          ; copn [:: Lvar g0.(gv) ] (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g0
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ]
-          ; copn [:: Lvar g1.(gv) ] (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g1
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ]
-          ; copn [:: Lvar g2.(gv) ] (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g2
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ]
-          ; copn [:: Lvar g3.(gv) ] (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g3
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ]
-          ; copn [:: Lvar g0.(gv) ] (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g0
-                                                                    ; Pvar hqs ]
-          ; copn [:: Lvar g1.(gv) ] (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g1
-                                                                    ; Pvar hqs ]
-          ; copn [:: Lvar g2.(gv) ] (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g2
-                                                                    ; Pvar hqs ]
-          ; copn [:: Lvar g3.(gv) ] (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g3
-                                                                    ; Pvar hqs ]
-          ; copn [:: Lvar h0.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar g0
-                                                                    ; Pvar g1 ]
-          ; copn [:: Lvar h2.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar g0
-                                                                    ; Pvar g1 ]
-          ; copn [:: Lvar h1.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar g2
-                                                                    ; Pvar g3 ]
-          ; copn [:: Lvar h3.(gv) ] (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar g2
-                                                                    ; Pvar g3 ]
-          ; copn [:: Lvar g0.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h0
+  [:: MkI dummy_instr_info (Cassgn (Lvar hqs.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 hqx16_p1 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Copn [:: Lvar shift.(gv) ] AT_none (Oasm ((BaseOp ((None), VBROADCASTI128)))) [:: Pget Aligned AAscale U128 pfm_shift_s (Pconst (0)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar idx.(gv) ] AT_none (Oasm ((BaseOp ((None), VBROADCASTI128)))) [:: Pget Aligned AAscale U128 pfm_idx_s (Pconst (0)%Z) ])
+    ; MkI dummy_instr_info (Cassgn (Lvar f.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 ap_14160 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cfor
+                              (i_14165.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (4)%Z)
+                              [:: MkI dummy_instr_info (Copn [:: Lvar g3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFD U256))))) [:: Pvar f
+                                                                    ; Papp1 (Oword_of_int U8) (Papp2 (Omul (Op_int)) (Pconst (85)%Z) (Pvar i_14165)) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLLV VE32 U256))))) [:: Pvar g3
+                                                                    ; Pvar shift ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar g3
+                                                                    ; Pvar idx ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLL VE16 U256))))) [:: Pvar g3
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (12)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLL VE16 U256))))) [:: Pvar g3
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (8)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLL VE16 U256))))) [:: Pvar g3
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (4)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g0
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g1
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g2
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRA VE16 U256))))) [:: Pvar g3
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (15)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g0
+                                                                    ; Pvar hqs ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g1
+                                                                    ; Pvar hqs ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g2
+                                                                    ; Pvar hqs ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar g3
+                                                                    ; Pvar hqs ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar h0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar g0
+                                                                    ; Pvar g1 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar h2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar g0
+                                                                    ; Pvar g1 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar h1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar g2
+                                                                    ; Pvar g3 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar h3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar g2
+                                                                    ; Pvar g3 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g0.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h0
                                                                     ; Pvar h1
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ]
-          ; copn [:: Lvar g2.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h0
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g2.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h0
                                                                     ; Pvar h1
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ]
-          ; copn [:: Lvar g1.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h2
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g1.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h2
                                                                     ; Pvar h3
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ]
-          ; copn [:: Lvar g3.(gv) ] (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h2
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (32)%Z) ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar g3.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERM2I128)))) [:: Pvar h2
                                                                     ; Pvar h3
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ]
-          ; cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165))) (aword U256) (Pvar g0)
-          ; cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165)) (Pconst (1)%Z))) (aword U256) (Pvar g1)
-          ; cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165)) (Pconst (8)%Z))) (aword U256) (Pvar g2)
-          ; cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165)) (Pconst (8)%Z)) (Pconst (1)%Z))) (aword U256) (Pvar g3) ] ].
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (49)%Z) ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165))) AT_none (aword U256) (Pvar g0))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165)) (Pconst (1)%Z))) AT_none (aword U256) (Pvar g1))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165)) (Pconst (8)%Z))) AT_none (aword U256) (Pvar g2))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 rp_14159.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar i_14165)) (Pconst (8)%Z)) (Pconst (1)%Z))) AT_none (aword U256) (Pvar g3)) ]) ].
 
 Definition fd__i_poly_frommsg : ufundef :=
   {|

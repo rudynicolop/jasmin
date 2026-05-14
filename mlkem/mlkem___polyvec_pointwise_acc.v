@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -35,17 +35,17 @@ Definition res___polyvec_pointwise_acc : seq var_i := [:: r_13920.(gv) ].
 
 (* Body *)
 Definition body___polyvec_pointwise_acc : cmd :=
-  [:: ccall [:: Lvar r_13920.(gv) ] _poly_basemul [:: Pvar r_13920
-                                                    ; Psub AAscale U16 256 a_13921 (Pconst (0)%Z)
-                                                    ; Psub AAscale U16 256 b_13922 (Pconst (0)%Z) ]
-    ; cfor
-        (i_13924.(gv))
-        (UpTo, Pconst (1)%Z, Pconst (3)%Z)
-        [:: ccall [:: Lvar t_13923.(gv) ] _poly_basemul [:: Pvar t_13923
-                                                          ; Psub AAscale U16 256 a_13921 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13924))
-                                                          ; Psub AAscale U16 256 b_13922 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13924)) ]
-          ; ccall [:: Lvar r_13920.(gv) ] _poly_add2 [:: Pvar r_13920
-                                                       ; Pvar t_13923 ] ] ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar r_13920.(gv) ] _poly_basemul [:: Pvar r_13920
+                                                                    ; Psub AAscale U16 256 a_13921 (Pconst (0)%Z)
+                                                                    ; Psub AAscale U16 256 b_13922 (Pconst (0)%Z) ])
+    ; MkI dummy_instr_info (Cfor
+                              (i_13924.(gv))
+                              (UpTo, Pconst (1)%Z, Pconst (3)%Z)
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar t_13923.(gv) ] _poly_basemul [:: Pvar t_13923
+                                                                    ; Psub AAscale U16 256 a_13921 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13924))
+                                                                    ; Psub AAscale U16 256 b_13922 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13924)) ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar r_13920.(gv) ] _poly_add2 [:: Pvar r_13920
+                                                                    ; Pvar t_13923 ]) ]) ].
 
 Definition fd___polyvec_pointwise_acc : ufundef :=
   {|

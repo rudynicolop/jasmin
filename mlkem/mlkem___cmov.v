@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -33,15 +33,15 @@ Definition res___cmov : seq var_i := [:: dst.(gv) ].
 
 (* Body *)
 Definition body___cmov : cmd :=
-  [:: cassgn (Lvar cnd_13661.(gv)) (aword U64) (Papp1 (Oneg (Op_w U64)) (Pvar cnd_13661))
-    ; cassgn (Lvar scnd.(gv)) (aword U64) (Pvar cnd_13661)
-    ; copn [:: Lvar m_13663.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar scnd ]
-    ; cassgn (Lvar f_13664.(gv)) (aword U256) (Pget Unaligned AAdirect U256 src (Pconst (0)%Z))
-    ; cassgn (Lvar g_13665.(gv)) (aword U256) (Pget Unaligned AAdirect U256 dst (Pconst (0)%Z))
-    ; copn [:: Lvar f_13664.(gv) ] (Oasm ((BaseOp ((None), (BLENDV VE8 U256))))) [:: Pvar f_13664
+  [:: MkI dummy_instr_info (Cassgn (Lvar cnd_13661.(gv)) AT_none (aword U64) (Papp1 (Oneg (Op_w U64)) (Pvar cnd_13661)))
+    ; MkI dummy_instr_info (Cassgn (Lvar scnd.(gv)) AT_none (aword U64) (Pvar cnd_13661))
+    ; MkI dummy_instr_info (Copn [:: Lvar m_13663.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar scnd ])
+    ; MkI dummy_instr_info (Cassgn (Lvar f_13664.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 src (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar g_13665.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 dst (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Copn [:: Lvar f_13664.(gv) ] AT_none (Oasm ((BaseOp ((None), (BLENDV VE8 U256))))) [:: Pvar f_13664
                                                                     ; Pvar g_13665
-                                                                    ; Pvar m_13663 ]
-    ; cassgn (Laset Unaligned AAdirect U256 dst.(gv) (Pconst (0)%Z)) (aword U256) (Pvar f_13664) ].
+                                                                    ; Pvar m_13663 ])
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 dst.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar f_13664)) ].
 
 Definition fd___cmov : ufundef :=
   {|

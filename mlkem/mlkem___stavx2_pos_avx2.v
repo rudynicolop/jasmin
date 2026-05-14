@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -27,131 +27,158 @@ Definition res___stavx2_pos_avx2 : seq var_i := [:: R.(gv); L_18829.(gv) ].
 
 (* Body *)
 Definition body___stavx2_pos_avx2 : cmd :=
-  [:: cassgn (Lvar R.(gv)) (aint) (Pconst (0)%Z)
-    ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (0)%Z)
-    ; cif
-        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar POS))
-        [:: cif
-              (Papp2 (Ole (Cmp_int)) (Pvar POS) (Pconst (4)%Z))
-              [:: cassgn (Lvar R.(gv)) (aint) (Pconst (1)%Z)
-                ; cassgn (Lvar L_18829.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar POS) (Pconst (1)%Z)) ]
-              [:: cif
-                    (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (10)%Z))
-                    [:: cassgn (Lvar R.(gv)) (aint) (Pconst (2)%Z)
-                      ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (0)%Z) ]
-                    [:: cif
-                          (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (20)%Z))
-                          [:: cassgn (Lvar R.(gv)) (aint) (Pconst (2)%Z)
-                            ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (1)%Z) ]
-                          [:: cif
-                                (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (5)%Z))
-                                [:: cassgn (Lvar R.(gv)) (aint) (Pconst (2)%Z)
-                                  ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (2)%Z) ]
-                                [:: cif
-                                      (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (15)%Z))
-                                      [:: cassgn (Lvar R.(gv)) (aint) (Pconst (2)%Z)
-                                        ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (3)%Z) ]
-                                      [:: cif
-                                            (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (16)%Z))
-                                            [:: cassgn (Lvar R.(gv)) (aint) (Pconst (3)%Z)
-                                              ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (0)%Z) ]
-                                            [:: cif
-                                                  (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (7)%Z))
-                                                  [:: cassgn (Lvar R.(gv)) (aint) (Pconst (3)%Z)
-                                                    ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (1)%Z) ]
-                                                  [:: cif
-                                                        (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (23)%Z))
-                                                        [:: cassgn (Lvar R.(gv)) (aint) (Pconst (3)%Z)
-                                                          ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (2)%Z) ]
-                                                        [:: cif
-                                                              (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (14)%Z))
-                                                              [:: cassgn (Lvar R.(gv)) (aint) (Pconst (3)%Z)
-                                                                ; cassgn (Lvar L_18829.(gv)) (aint) (Pconst (3)%Z) ]
-                                                              [:: cif
+  [:: MkI dummy_instr_info (Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (0)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (0)%Z))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar POS))
+                              [:: MkI dummy_instr_info (Cif
+                                                          (Papp2 (Ole (Cmp_int)) (Pvar POS) (Pconst (4)%Z))
+                                                          [:: MkI dummy_instr_info (
+                                                          Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (1)%Z))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar POS) (Pconst (1)%Z))) ]
+                                                          [:: MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (10)%Z))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (2)%Z))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (0)%Z)) ]
+                                                            [:: MkI dummy_instr_info (
+                                                            Cif
+                                                              (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (20)%Z))
+                                                              [:: MkI dummy_instr_info (
+                                                              Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (2)%Z))
+                                                                ; MkI dummy_instr_info (
+                                                              Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (1)%Z)) ]
+                                                              [:: MkI dummy_instr_info (
+                                                              Cif
+                                                                (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (5)%Z))
+                                                                [:: MkI dummy_instr_info (
+                                                                Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (2)%Z))
+                                                                  ; MkI dummy_instr_info (
+                                                                Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (2)%Z)) ]
+                                                                [:: MkI dummy_instr_info (
+                                                                Cif
+                                                                  (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (15)%Z))
+                                                                  [:: MkI dummy_instr_info (
+                                                                  Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (2)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                  Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (3)%Z)) ]
+                                                                  [:: MkI dummy_instr_info (
+                                                                  Cif
+                                                                    (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (16)%Z))
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (3)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (0)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
+                                                                    (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (7)%Z))
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (3)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (1)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
+                                                                    (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (23)%Z))
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (3)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (2)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
+                                                                    (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (14)%Z))
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (3)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (3)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (11)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (4)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (0)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (4)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (0)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (22)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (4)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (1)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (4)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (1)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (8)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (4)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (2)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (4)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (2)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (19)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (4)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (3)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (4)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (3)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (21)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (5)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (0)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (5)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (0)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (17)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (5)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (1)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (5)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (1)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (13)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (5)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (2)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (5)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (2)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (9)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (5)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (3)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (5)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (3)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (6)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (6)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (0)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (6)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (0)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (12)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (6)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (1)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (6)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (1)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (18)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (6)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (2)%Z) ]
-                                                                    [:: 
-                                                                    cif
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (6)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (2)%Z)) ]
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cif
                                                                     (Papp2 (Oeq (Op_int)) (Pvar POS) (Pconst (24)%Z))
-                                                                    [:: 
-                                                                    cassgn (Lvar R.(gv)) (aint) (Pconst (6)%Z)
-                                                                    ; 
-                                                                    cassgn (Lvar L_18829.(gv)) (aint) (Pconst (3)%Z) ]
-                                                                    [::] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ]
-        [::] ].
+                                                                    [:: MkI dummy_instr_info (
+                                                                    Cassgn (Lvar R.(gv)) AT_none (aint) (Pconst (6)%Z))
+                                                                    ; MkI dummy_instr_info (
+                                                                    Cassgn (Lvar L_18829.(gv)) AT_none (aint) (Pconst (3)%Z)) ]
+                                                                    [::]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]) ]
+                              [::]) ].
 
 Definition fd___stavx2_pos_avx2 : ufundef :=
   {|

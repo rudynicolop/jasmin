@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -55,32 +55,32 @@ Definition res___st4x_unpack : seq var_i :=
 
 (* Body *)
 Definition body___st4x_unpack : cmd :=
-  [:: cfor
-        (i_18594.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (6)%Z)
-        [:: cassgn (Lvar x0_18595.(gv)) (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (0)%Z)))
-          ; cassgn (Lvar x1_18596.(gv)) (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (1)%Z)))
-          ; cassgn (Lvar x2_18597.(gv)) (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (2)%Z)))
-          ; cassgn (Lvar x3_18598.(gv)) (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (3)%Z)))
-          ; ccall [:: Lvar x0_18595.(gv)
-                    ; Lvar x1_18596.(gv)
-                    ; Lvar x2_18597.(gv)
-                    ; Lvar x3_18598.(gv) ] __4u64x4_u256x4 [:: Pvar x0_18595
-                                                             ; Pvar x1_18596
-                                                             ; Pvar x2_18597
-                                                             ; Pvar x3_18598 ]
-          ; cassgn (Laset Unaligned AAdirect U256 st0_18589.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) (aword U256) (Pvar x0_18595)
-          ; cassgn (Laset Unaligned AAdirect U256 st1_18590.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) (aword U256) (Pvar x1_18596)
-          ; cassgn (Laset Unaligned AAdirect U256 st2_18591.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) (aword U256) (Pvar x2_18597)
-          ; cassgn (Laset Unaligned AAdirect U256 st3_18592.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) (aword U256) (Pvar x3_18598) ]
-    ; cassgn (Lvar t0_18599.(gv)) (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (0)%Z)))
-    ; cassgn (Lvar t1_18600.(gv)) (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (1)%Z)))
-    ; cassgn (Lvar t2_18601.(gv)) (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (2)%Z)))
-    ; cassgn (Lvar t3_18602.(gv)) (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (3)%Z)))
-    ; cassgn (Laset Aligned AAscale U64 st0_18589.(gv) (Pconst (24)%Z)) (aword U64) (Pvar t0_18599)
-    ; cassgn (Laset Aligned AAscale U64 st1_18590.(gv) (Pconst (24)%Z)) (aword U64) (Pvar t1_18600)
-    ; cassgn (Laset Aligned AAscale U64 st2_18591.(gv) (Pconst (24)%Z)) (aword U64) (Pvar t2_18601)
-    ; cassgn (Laset Aligned AAscale U64 st3_18592.(gv) (Pconst (24)%Z)) (aword U64) (Pvar t3_18602) ].
+  [:: MkI dummy_instr_info (Cfor
+                              (i_18594.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (6)%Z)
+                              [:: MkI dummy_instr_info (Cassgn (Lvar x0_18595.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (0)%Z))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar x1_18596.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (1)%Z))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar x2_18597.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (2)%Z))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar x3_18598.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pvar i_18594)) (Pconst (3)%Z))))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar x0_18595.(gv)
+                                                                ; Lvar x1_18596.(gv)
+                                                                ; Lvar x2_18597.(gv)
+                                                                ; Lvar x3_18598.(gv) ] __4u64x4_u256x4 [:: Pvar x0_18595
+                                                                    ; Pvar x1_18596
+                                                                    ; Pvar x2_18597
+                                                                    ; Pvar x3_18598 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 st0_18589.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) AT_none (aword U256) (Pvar x0_18595))
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 st1_18590.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) AT_none (aword U256) (Pvar x1_18596))
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 st2_18591.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) AT_none (aword U256) (Pvar x2_18597))
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 st3_18592.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (8)%Z)) (Pvar i_18594))) AT_none (aword U256) (Pvar x3_18598)) ])
+    ; MkI dummy_instr_info (Cassgn (Lvar t0_18599.(gv)) AT_none (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (0)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar t1_18600.(gv)) AT_none (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (1)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar t2_18601.(gv)) AT_none (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (2)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar t3_18602.(gv)) AT_none (aword U64) (Pget Aligned AAscale U64 st4x_18593 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (4)%Z) (Pconst (24)%Z)) (Pconst (3)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st0_18589.(gv) (Pconst (24)%Z)) AT_none (aword U64) (Pvar t0_18599))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st1_18590.(gv) (Pconst (24)%Z)) AT_none (aword U64) (Pvar t1_18600))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st2_18591.(gv) (Pconst (24)%Z)) AT_none (aword U64) (Pvar t2_18601))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U64 st3_18592.(gv) (Pconst (24)%Z)) AT_none (aword U64) (Pvar t3_18602)) ].
 
 Definition fd___st4x_unpack : ufundef :=
   {|

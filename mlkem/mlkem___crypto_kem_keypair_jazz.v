@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -43,28 +43,28 @@ Definition res___crypto_kem_keypair_jazz : seq var_i :=
 
 (* Body *)
 Definition body___crypto_kem_keypair_jazz : cmd :=
-  [:: cassgn (Lvar s_randomnessp.(gv)) (aarr U8 64) (Pvar randomnessp_13647)
-    ; cassgn (Lvar randomnessp1.(gv)) (aarr U8 32) (Psub AAscale U8 32 randomnessp_13647 (Pconst (0)%Z))
-    ; cassgn (Lvar skcpa.(gv)) (aarr U8 1152) (Psub AAscale U8 1152 sk_13646 (Pconst (0)%Z))
-    ; cassgn (Lvar sk_s.(gv)) (aarr U8 2400) (Pvar sk_13646)
-    ; ccall [:: Lvar pk_13645.(gv); Lvar skcpa.(gv) ] __indcpa_keypair [:: Pvar pk_13645
+  [:: MkI dummy_instr_info (Cassgn (Lvar s_randomnessp.(gv)) AT_none (aarr U8 64) (Pvar randomnessp_13647))
+    ; MkI dummy_instr_info (Cassgn (Lvar randomnessp1.(gv)) AT_none (aarr U8 32) (Psub AAscale U8 32 randomnessp_13647 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar skcpa.(gv)) AT_none (aarr U8 1152) (Psub AAscale U8 1152 sk_13646 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar sk_s.(gv)) AT_none (aarr U8 2400) (Pvar sk_13646))
+    ; MkI dummy_instr_info (Ccall [:: Lvar pk_13645.(gv); Lvar skcpa.(gv) ] __indcpa_keypair [:: Pvar pk_13645
                                                                     ; Pvar skcpa
-                                                                    ; Pvar randomnessp1 ]
-    ; cassgn (Lvar sk_13646.(gv)) (aarr U8 2400) (Pvar sk_s)
-    ; cassgn (Lasub AAscale U8 1152 sk_13646.(gv) (Pconst (0)%Z)) (aarr U8 1152) (Pvar skcpa)
-    ; cfor
-        (i_13652.(gv))
-        (UpTo, Pconst (0)%Z, Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z)) (Pconst (8)%Z))
-        [:: cassgn (Lvar t64_13653.(gv)) (aword U64) (Pget Unaligned AAscale U64 pk_13645 (Pvar i_13652))
-          ; cassgn (Laset Unaligned AAdirect U64 sk_13646.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (8)%Z)) (Pvar i_13652)) (Pconst (8)%Z))) (aword U64) (Pvar t64_13653) ]
-    ; ccall [:: Lasub AAscale U8 32 sk_13646.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z))) ] _sha3_256A_A1184 [:: Psub AAscale U8 32 sk_13646 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z)))
-                                                                    ; Pvar pk_13645 ]
-    ; cassgn (Lvar randomnessp_13647.(gv)) (aarr U8 64) (Pvar s_randomnessp)
-    ; cfor
-        (i_13652.(gv))
-        (UpTo, Pconst (0)%Z, Papp2 (Odiv Unsigned (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z))
-        [:: cassgn (Lvar t64_13653.(gv)) (aword U64) (Pget Unaligned AAscale U64 randomnessp_13647 (Papp2 (Oadd (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z)) (Pvar i_13652)))
-          ; cassgn (Laset Unaligned AAdirect U64 sk_13646.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z))) (Pconst (32)%Z)) (Pconst (8)%Z)) (Pvar i_13652)) (Pconst (8)%Z))) (aword U64) (Pvar t64_13653) ] ].
+                                                                    ; Pvar randomnessp1 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar sk_13646.(gv)) AT_none (aarr U8 2400) (Pvar sk_s))
+    ; MkI dummy_instr_info (Cassgn (Lasub AAscale U8 1152 sk_13646.(gv) (Pconst (0)%Z)) AT_none (aarr U8 1152) (Pvar skcpa))
+    ; MkI dummy_instr_info (Cfor
+                              (i_13652.(gv))
+                              (UpTo, Pconst (0)%Z, Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z)) (Pconst (8)%Z))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar t64_13653.(gv)) AT_none (aword U64) (Pget Unaligned AAscale U64 pk_13645 (Pvar i_13652)))
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U64 sk_13646.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (8)%Z)) (Pvar i_13652)) (Pconst (8)%Z))) AT_none (aword U64) (Pvar t64_13653)) ])
+    ; MkI dummy_instr_info (Ccall [:: Lasub AAscale U8 32 sk_13646.(gv) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z))) ] _sha3_256A_A1184 [:: Psub AAscale U8 32 sk_13646 (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z)))
+                                                                    ; Pvar pk_13645 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar randomnessp_13647.(gv)) AT_none (aarr U8 64) (Pvar s_randomnessp))
+    ; MkI dummy_instr_info (Cfor
+                              (i_13652.(gv))
+                              (UpTo, Pconst (0)%Z, Papp2 (Odiv Unsigned (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar t64_13653.(gv)) AT_none (aword U64) (Pget Unaligned AAscale U64 randomnessp_13647 (Papp2 (Oadd (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Pconst (32)%Z) (Pconst (8)%Z)) (Pvar i_13652))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U64 sk_13646.(gv) (Papp2 (Omul (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (384)%Z)) (Pconst (32)%Z))) (Pconst (32)%Z)) (Pconst (8)%Z)) (Pvar i_13652)) (Pconst (8)%Z))) AT_none (aword U64) (Pvar t64_13653)) ]) ].
 
 Definition fd___crypto_kem_keypair_jazz : ufundef :=
   {|

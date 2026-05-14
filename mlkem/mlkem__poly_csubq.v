@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -30,14 +30,14 @@ Definition res__poly_csubq : seq var_i := [:: rp_14261.(gv) ].
 
 (* Body *)
 Definition body__poly_csubq : cmd :=
-  [:: cassgn (Lvar qx16_14262.(gv)) (aword U256) (Pget Aligned AAscale U256 jqx16 (Pconst (0)%Z))
-    ; cfor
-        (i_14263.(gv))
-        (UpTo, Pconst (0)%Z, Pconst (16)%Z)
-        [:: cassgn (Lvar r_14264.(gv)) (aword U256) (Pget Unaligned AAdirect U256 rp_14261 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14263)))
-          ; ccall [:: Lvar r_14264.(gv) ] __csubq [:: Pvar r_14264
-                                                    ; Pvar qx16_14262 ]
-          ; cassgn (Laset Unaligned AAdirect U256 rp_14261.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14263))) (aword U256) (Pvar r_14264) ] ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar qx16_14262.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 jqx16 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cfor
+                              (i_14263.(gv))
+                              (UpTo, Pconst (0)%Z, Pconst (16)%Z)
+                              [:: MkI dummy_instr_info (Cassgn (Lvar r_14264.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 rp_14261 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14263))))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar r_14264.(gv) ] __csubq [:: Pvar r_14264
+                                                                    ; Pvar qx16_14262 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14261.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14263))) AT_none (aword U256) (Pvar r_14264)) ]) ].
 
 Definition fd__poly_csubq : ufundef :=
   {|

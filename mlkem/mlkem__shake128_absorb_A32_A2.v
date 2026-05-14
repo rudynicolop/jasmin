@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -31,17 +31,19 @@ Definition res__shake128_absorb_A32_A2 : seq var_i := [:: st_14326.(gv) ].
 
 (* Body *)
 Definition body__shake128_absorb_A32_A2 : cmd :=
-  [:: ccall [:: Lvar st_14326.(gv) ] __state_init_avx2 [::]
-    ; ccall [:: Lvar st_14326.(gv); Lnone dummy_var_info (aint) ] A32____absorb_avx2 [:: Pvar st_14326
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st_14326.(gv) ] __state_init_avx2 [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14326.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A32____absorb_avx2 [:: Pvar st_14326
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar seed_14324
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (168)%Z ]
-    ; ccall [:: Lvar st_14326.(gv); Lnone dummy_var_info (aint) ] A2____absorb_avx2 [:: Pvar st_14326
+                                                                    ; Pconst (168)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14326.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A2____absorb_avx2 [:: Pvar st_14326
                                                                     ; Pconst (32)%Z
                                                                     ; Pvar pos
                                                                     ; Pconst (31)%Z
-                                                                    ; Pconst (168)%Z ] ].
+                                                                    ; Pconst (168)%Z ]) ].
 
 Definition fd__shake128_absorb_A32_A2 : ufundef :=
   {|

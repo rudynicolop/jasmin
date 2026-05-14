@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -35,25 +35,25 @@ Definition res___verify : seq var_i := [:: cnd.(gv) ].
 
 (* Body *)
 Definition body___verify : cmd :=
-  [:: cassgn (Lvar cnd.(gv)) (aword U64) (Papp1 (Oword_of_int U64) (Pconst (0)%Z))
-    ; cassgn (Lvar t64_13669.(gv)) (aword U64) (Papp1 (Oword_of_int U64) (Pconst (1)%Z))
-    ; copn [:: Lvar h_13670.(gv) ] (Oasm ((ExtOp (Oset0 U256)))) [::]
-    ; cfor
-        (i_13671.(gv))
-        (UpTo, Pconst (0)%Z, Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (320)%Z)) (Pconst (128)%Z)) (Pconst (32)%Z))
-        [:: cassgn (Lvar f_13672.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ctpc (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_13671)))
-          ; cassgn (Lvar g.(gv)) (aword U256) (Pget Unaligned AAdirect U256 ct_13666 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_13671)))
-          ; copn [:: Lvar f_13672.(gv) ] (Oasm ((BaseOp ((None), (VPXOR U256))))) [:: Pvar f_13672
-                                                                    ; Pvar g ]
-          ; copn [:: Lvar h_13670.(gv) ] (Oasm ((BaseOp ((None), (VPOR U256))))) [:: Pvar h_13670
-                                                                    ; Pvar f_13672 ] ]
-    ; copn [:: Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lvar zf_13674.(gv) ] (Oasm ((BaseOp ((None), (VPTEST U256))))) [:: Pvar h_13670
-                                                                    ; Pvar h_13670 ]
-    ; cassgn (Lvar cnd.(gv)) (aword U64) (Pif (aword U64) (Papp1 (Onot) (Pvar zf_13674)) (Pvar t64_13669) (Pvar cnd)) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar cnd.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar t64_13669.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (1)%Z)))
+    ; MkI dummy_instr_info (Copn [:: Lvar h_13670.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::])
+    ; MkI dummy_instr_info (Cfor
+                              (i_13671.(gv))
+                              (UpTo, Pconst (0)%Z, Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (320)%Z)) (Pconst (128)%Z)) (Pconst (32)%Z))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar f_13672.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ctpc (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_13671))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar g.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 ct_13666 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_13671))))
+                                ; MkI dummy_instr_info (Copn [:: Lvar f_13672.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPXOR U256))))) [:: Pvar f_13672
+                                                                    ; Pvar g ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar h_13670.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPOR U256))))) [:: Pvar h_13670
+                                                                    ; Pvar f_13672 ]) ])
+    ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lvar zf_13674.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPTEST U256))))) [:: Pvar h_13670
+                                                                    ; Pvar h_13670 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar cnd.(gv)) AT_none (aword U64) (Pif (aword U64) (Papp1 (Onot) (Pvar zf_13674)) (Pvar t64_13669) (Pvar cnd))) ].
 
 Definition fd___verify : ufundef :=
   {|

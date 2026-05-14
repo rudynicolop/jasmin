@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -30,12 +30,12 @@ Definition res___wmul_16u16 : seq var_i := [:: xy0.(gv); xy1.(gv) ].
 
 (* Body *)
 Definition body___wmul_16u16 : cmd :=
-  [:: copn [:: Lvar xyL.(gv) ] (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar x_14241
-                                                                    ; Pvar y_14242 ]
-    ; copn [:: Lvar xyH.(gv) ] (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_14241
-                                                                    ; Pvar y_14242 ]
-    ; ccall [:: Lvar xy0.(gv); Lvar xy1.(gv) ] __w256_interleave_u16 [:: Pvar xyL
-                                                                    ; Pvar xyH ] ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar xyL.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar x_14241
+                                                                    ; Pvar y_14242 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar xyH.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_14241
+                                                                    ; Pvar y_14242 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar xy0.(gv); Lvar xy1.(gv) ] __w256_interleave_u16 [:: Pvar xyL
+                                                                    ; Pvar xyH ]) ].
 
 Definition fd___wmul_16u16 : ufundef :=
   {|

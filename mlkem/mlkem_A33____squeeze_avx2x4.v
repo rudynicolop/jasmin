@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -54,45 +54,49 @@ Definition res_A33____squeeze_avx2x4 : seq var_i :=
 
 (* Body *)
 Definition body_A33____squeeze_avx2x4 : cmd :=
-  [:: cassgn (Lvar offset_16913.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-    ; cassgn (Lvar _LEN_16914.(gv)) (aint) (Pconst (33)%Z)
-    ; cassgn (Lvar ITERS_16915.(gv)) (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_16914) (Pvar _RATE8_16912))
-    ; cassgn (Lvar LO_16916.(gv)) (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_16914) (Pvar _RATE8_16912))
-    ; cif
-        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar ITERS_16915))
-        [:: cassgn (Lvar i_16917.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-          ; cwhile
-              [::]
-              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_16917) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_16915)))
-              [:: ccall [:: Lvar st_16907.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_16907 ]
-                ; ccall [:: Lvar buf0_16908.(gv)
-                          ; Lvar buf1_16909.(gv)
-                          ; Lvar buf2_16910.(gv)
-                          ; Lvar buf3_16911.(gv)
-                          ; Lvar offset_16913.(gv) ] A33____dumpstate_avx2x4 [:: Pvar buf0_16908
+  [:: MkI dummy_instr_info (Cassgn (Lvar offset_16913.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_16914.(gv)) AT_none (aint) (Pconst (33)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar ITERS_16915.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_16914) (Pvar _RATE8_16912)))
+    ; MkI dummy_instr_info (Cassgn (Lvar LO_16916.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_16914) (Pvar _RATE8_16912)))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar ITERS_16915))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar i_16917.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+                                ; MkI dummy_instr_info (Cwhile Align
+                                                          [::]
+                                                          (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_16917) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_16915)))
+                                                          dummy_instr_info
+                                                          [:: MkI dummy_instr_info (
+                                                          Ccall [:: Lvar st_16907.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_16907 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar buf0_16908.(gv)
+                                                                  ; Lvar buf1_16909.(gv)
+                                                                  ; Lvar buf2_16910.(gv)
+                                                                  ; Lvar buf3_16911.(gv)
+                                                                  ; Lvar offset_16913.(gv) ] A33____dumpstate_avx2x4 [:: Pvar buf0_16908
                                                                     ; Pvar buf1_16909
                                                                     ; Pvar buf2_16910
                                                                     ; Pvar buf3_16911
                                                                     ; Pvar offset_16913
                                                                     ; Pvar _RATE8_16912
-                                                                    ; Pvar st_16907 ]
-                ; cassgn (Lvar i_16917.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_16917) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))) ] ]
-        [::]
-    ; cif
-        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LO_16916))
-        [:: ccall [:: Lvar st_16907.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_16907 ]
-          ; ccall [:: Lvar buf0_16908.(gv)
-                    ; Lvar buf1_16909.(gv)
-                    ; Lvar buf2_16910.(gv)
-                    ; Lvar buf3_16911.(gv)
-                    ; Lvar offset_16913.(gv) ] A33____dumpstate_avx2x4 [:: Pvar buf0_16908
+                                                                    ; Pvar st_16907 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar i_16917.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_16917) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ]) ]
+                              [::])
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LO_16916))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_16907.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_16907 ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar buf0_16908.(gv)
+                                                                ; Lvar buf1_16909.(gv)
+                                                                ; Lvar buf2_16910.(gv)
+                                                                ; Lvar buf3_16911.(gv)
+                                                                ; Lvar offset_16913.(gv) ] A33____dumpstate_avx2x4 [:: Pvar buf0_16908
                                                                     ; Pvar buf1_16909
                                                                     ; Pvar buf2_16910
                                                                     ; Pvar buf3_16911
                                                                     ; Pvar offset_16913
                                                                     ; Pvar LO_16916
-                                                                    ; Pvar st_16907 ] ]
-        [::] ].
+                                                                    ; Pvar st_16907 ]) ]
+                              [::]) ].
 
 Definition fd_A33____squeeze_avx2x4 : ufundef :=
   {|

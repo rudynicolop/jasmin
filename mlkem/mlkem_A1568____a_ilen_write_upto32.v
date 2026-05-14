@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -41,30 +41,40 @@ Definition res_A1568____a_ilen_write_upto32 : seq var_i :=
 
 (* Body *)
 Definition body_A1568____a_ilen_write_upto32 : cmd :=
-  [:: cif
-        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LEN_15766))
-        [:: cif
-              (Papp2 (Ole (Cmp_int)) (Pconst (32)%Z) (Pvar LEN_15766))
-              [:: cassgn (Laset Unaligned AAdirect U256 buf_15763.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15764) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15765))))) (aword U256) (Pvar w_15767)
-                ; cassgn (Lvar DELTA_15765.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15765) (Pconst (32)%Z))
-                ; cassgn (Lvar LEN_15766.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15766) (Pconst (32)%Z)) ]
-              [:: cassgn (Lvar t128_15768.(gv)) (aword U128) (Pvar w_15767)
-                ; cif
-                    (Papp2 (Ole (Cmp_int)) (Pconst (16)%Z) (Pvar LEN_15766))
-                    [:: cassgn (Laset Unaligned AAdirect U128 buf_15763.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15764) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15765))))) (aword U128) (Pvar t128_15768)
-                      ; cassgn (Lvar DELTA_15765.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15765) (Pconst (16)%Z))
-                      ; cassgn (Lvar LEN_15766.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15766) (Pconst (16)%Z))
-                      ; copn [:: Lvar t128_15768.(gv) ] (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pvar w_15767
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ] ]
-                    [::]
-                ; ccall [:: Lvar buf_15763.(gv)
-                          ; Lvar DELTA_15765.(gv)
-                          ; Lvar LEN_15766.(gv) ] A1568____a_ilen_write_upto16 [:: Pvar buf_15763
+  [:: MkI dummy_instr_info (Cif
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LEN_15766))
+                              [:: MkI dummy_instr_info (Cif
+                                                          (Papp2 (Ole (Cmp_int)) (Pconst (32)%Z) (Pvar LEN_15766))
+                                                          [:: MkI dummy_instr_info (
+                                                          Cassgn (Laset Unaligned AAdirect U256 buf_15763.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15764) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15765))))) AT_none (aword U256) (Pvar w_15767))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar DELTA_15765.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15765) (Pconst (32)%Z)))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar LEN_15766.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15766) (Pconst (32)%Z))) ]
+                                                          [:: MkI dummy_instr_info (
+                                                          Cassgn (Lvar t128_15768.(gv)) AT_none (aword U128) (Pvar w_15767))
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Ole (Cmp_int)) (Pconst (16)%Z) (Pvar LEN_15766))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Laset Unaligned AAdirect U128 buf_15763.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15764) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15765))))) AT_none (aword U128) (Pvar t128_15768))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar DELTA_15765.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_15765) (Pconst (16)%Z)))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar LEN_15766.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_15766) (Pconst (16)%Z)))
+                                                              ; MkI dummy_instr_info (
+                                                            Copn [:: Lvar t128_15768.(gv) ] AT_none (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pvar w_15767
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar buf_15763.(gv)
+                                                                  ; Lvar DELTA_15765.(gv)
+                                                                  ; Lvar LEN_15766.(gv) ] A1568____a_ilen_write_upto16 [:: Pvar buf_15763
                                                                     ; Pvar offset_15764
                                                                     ; Pvar DELTA_15765
                                                                     ; Pvar LEN_15766
-                                                                    ; Pvar t128_15768 ] ] ]
-        [::] ].
+                                                                    ; Pvar t128_15768 ]) ]) ]
+                              [::]) ].
 
 Definition fd_A1568____a_ilen_write_upto32 : ufundef :=
   {|

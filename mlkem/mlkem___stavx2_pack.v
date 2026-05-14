@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -33,61 +33,58 @@ Definition res___stavx2_pack : seq var_i := [:: state_19008.(gv) ].
 
 (* Body *)
 Definition body___stavx2_pack : cmd :=
-  [:: copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (0)%Z) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Unaligned AAdirect U64 st (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pconst (0)%Z)) ]
-    ; cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (1)%Z)) (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (1)%Z) (Pconst (8)%Z)))
-    ; copn [:: Lvar t128_1.(gv) ] (Oasm ((BaseOp ((None), (VMOV U64))))) [:: Pget Aligned AAscale U64 st (Pconst (5)%Z) ]
-    ; cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (3)%Z)) (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (6)%Z) (Pconst (8)%Z)))
-    ; copn [:: Lvar t128_0.(gv) ] (Oasm ((BaseOp ((None), (VMOV U64))))) [:: Pget Aligned AAscale U64 st (Pconst (10)%Z) ]
-    ; cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (4)%Z)) (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (11)%Z) (Pconst (8)%Z)))
-    ; cassgn (Lvar r_19011.(gv)) (aword U64) (Pget Aligned AAscale U64 st (Pconst (15)%Z))
-    ; copn [:: Lvar t128_1.(gv) ] (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_1
+  [:: MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (0)%Z) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Unaligned AAdirect U64 st (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pconst (0)%Z)) ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (1)%Z)) AT_none (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (1)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Copn [:: Lvar t128_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VMOV U64))))) [:: Pget Aligned AAscale U64 st (Pconst (5)%Z) ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (3)%Z)) AT_none (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (6)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Copn [:: Lvar t128_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VMOV U64))))) [:: Pget Aligned AAscale U64 st (Pconst (10)%Z) ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (4)%Z)) AT_none (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (11)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar r_19011.(gv)) AT_none (aword U64) (Pget Aligned AAscale U64 st (Pconst (15)%Z)))
+    ; MkI dummy_instr_info (Copn [:: Lvar t128_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_1
                                                                     ; Pvar r_19011
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]
-    ; cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (5)%Z)) (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (16)%Z) (Pconst (8)%Z)))
-    ; cassgn (Lvar r_19011.(gv)) (aword U64) (Pget Aligned AAscale U64 st (Pconst (20)%Z))
-    ; copn [:: Lvar t128_0.(gv) ] (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_0
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (5)%Z)) AT_none (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (16)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Lvar r_19011.(gv)) AT_none (aword U64) (Pget Aligned AAscale U64 st (Pconst (20)%Z)))
+    ; MkI dummy_instr_info (Copn [:: Lvar t128_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_0
                                                                     ; Pvar r_19011
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]
-    ; cassgn (Lvar t256_0.(gv)) (aword U256) (Papp1 (Ozeroext U256 U128) (Pvar t128_0))
-    ; copn [:: Lvar t256_0.(gv) ] (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar t256_0
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
+    ; MkI dummy_instr_info (Cassgn (Lvar t256_0.(gv)) AT_none (aword U256) (Papp1 (Ozeroext U256 U128) (Pvar t128_0)))
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_0.(gv) ] AT_none (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar t256_0
                                                                     ; Pvar t128_1
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ]
-    ; cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (2)%Z)) (aword U256) (Pvar t256_0)
-    ; cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (6)%Z)) (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (21)%Z) (Pconst (8)%Z)))
-    ; copn [:: Lvar t256_0.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (3)%Z)
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (2)%Z)) AT_none (aword U256) (Pvar t256_0))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19008.(gv) (Pconst (6)%Z)) AT_none (aword U256) (Pget Unaligned AAdirect U256 st (Papp2 (Omul (Op_int)) (Pconst (21)%Z) (Pconst (8)%Z))))
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (3)%Z)
                                                                     ; Pget Aligned AAscale U256 state_19008 (Pconst (5)%Z)
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Lvar t256_1.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (6)%Z)
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (6)%Z)
                                                                     ; Pget Aligned AAscale U256 state_19008 (Pconst (4)%Z)
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Lvar t256_2.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (4)%Z)
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (4)%Z)
                                                                     ; Pget Aligned AAscale U256 state_19008 (Pconst (3)%Z)
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (3)%Z) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (3)%Z) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0
                                                                     ; Pvar t256_1
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -96,8 +93,8 @@ Definition body___stavx2_pack : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-    ; copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (4)%Z) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1
+                                                                    ; Pconst (0)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (4)%Z) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1
                                                                     ; Pvar t256_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -106,19 +103,18 @@ Definition body___stavx2_pack : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-    ; copn [:: Lvar t256_0.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (5)%Z)
+                                                                    ; Pconst (0)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pget Aligned AAscale U256 state_19008 (Pconst (5)%Z)
                                                                     ; Pget Aligned AAscale U256 state_19008 (Pconst (6)%Z)
-                                                                    ; PappN (Opack U8 PE1) 
-                                                                    [:: Pconst (1)%Z
+                                                                    ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
-                                                                    ; Pconst (1)%Z ] ]
-    ; copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (5)%Z) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0
+                                                                    ; Pconst (1)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (5)%Z) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0
                                                                     ; Pvar t256_2
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -127,8 +123,8 @@ Definition body___stavx2_pack : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ]
-    ; copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (6)%Z) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2
+                                                                    ; Pconst (0)%Z ] ])
+    ; MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 state_19008.(gv) (Pconst (6)%Z) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2
                                                                     ; Pvar t256_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -137,7 +133,7 @@ Definition body___stavx2_pack : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (0)%Z ] ] ].
+                                                                    ; Pconst (0)%Z ] ]) ].
 
 Definition fd___stavx2_pack : ufundef :=
   {|

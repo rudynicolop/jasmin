@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -30,11 +30,11 @@ Definition res_gen_matrix_get_indexes : seq var_i := [:: t_13782.(gv) ].
 
 (* Body *)
 Definition body_gen_matrix_get_indexes : cmd :=
-  [:: cassgn (Lvar idxs.(gv)) (aarr U8 32) (Pvar gen_matrix_indexes)
-    ; cassgn (Lvar t_13782.(gv)) (aword U64) (Pvar _t)
-    ; cassgn (Lvar t_13782.(gv)) (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t_13782) (Papp1 (Oword_of_int U8) (Papp2 (Oadd (Op_int)) (Pconst (3)%Z) (Pconst (1)%Z))))
-    ; cassgn (Lvar b_13780.(gv)) (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar b_13780) (Pvar t_13782))
-    ; cassgn (Lvar t_13782.(gv)) (aword U64) (Pget Unaligned AAdirect U64 idxs (Papp1 (Oint_of_word Unsigned U64) (Pvar b_13780))) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar idxs.(gv)) AT_none (aarr U8 32) (Pvar gen_matrix_indexes))
+    ; MkI dummy_instr_info (Cassgn (Lvar t_13782.(gv)) AT_none (aword U64) (Pvar _t))
+    ; MkI dummy_instr_info (Cassgn (Lvar t_13782.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t_13782) (Papp1 (Oword_of_int U8) (Papp2 (Oadd (Op_int)) (Pconst (3)%Z) (Pconst (1)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Lvar b_13780.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar b_13780) (Pvar t_13782)))
+    ; MkI dummy_instr_info (Cassgn (Lvar t_13782.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 idxs (Papp1 (Oint_of_word Unsigned U64) (Pvar b_13780)))) ].
 
 Definition fd_gen_matrix_get_indexes : ufundef :=
   {|

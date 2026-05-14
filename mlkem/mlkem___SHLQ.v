@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -26,10 +26,10 @@ Definition res___SHLQ : seq var_i := [:: x_18991.(gv) ].
 
 (* Body *)
 Definition body___SHLQ : cmd :=
-  [:: cif
-        (Papp2 (Oneq (Op_int)) (Pvar shbytes) (Pconst (0)%Z))
-        [:: cassgn (Lvar x_18991.(gv)) (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar x_18991) (Papp1 (Oword_of_int U8) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar shbytes)))) ]
-        [::] ].
+  [:: MkI dummy_instr_info (Cif
+                              (Papp2 (Oneq (Op_int)) (Pvar shbytes) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar x_18991.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar x_18991) (Papp1 (Oword_of_int U8) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar shbytes))))) ]
+                              [::]) ].
 
 Definition fd___SHLQ : ufundef :=
   {|

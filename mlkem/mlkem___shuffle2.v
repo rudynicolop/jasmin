@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -28,15 +28,15 @@ Definition res___shuffle2 : seq var_i := [:: t0.(gv); t1.(gv) ].
 
 (* Body *)
 Definition body___shuffle2 : cmd :=
-  [:: copn [:: Lvar t0.(gv) ] (Oasm ((BaseOp ((None), (VMOVSLDUP U256))))) [:: Pvar b_19090 ]
-    ; copn [:: Lvar t0.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_19089
+  [:: MkI dummy_instr_info (Copn [:: Lvar t0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VMOVSLDUP U256))))) [:: Pvar b_19090 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_19089
                                                                     ; Pvar t0
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ]
-    ; copn [:: Lvar a_19089.(gv) ] (Oasm ((BaseOp ((None), (VPSRL VE64 U256))))) [:: Pvar a_19089
-                                                                    ; Papp1 (Oword_of_int U128) (Pconst (32)%Z) ]
-    ; copn [:: Lvar t1.(gv) ] (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_19089
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar a_19089.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE64 U256))))) [:: Pvar a_19089
+                                                                    ; Papp1 (Oword_of_int U128) (Pconst (32)%Z) ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_19089
                                                                     ; Pvar b_19090
-                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ] ].
+                                                                    ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ]) ].
 
 Definition fd___shuffle2 : ufundef :=
   {|

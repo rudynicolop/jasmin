@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -39,34 +39,51 @@ Definition res_A32____a_ilen_write_upto8 : seq var_i :=
 
 (* Body *)
 Definition body_A32____a_ilen_write_upto8 : cmd :=
-  [:: cif
-        (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LEN_17569))
-        [:: cif
-              (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar LEN_17569))
-              [:: cassgn (Laset Unaligned AAdirect U64 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) (aword U64) (Pvar w_17570)
-                ; cassgn (Lvar DELTA_17568.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (8)%Z))
-                ; cassgn (Lvar LEN_17569.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (8)%Z)) ]
-              [:: cif
-                    (Papp2 (Ole (Cmp_int)) (Pconst (4)%Z) (Pvar LEN_17569))
-                    [:: cassgn (Laset Unaligned AAdirect U32 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) (aword U32) (Pvar w_17570)
-                      ; cassgn (Lvar w_17570.(gv)) (aword U64) (Papp2 (Olsr U64) (Pvar w_17570) (Papp1 (Oword_of_int U8) (Pconst (32)%Z)))
-                      ; cassgn (Lvar DELTA_17568.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (4)%Z))
-                      ; cassgn (Lvar LEN_17569.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (4)%Z)) ]
-                    [::]
-                ; cif
-                    (Papp2 (Ole (Cmp_int)) (Pconst (2)%Z) (Pvar LEN_17569))
-                    [:: cassgn (Laset Unaligned AAdirect U16 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) (aword U16) (Pvar w_17570)
-                      ; cassgn (Lvar w_17570.(gv)) (aword U64) (Papp2 (Olsr U64) (Pvar w_17570) (Papp1 (Oword_of_int U8) (Pconst (16)%Z)))
-                      ; cassgn (Lvar DELTA_17568.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (2)%Z))
-                      ; cassgn (Lvar LEN_17569.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (2)%Z)) ]
-                    [::]
-                ; cif
-                    (Papp2 (Ole (Cmp_int)) (Pconst (1)%Z) (Pvar LEN_17569))
-                    [:: cassgn (Laset Unaligned AAdirect U8 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) (aword U8) (Pvar w_17570)
-                      ; cassgn (Lvar DELTA_17568.(gv)) (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (1)%Z))
-                      ; cassgn (Lvar LEN_17569.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (1)%Z)) ]
-                    [::] ] ]
-        [::] ].
+  [:: MkI dummy_instr_info (Cif
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LEN_17569))
+                              [:: MkI dummy_instr_info (Cif
+                                                          (Papp2 (Ole (Cmp_int)) (Pconst (8)%Z) (Pvar LEN_17569))
+                                                          [:: MkI dummy_instr_info (
+                                                          Cassgn (Laset Unaligned AAdirect U64 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) AT_none (aword U64) (Pvar w_17570))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar DELTA_17568.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (8)%Z)))
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar LEN_17569.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (8)%Z))) ]
+                                                          [:: MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Ole (Cmp_int)) (Pconst (4)%Z) (Pvar LEN_17569))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Laset Unaligned AAdirect U32 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) AT_none (aword U32) (Pvar w_17570))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar w_17570.(gv)) AT_none (aword U64) (Papp2 (Olsr U64) (Pvar w_17570) (Papp1 (Oword_of_int U8) (Pconst (32)%Z))))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar DELTA_17568.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (4)%Z)))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar LEN_17569.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (4)%Z))) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Ole (Cmp_int)) (Pconst (2)%Z) (Pvar LEN_17569))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Laset Unaligned AAdirect U16 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) AT_none (aword U16) (Pvar w_17570))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar w_17570.(gv)) AT_none (aword U64) (Papp2 (Olsr U64) (Pvar w_17570) (Papp1 (Oword_of_int U8) (Pconst (16)%Z))))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar DELTA_17568.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (2)%Z)))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar LEN_17569.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (2)%Z))) ]
+                                                            [::])
+                                                            ; MkI dummy_instr_info (
+                                                          Cif
+                                                            (Papp2 (Ole (Cmp_int)) (Pconst (1)%Z) (Pvar LEN_17569))
+                                                            [:: MkI dummy_instr_info (
+                                                            Cassgn (Laset Unaligned AAdirect U8 buf_17566.(gv) (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_17567) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_17568))))) AT_none (aword U8) (Pvar w_17570))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar DELTA_17568.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar DELTA_17568) (Pconst (1)%Z)))
+                                                              ; MkI dummy_instr_info (
+                                                            Cassgn (Lvar LEN_17569.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN_17569) (Pconst (1)%Z))) ]
+                                                            [::]) ]) ]
+                              [::]) ].
 
 Definition fd_A32____a_ilen_write_upto8 : ufundef :=
   {|

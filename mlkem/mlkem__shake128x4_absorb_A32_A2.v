@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -33,20 +33,22 @@ Definition res__shake128x4_absorb_A32_A2 : seq var_i := [:: st_14316.(gv) ].
 
 (* Body *)
 Definition body__shake128x4_absorb_A32_A2 : cmd :=
-  [:: ccall [:: Lvar st_14316.(gv) ] __state_init_avx2x4 [:: Pvar st_14316 ]
-    ; ccall [:: Lvar st_14316.(gv); Lvar AT_14319.(gv) ] A32____absorb_bcast_avx2x4 [:: Pvar st_14316
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st_14316.(gv) ] __state_init_avx2x4 [:: Pvar st_14316 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14316.(gv)
+                                    ; Lvar AT_14319.(gv) ] A32____absorb_bcast_avx2x4 [:: Pvar st_14316
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar seed_14317
                                                                     ; Pconst (0)%Z
-                                                                    ; Pconst (168)%Z ]
-    ; ccall [:: Lvar st_14316.(gv); Lnone dummy_var_info (aint) ] A2____absorb_avx2x4 [:: Pvar st_14316
+                                                                    ; Pconst (168)%Z ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14316.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A2____absorb_avx2x4 [:: Pvar st_14316
                                                                     ; Pconst (32)%Z
                                                                     ; Psub AAscale U8 2 pos_14318 (Pconst (0)%Z)
                                                                     ; Psub AAscale U8 2 pos_14318 (Pconst (2)%Z)
                                                                     ; Psub AAscale U8 2 pos_14318 (Pconst (4)%Z)
                                                                     ; Psub AAscale U8 2 pos_14318 (Pconst (6)%Z)
                                                                     ; Pconst (31)%Z
-                                                                    ; Pconst (168)%Z ] ].
+                                                                    ; Pconst (168)%Z ]) ].
 
 Definition fd__shake128x4_absorb_A32_A2 : ufundef :=
   {|

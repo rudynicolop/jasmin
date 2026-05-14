@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -38,33 +38,36 @@ Definition res___keccakf1600_avx2x4 : seq var_i := [:: a_18650.(gv) ].
 
 (* Body *)
 Definition body___keccakf1600_avx2x4 : cmd :=
-  [:: cassgn (Lvar RC.(gv)) (aarr U64 24) (Pvar KECCAK1600_RC)
-    ; cassgn (Lvar e_18653.(gv)) (aarr U256 25) (Pvar s_e)
-    ; cassgn (Lvar r8_18654.(gv)) (aword U256) (Pvar ROL8)
-    ; cassgn (Lvar r56_18655.(gv)) (aword U256) (Pvar ROL56)
-    ; cassgn (Lvar c.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-    ; cwhile
-        [::]
-        (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar c) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (24)%Z)))
-        [:: copn [:: Lvar rc_18657.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Aligned AAscale U64 RC (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar c)) ]
-          ; ccall [:: Lvar e_18653.(gv) ] _keccakf1600_4x_pround [:: Pvar e_18653
-                                                                   ; Pvar a_18650
-                                                                   ; Pvar r8_18654
-                                                                   ; Pvar r56_18655 ]
-          ; cassgn (Lvar t_18658.(gv)) (aword U256) (Papp2 (Olxor U256) (Pvar rc_18657) (Pget Aligned AAscale U256 e_18653 (Pconst (0)%Z)))
-          ; cassgn (Laset Aligned AAscale U256 e_18653.(gv) (Pconst (0)%Z)) (aword U256) (Pvar t_18658)
-          ; copn [:: Lvar a_18650.(gv); Lvar e_18653.(gv) ] (Opseudo_op (Oswap (aarr U256 25%positive))) [:: Pvar e_18653
-                                                                    ; Pvar a_18650 ]
-          ; copn [:: Lvar rc_18657.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Aligned AAscale U64 RC (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar c) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ]
-          ; ccall [:: Lvar a_18650.(gv) ] _keccakf1600_4x_pround [:: Pvar a_18650
-                                                                   ; Pvar e_18653
-                                                                   ; Pvar r8_18654
-                                                                   ; Pvar r56_18655 ]
-          ; cassgn (Lvar t_18658.(gv)) (aword U256) (Papp2 (Olxor U256) (Pvar rc_18657) (Pget Aligned AAscale U256 a_18650 (Pconst (0)%Z)))
-          ; cassgn (Laset Aligned AAscale U256 a_18650.(gv) (Pconst (0)%Z)) (aword U256) (Pvar t_18658)
-          ; copn [:: Lvar a_18650.(gv); Lvar e_18653.(gv) ] (Opseudo_op (Oswap (aarr U256 25%positive))) [:: Pvar e_18653
-                                                                    ; Pvar a_18650 ]
-          ; cassgn (Lvar c.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar c) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))) ] ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar RC.(gv)) AT_none (aarr U64 24) (Pvar KECCAK1600_RC))
+    ; MkI dummy_instr_info (Cassgn (Lvar e_18653.(gv)) AT_none (aarr U256 25) (Pvar s_e))
+    ; MkI dummy_instr_info (Cassgn (Lvar r8_18654.(gv)) AT_none (aword U256) (Pvar ROL8))
+    ; MkI dummy_instr_info (Cassgn (Lvar r56_18655.(gv)) AT_none (aword U256) (Pvar ROL56))
+    ; MkI dummy_instr_info (Cassgn (Lvar c.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cwhile Align
+                              [::]
+                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar c) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (24)%Z)))
+                              dummy_instr_info
+                              [:: MkI dummy_instr_info (Copn [:: Lvar rc_18657.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Aligned AAscale U64 RC (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar c)) ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar e_18653.(gv) ] _keccakf1600_4x_pround [:: Pvar e_18653
+                                                                    ; Pvar a_18650
+                                                                    ; Pvar r8_18654
+                                                                    ; Pvar r56_18655 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar t_18658.(gv)) AT_none (aword U256) (Papp2 (Olxor U256) (Pvar rc_18657) (Pget Aligned AAscale U256 e_18653 (Pconst (0)%Z))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 e_18653.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar t_18658))
+                                ; MkI dummy_instr_info (Copn [:: Lvar a_18650.(gv)
+                                                               ; Lvar e_18653.(gv) ] AT_none (Opseudo_op (Oswap (aarr U256 25%positive))) [:: Pvar e_18653
+                                                                    ; Pvar a_18650 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar rc_18657.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Aligned AAscale U64 RC (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar c) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar a_18650.(gv) ] _keccakf1600_4x_pround [:: Pvar a_18650
+                                                                    ; Pvar e_18653
+                                                                    ; Pvar r8_18654
+                                                                    ; Pvar r56_18655 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar t_18658.(gv)) AT_none (aword U256) (Papp2 (Olxor U256) (Pvar rc_18657) (Pget Aligned AAscale U256 a_18650 (Pconst (0)%Z))))
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 a_18650.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar t_18658))
+                                ; MkI dummy_instr_info (Copn [:: Lvar a_18650.(gv)
+                                                               ; Lvar e_18653.(gv) ] AT_none (Opseudo_op (Oswap (aarr U256 25%positive))) [:: Pvar e_18653
+                                                                    ; Pvar a_18650 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar c.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar c) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z)))) ]) ].
 
 Definition fd___keccakf1600_avx2x4 : ufundef :=
   {|

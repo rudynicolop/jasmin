@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -38,26 +38,26 @@ Definition res___keccakf1600_pround_equiv : seq var_i := [:: e_18572.(gv) ].
 
 (* Body *)
 Definition body___keccakf1600_pround_equiv : cmd :=
-  [:: ccall [:: Lvar st0_18574.(gv)
-              ; Lvar st1_18575.(gv)
-              ; Lvar st2_18576.(gv)
-              ; Lvar st3_18577.(gv) ] __st4x_unpack [:: Pvar st0_18574
-                                                      ; Pvar st1_18575
-                                                      ; Pvar st2_18576
-                                                      ; Pvar st3_18577
-                                                      ; Pvar a_18573 ]
-    ; ccall [:: Lvar st0_18574.(gv)
-              ; Lvar st1_18575.(gv)
-              ; Lvar st2_18576.(gv)
-              ; Lvar st3_18577.(gv) ] __keccakf1600_pround_unpacked [:: Pvar st0_18574
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st0_18574.(gv)
+                                    ; Lvar st1_18575.(gv)
+                                    ; Lvar st2_18576.(gv)
+                                    ; Lvar st3_18577.(gv) ] __st4x_unpack [:: Pvar st0_18574
                                                                     ; Pvar st1_18575
                                                                     ; Pvar st2_18576
-                                                                    ; Pvar st3_18577 ]
-    ; ccall [:: Lvar e_18572.(gv) ] __st4x_pack [:: Pvar e_18572
-                                                  ; Pvar st0_18574
-                                                  ; Pvar st1_18575
-                                                  ; Pvar st2_18576
-                                                  ; Pvar st3_18577 ] ].
+                                                                    ; Pvar st3_18577
+                                                                    ; Pvar a_18573 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st0_18574.(gv)
+                                    ; Lvar st1_18575.(gv)
+                                    ; Lvar st2_18576.(gv)
+                                    ; Lvar st3_18577.(gv) ] __keccakf1600_pround_unpacked [:: Pvar st0_18574
+                                                                    ; Pvar st1_18575
+                                                                    ; Pvar st2_18576
+                                                                    ; Pvar st3_18577 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar e_18572.(gv) ] __st4x_pack [:: Pvar e_18572
+                                                                    ; Pvar st0_18574
+                                                                    ; Pvar st1_18575
+                                                                    ; Pvar st2_18576
+                                                                    ; Pvar st3_18577 ]) ].
 
 Definition fd___keccakf1600_pround_equiv : ufundef :=
   {|

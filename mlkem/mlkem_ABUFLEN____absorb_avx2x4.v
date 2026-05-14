@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -60,13 +60,13 @@ Definition res_ABUFLEN____absorb_avx2x4 : seq var_i :=
 
 (* Body *)
 Definition body_ABUFLEN____absorb_avx2x4 : cmd :=
-  [:: cassgn (Lvar offset_14426.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-    ; cassgn (Lvar _LEN_14427.(gv)) (aint) (Pconst (536)%Z)
-    ; cif
-        (Papp2 (Oge (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar AT_14419) (Pvar _LEN_14427)) (Pvar _RATE8_14425))
-        [:: ccall [:: Lvar st_14418.(gv)
-                    ; Lnone dummy_var_info (aint)
-                    ; Lvar offset_14426.(gv) ] ABUFLEN____addstate_avx2x4 [:: Pvar st_14418
+  [:: MkI dummy_instr_info (Cassgn (Lvar offset_14426.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_14427.(gv)) AT_none (aint) (Pconst (536)%Z))
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oge (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar AT_14419) (Pvar _LEN_14427)) (Pvar _RATE8_14425))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_14418.(gv)
+                                                                ; Lnone dummy_var_info (aint)
+                                                                ; Lvar offset_14426.(gv) ] ABUFLEN____addstate_avx2x4 [:: Pvar st_14418
                                                                     ; Pvar AT_14419
                                                                     ; Pvar buf0_14420
                                                                     ; Pvar buf1_14421
@@ -74,18 +74,20 @@ Definition body_ABUFLEN____absorb_avx2x4 : cmd :=
                                                                     ; Pvar buf3_14423
                                                                     ; Pvar offset_14426
                                                                     ; Papp2 (Osub (Op_int)) (Pvar _RATE8_14425) (Pvar AT_14419)
-                                                                    ; Pconst (0)%Z ]
-          ; cassgn (Lvar _LEN_14427.(gv)) (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_14427) (Papp2 (Osub (Op_int)) (Pvar _RATE8_14425) (Pvar AT_14419)))
-          ; cassgn (Lvar AT_14419.(gv)) (aint) (Pconst (0)%Z)
-          ; ccall [:: Lvar st_14418.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_14418 ]
-          ; cassgn (Lvar ITERS_14428.(gv)) (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_14427) (Pvar _RATE8_14425))
-          ; cassgn (Lvar i_14429.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-          ; cwhile
-              [::]
-              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_14429) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_14428)))
-              [:: ccall [:: Lvar st_14418.(gv)
-                          ; Lnone dummy_var_info (aint)
-                          ; Lvar offset_14426.(gv) ] ABUFLEN____addstate_avx2x4 [:: Pvar st_14418
+                                                                    ; Pconst (0)%Z ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_14427.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_14427) (Papp2 (Osub (Op_int)) (Pvar _RATE8_14425) (Pvar AT_14419))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar AT_14419.(gv)) AT_none (aint) (Pconst (0)%Z))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar st_14418.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_14418 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar ITERS_14428.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_14427) (Pvar _RATE8_14425)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar i_14429.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+                                ; MkI dummy_instr_info (Cwhile Align
+                                                          [::]
+                                                          (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_14429) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_14428)))
+                                                          dummy_instr_info
+                                                          [:: MkI dummy_instr_info (
+                                                          Ccall [:: Lvar st_14418.(gv)
+                                                                  ; Lnone dummy_var_info (aint)
+                                                                  ; Lvar offset_14426.(gv) ] ABUFLEN____addstate_avx2x4 [:: Pvar st_14418
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar buf0_14420
                                                                     ; Pvar buf1_14421
@@ -93,14 +95,16 @@ Definition body_ABUFLEN____absorb_avx2x4 : cmd :=
                                                                     ; Pvar buf3_14423
                                                                     ; Pvar offset_14426
                                                                     ; Pvar _RATE8_14425
-                                                                    ; Pconst (0)%Z ]
-                ; ccall [:: Lvar st_14418.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_14418 ]
-                ; cassgn (Lvar i_14429.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_14429) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))) ]
-          ; cassgn (Lvar _LEN_14427.(gv)) (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_14427) (Pvar _RATE8_14425)) ]
-        [::]
-    ; ccall [:: Lvar st_14418.(gv)
-              ; Lvar AT_14419.(gv)
-              ; Lnone dummy_var_info (aword U64) ] ABUFLEN____addstate_avx2x4 [:: Pvar st_14418
+                                                                    ; Pconst (0)%Z ])
+                                                            ; MkI dummy_instr_info (
+                                                          Ccall [:: Lvar st_14418.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_14418 ])
+                                                            ; MkI dummy_instr_info (
+                                                          Cassgn (Lvar i_14429.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_14429) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_14427.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_14427) (Pvar _RATE8_14425))) ]
+                              [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_14418.(gv)
+                                    ; Lvar AT_14419.(gv)
+                                    ; Lnone dummy_var_info (aword U64) ] ABUFLEN____addstate_avx2x4 [:: Pvar st_14418
                                                                     ; Pvar AT_14419
                                                                     ; Pvar buf0_14420
                                                                     ; Pvar buf1_14421
@@ -108,12 +112,12 @@ Definition body_ABUFLEN____absorb_avx2x4 : cmd :=
                                                                     ; Pvar buf3_14423
                                                                     ; Pvar offset_14426
                                                                     ; Pvar _LEN_14427
-                                                                    ; Pvar _TRAILB_14424 ]
-    ; cif
-        (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_14424) (Pconst (0)%Z))
-        [:: ccall [:: Lvar st_14418.(gv) ] __addratebit_avx2x4 [:: Pvar st_14418
-                                                                 ; Pvar _RATE8_14425 ] ]
-        [::] ].
+                                                                    ; Pvar _TRAILB_14424 ])
+    ; MkI dummy_instr_info (Cif
+                              (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_14424) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_14418.(gv) ] __addratebit_avx2x4 [:: Pvar st_14418
+                                                                    ; Pvar _RATE8_14425 ]) ]
+                              [::]) ].
 
 Definition fd_ABUFLEN____absorb_avx2x4 : ufundef :=
   {|

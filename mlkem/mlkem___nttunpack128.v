@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -66,38 +66,39 @@ Definition res___nttunpack128 : seq var_i :=
 
 (* Body *)
 Definition body___nttunpack128 : cmd :=
-  [:: ccall [:: Lvar r0_19075.(gv); Lvar r4.(gv) ] __shuffle8 [:: Pvar r0_19075
-                                                                ; Pvar r4 ]
-    ; ccall [:: Lvar r1_19076.(gv); Lvar r5.(gv) ] __shuffle8 [:: Pvar r1_19076
-                                                                ; Pvar r5 ]
-    ; ccall [:: Lvar r2.(gv); Lvar r6.(gv) ] __shuffle8 [:: Pvar r2
-                                                          ; Pvar r6 ]
-    ; ccall [:: Lvar r3.(gv); Lvar r7.(gv) ] __shuffle8 [:: Pvar r3
-                                                          ; Pvar r7 ]
-    ; ccall [:: Lvar r0_19075.(gv); Lvar r2.(gv) ] __shuffle4 [:: Pvar r0_19075
-                                                                ; Pvar r2 ]
-    ; ccall [:: Lvar r4.(gv); Lvar r6.(gv) ] __shuffle4 [:: Pvar r4
-                                                          ; Pvar r6 ]
-    ; ccall [:: Lvar r1_19076.(gv); Lvar r3.(gv) ] __shuffle4 [:: Pvar r1_19076
-                                                                ; Pvar r3 ]
-    ; ccall [:: Lvar r5.(gv); Lvar r7.(gv) ] __shuffle4 [:: Pvar r5
-                                                          ; Pvar r7 ]
-    ; ccall [:: Lvar r0_19075.(gv); Lvar r1_19076.(gv) ] __shuffle2 [:: Pvar r0_19075
-                                                                    ; Pvar r1_19076 ]
-    ; ccall [:: Lvar r2.(gv); Lvar r3.(gv) ] __shuffle2 [:: Pvar r2
-                                                          ; Pvar r3 ]
-    ; ccall [:: Lvar r4.(gv); Lvar r5.(gv) ] __shuffle2 [:: Pvar r4
-                                                          ; Pvar r5 ]
-    ; ccall [:: Lvar r6.(gv); Lvar r7.(gv) ] __shuffle2 [:: Pvar r6
-                                                          ; Pvar r7 ]
-    ; ccall [:: Lvar r0_19075.(gv); Lvar r4.(gv) ] __shuffle1 [:: Pvar r0_19075
-                                                                ; Pvar r4 ]
-    ; ccall [:: Lvar r1_19076.(gv); Lvar r5.(gv) ] __shuffle1 [:: Pvar r1_19076
-                                                                ; Pvar r5 ]
-    ; ccall [:: Lvar r2.(gv); Lvar r6.(gv) ] __shuffle1 [:: Pvar r2
-                                                          ; Pvar r6 ]
-    ; ccall [:: Lvar r3.(gv); Lvar r7.(gv) ] __shuffle1 [:: Pvar r3
-                                                          ; Pvar r7 ] ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar r0_19075.(gv); Lvar r4.(gv) ] __shuffle8 [:: Pvar r0_19075
+                                                                    ; Pvar r4 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r1_19076.(gv); Lvar r5.(gv) ] __shuffle8 [:: Pvar r1_19076
+                                                                    ; Pvar r5 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r2.(gv); Lvar r6.(gv) ] __shuffle8 [:: Pvar r2
+                                                                    ; Pvar r6 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r3.(gv); Lvar r7.(gv) ] __shuffle8 [:: Pvar r3
+                                                                    ; Pvar r7 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r0_19075.(gv); Lvar r2.(gv) ] __shuffle4 [:: Pvar r0_19075
+                                                                    ; Pvar r2 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r4.(gv); Lvar r6.(gv) ] __shuffle4 [:: Pvar r4
+                                                                    ; Pvar r6 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r1_19076.(gv); Lvar r3.(gv) ] __shuffle4 [:: Pvar r1_19076
+                                                                    ; Pvar r3 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r5.(gv); Lvar r7.(gv) ] __shuffle4 [:: Pvar r5
+                                                                    ; Pvar r7 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r0_19075.(gv)
+                                    ; Lvar r1_19076.(gv) ] __shuffle2 [:: Pvar r0_19075
+                                                                    ; Pvar r1_19076 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r2.(gv); Lvar r3.(gv) ] __shuffle2 [:: Pvar r2
+                                                                    ; Pvar r3 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r4.(gv); Lvar r5.(gv) ] __shuffle2 [:: Pvar r4
+                                                                    ; Pvar r5 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r6.(gv); Lvar r7.(gv) ] __shuffle2 [:: Pvar r6
+                                                                    ; Pvar r7 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r0_19075.(gv); Lvar r4.(gv) ] __shuffle1 [:: Pvar r0_19075
+                                                                    ; Pvar r4 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r1_19076.(gv); Lvar r5.(gv) ] __shuffle1 [:: Pvar r1_19076
+                                                                    ; Pvar r5 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r2.(gv); Lvar r6.(gv) ] __shuffle1 [:: Pvar r2
+                                                                    ; Pvar r6 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r3.(gv); Lvar r7.(gv) ] __shuffle1 [:: Pvar r3
+                                                                    ; Pvar r7 ]) ].
 
 Definition fd___nttunpack128 : ufundef :=
   {|

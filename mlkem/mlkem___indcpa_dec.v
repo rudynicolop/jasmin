@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -41,21 +41,21 @@ Definition res___indcpa_dec : seq var_i := [:: msgp_13675.(gv) ].
 
 (* Body *)
 Definition body___indcpa_dec : cmd :=
-  [:: ccall [:: Lvar bp_13678.(gv) ] __i_polyvec_decompress [:: Pvar ct_13676 ]
-    ; ccall [:: Lvar v_13679.(gv) ] _i_poly_decompress [:: Pvar v_13679
-                                                         ; Psub AAscale U8 128 ct_13676 (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (320)%Z)) ]
-    ; ccall [:: Lvar skpv_13680.(gv) ] __i_polyvec_frombytes [:: Pvar sk_13677 ]
-    ; ccall [:: Lvar bp_13678.(gv) ] __polyvec_ntt [:: Pvar bp_13678 ]
-    ; ccall [:: Lvar t_13681.(gv) ] __polyvec_pointwise_acc [:: Pvar t_13681
-                                                              ; Pvar skpv_13680
-                                                              ; Pvar bp_13678 ]
-    ; ccall [:: Lvar t_13681.(gv) ] _poly_invntt [:: Pvar t_13681 ]
-    ; ccall [:: Lvar mp.(gv) ] _poly_sub [:: Pvar mp
-                                           ; Pvar v_13679
-                                           ; Pvar t_13681 ]
-    ; ccall [:: Lvar mp.(gv) ] __poly_reduce [:: Pvar mp ]
-    ; ccall [:: Lvar msgp_13675.(gv); Lvar mp.(gv) ] _i_poly_tomsg [:: Pvar msgp_13675
-                                                                    ; Pvar mp ] ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar bp_13678.(gv) ] __i_polyvec_decompress [:: Pvar ct_13676 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar v_13679.(gv) ] _i_poly_decompress [:: Pvar v_13679
+                                                                    ; Psub AAscale U8 128 ct_13676 (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pconst (320)%Z)) ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar skpv_13680.(gv) ] __i_polyvec_frombytes [:: Pvar sk_13677 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar bp_13678.(gv) ] __polyvec_ntt [:: Pvar bp_13678 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar t_13681.(gv) ] __polyvec_pointwise_acc [:: Pvar t_13681
+                                                                    ; Pvar skpv_13680
+                                                                    ; Pvar bp_13678 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar t_13681.(gv) ] _poly_invntt [:: Pvar t_13681 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar mp.(gv) ] _poly_sub [:: Pvar mp
+                                                                 ; Pvar v_13679
+                                                                 ; Pvar t_13681 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar mp.(gv) ] __poly_reduce [:: Pvar mp ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar msgp_13675.(gv); Lvar mp.(gv) ] _i_poly_tomsg [:: Pvar msgp_13675
+                                                                    ; Pvar mp ]) ].
 
 Definition fd___indcpa_dec : ufundef :=
   {|

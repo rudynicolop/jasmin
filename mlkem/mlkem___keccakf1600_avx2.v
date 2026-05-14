@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -30,15 +30,16 @@ Definition res___keccakf1600_avx2 : seq var_i := [:: state_19016.(gv) ].
 
 (* Body *)
 Definition body___keccakf1600_avx2 : cmd :=
-  [:: cassgn (Lvar round_constants.(gv)) (aarr U64 24) (Pvar KECCAK1600_RC)
-    ; cassgn (Lvar r_19018.(gv)) (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z))
-    ; cwhile
-        [:: ccall [:: Lvar state_19016.(gv) ] __keccakf1600_pround_avx2 [:: Pvar state_19016 ]
-          ; copn [:: Lvar rc.(gv) ] (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Aligned AAscale U64 round_constants (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar r_19018)) ]
-          ; cassgn (Laset Aligned AAscale U256 state_19016.(gv) (Pconst (0)%Z)) (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 state_19016 (Pconst (0)%Z)) (Pvar rc))
-          ; cassgn (Lvar r_19018.(gv)) (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar r_19018) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))) ]
-        (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar r_19018) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (24)%Z)))
-        [::] ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar round_constants.(gv)) AT_none (aarr U64 24) (Pvar KECCAK1600_RC))
+    ; MkI dummy_instr_info (Cassgn (Lvar r_19018.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cwhile Align
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar state_19016.(gv) ] __keccakf1600_pround_avx2 [:: Pvar state_19016 ])
+                                ; MkI dummy_instr_info (Copn [:: Lvar rc.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pget Aligned AAscale U64 round_constants (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar r_19018)) ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 state_19016.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 state_19016 (Pconst (0)%Z)) (Pvar rc)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar r_19018.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar r_19018) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ]
+                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar r_19018) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (24)%Z)))
+                              dummy_instr_info
+                              [::]) ].
 
 Definition fd___keccakf1600_avx2 : ufundef :=
   {|

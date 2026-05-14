@@ -2,7 +2,7 @@ From Coq Require Import ZArith.
 From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
 
 Require Import expr ident var type global pseudo_operator sopn arch_extra.
-From Printing Require Import atoi syntax data notations.
+From Printing Require Import atoi data notations.
 
 Require Import x86_decl x86_instr_decl x86_extra.
 Existing Instance x86_atoI.
@@ -41,22 +41,23 @@ Definition res_jade_kem_mlkem_mlkem768_amd64_avx2_enc : seq var_i :=
 
 (* Body *)
 Definition body_jade_kem_mlkem_mlkem768_amd64_avx2_enc : cmd :=
-  [:: copn [:: Lnone dummy_var_info (aword U64) ] (Oslh (SLHinit)) [::]
-    ; cassgn (Lvar ciphertext_13571.(gv)) (aarr U8 1088) (Pvar ciphertext_13571)
-    ; cassgn (Lvar shared_secret_13572.(gv)) (aarr U8 32) (Pvar shared_secret_13572)
-    ; cassgn (Lvar public_key_13573.(gv)) (aarr U8 1184) (Pvar public_key_13573)
-    ; cassgn (Lvar randomnessp_13576.(gv)) (aarr U8 32) (Pvar randomness_13575)
-    ; crandombytes (Lvar randomnessp_13576.(gv)) U8 32%positive (Pvar randomnessp_13576)
-    ; ccall [:: Lvar ciphertext_13571.(gv); Lvar shared_secret_13572.(gv) ] __crypto_kem_enc_jazz [:: Pvar ciphertext_13571
+  [:: MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (aword U64) ] AT_none (Oslh (SLHinit)) [::])
+    ; MkI dummy_instr_info (Cassgn (Lvar ciphertext_13571.(gv)) AT_none (aarr U8 1088) (Pvar ciphertext_13571))
+    ; MkI dummy_instr_info (Cassgn (Lvar shared_secret_13572.(gv)) AT_none (aarr U8 32) (Pvar shared_secret_13572))
+    ; MkI dummy_instr_info (Cassgn (Lvar public_key_13573.(gv)) AT_none (aarr U8 1184) (Pvar public_key_13573))
+    ; MkI dummy_instr_info (Cassgn (Lvar randomnessp_13576.(gv)) AT_none (aarr U8 32) (Pvar randomness_13575))
+    ; MkI dummy_instr_info (Csyscall [:: (Lvar randomnessp_13576.(gv))] (RandomBytes U8 32%positive) [:: (Pvar randomnessp_13576)])
+    ; MkI dummy_instr_info (Ccall [:: Lvar ciphertext_13571.(gv)
+                                    ; Lvar shared_secret_13572.(gv) ] __crypto_kem_enc_jazz [:: Pvar ciphertext_13571
                                                                     ; Pvar shared_secret_13572
                                                                     ; Pvar public_key_13573
-                                                                    ; Pvar randomnessp_13576 ]
-    ; copn [:: Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lnone dummy_var_info (abool)
-             ; Lvar r_13574.(gv) ] (Oasm ((ExtOp (Oset0 U64)))) [::] ].
+                                                                    ; Pvar randomnessp_13576 ])
+    ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lnone dummy_var_info (abool)
+                                   ; Lvar r_13574.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U64)))) [::]) ].
 
 Definition fd_jade_kem_mlkem_mlkem768_amd64_avx2_enc : ufundef :=
   {|
