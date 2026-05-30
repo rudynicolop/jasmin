@@ -15,42 +15,33 @@ Context {IdO : IdentOracles}.
 
 (* __addstate_r3456_avx2 *)
 (* Local variables *)
-Definition st_18833 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 7) (mkident 18833).
-Definition r3_18834 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18834).
-Definition r4_18835 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18835).
-Definition r5_18836 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18836).
-Definition r6_18837 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18837).
+Definition st_2 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 18833).
+Definition r3_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18834).
+Definition r4_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18835).
+Definition r5_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18836).
+Definition r6_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18837).
 
 (* Signature *)
 Definition tyin___addstate_r3456_avx2 : seq atype :=
   [:: aarr U256 7; aword U256; aword U256; aword U256; aword U256 ].
 Definition args___addstate_r3456_avx2 : seq var_i :=
-  [:: st_18833.(gv)
-    ; r3_18834.(gv)
-    ; r4_18835.(gv)
-    ; r5_18836.(gv)
-    ; r6_18837.(gv) ].
+  [:: st_2.(gv); r3_3.(gv); r4_3.(gv); r5_3.(gv); r6_3.(gv) ].
 Definition tyout___addstate_r3456_avx2 : seq atype := [:: aarr U256 7 ].
-Definition res___addstate_r3456_avx2 : seq var_i := [:: st_18833.(gv) ].
+Definition res___addstate_r3456_avx2 : seq var_i := [:: st_2.(gv) ].
 
 (* Body *)
 Definition body___addstate_r3456_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Ccall [:: Lvar r3_18834.(gv)
-                                    ; Lvar r4_18835.(gv)
-                                    ; Lvar r5_18836.(gv)
-                                    ; Lvar r6_18837.(gv) ] __perm_reg3456_avx2 [:: Pvar r3_18834
-                                                                    ; Pvar r4_18835
-                                                                    ; Pvar r5_18836
-                                                                    ; Pvar r6_18837 ])
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (3)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (3)%Z)) (Pvar r3_18834)))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (4)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (4)%Z)) (Pvar r4_18835)))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (5)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (5)%Z)) (Pvar r5_18836)))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18833.(gv) (Pconst (6)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_18833 (Pconst (6)%Z)) (Pvar r6_18837))) ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar r3_3.(gv)
+                                    ; Lvar r4_3.(gv)
+                                    ; Lvar r5_3.(gv)
+                                    ; Lvar r6_3.(gv) ] __perm_reg3456_avx2 [:: Pvar r3_3
+                                                                    ; Pvar r4_3
+                                                                    ; Pvar r5_3
+                                                                    ; Pvar r6_3 ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_2.(gv) (Pconst (3)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_2 (Pconst (3)%Z)) (Pvar r3_3)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_2.(gv) (Pconst (4)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_2 (Pconst (4)%Z)) (Pvar r4_3)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_2.(gv) (Pconst (5)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_2 (Pconst (5)%Z)) (Pvar r5_3)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_2.(gv) (Pconst (6)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_2 (Pconst (6)%Z)) (Pvar r6_3))) ].
 
 Definition fd___addstate_r3456_avx2 : ufundef :=
   {|

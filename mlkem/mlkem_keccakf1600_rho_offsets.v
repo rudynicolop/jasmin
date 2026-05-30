@@ -16,34 +16,34 @@ Context {IdO : IdentOracles}.
 (* keccakf1600_rho_offsets *)
 (* Local variables *)
 Definition i : gvar := mk_rocq_gvar Slocal (aint) (mkident 19038).
-Definition r_19039 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19039).
-Definition x_19040 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19040).
-Definition y_19041 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19041).
-Definition t_19042 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19042).
+Definition r_2 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19039).
+Definition x_2 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19040).
+Definition y_0 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19041).
+Definition t_0 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19042).
 Definition z : gvar := mk_rocq_gvar Slocal (aint) (mkident 19043).
 
 (* Signature *)
 Definition tyin_keccakf1600_rho_offsets : seq atype := [:: aint ].
 Definition args_keccakf1600_rho_offsets : seq var_i := [:: i.(gv) ].
 Definition tyout_keccakf1600_rho_offsets : seq atype := [:: aint ].
-Definition res_keccakf1600_rho_offsets : seq var_i := [:: r_19039.(gv) ].
+Definition res_keccakf1600_rho_offsets : seq var_i := [:: r_2.(gv) ].
 
 (* Body *)
 Definition body_keccakf1600_rho_offsets : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar r_19039.(gv)) AT_none (aint) (Pconst (0)%Z))
-    ; MkI dummy_instr_info (Cassgn (Lvar x_19040.(gv)) AT_none (aint) (Pconst (1)%Z))
-    ; MkI dummy_instr_info (Cassgn (Lvar y_19041.(gv)) AT_none (aint) (Pconst (0)%Z))
+  [:: MkI dummy_instr_info (Cassgn (Lvar r_2.(gv)) AT_none (aint) (Pconst (0)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar x_2.(gv)) AT_none (aint) (Pconst (1)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar y_0.(gv)) AT_none (aint) (Pconst (0)%Z))
     ; MkI dummy_instr_info (Cfor
-                              (t_19042.(gv))
+                              (t_0.(gv))
                               (UpTo, Pconst (0)%Z, Pconst (24)%Z)
                               [:: MkI dummy_instr_info (Cif
-                                                          (Papp2 (Oeq (Op_int)) (Pvar i) (Papp2 (Oadd (Op_int)) (Pvar x_19040) (Papp2 (Omul (Op_int)) (Pconst (5)%Z) (Pvar y_19041))))
+                                                          (Papp2 (Oeq (Op_int)) (Pvar i) (Papp2 (Oadd (Op_int)) (Pvar x_2) (Papp2 (Omul (Op_int)) (Pconst (5)%Z) (Pvar y_0))))
                                                           [:: MkI dummy_instr_info (
-                                                          Cassgn (Lvar r_19039.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Omul (Op_int)) (Papp2 (Oadd (Op_int)) (Pvar t_19042) (Pconst (1)%Z)) (Papp2 (Oadd (Op_int)) (Pvar t_19042) (Pconst (2)%Z))) (Pconst (2)%Z)) (Pconst (64)%Z))) ]
+                                                          Cassgn (Lvar r_2.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Omul (Op_int)) (Papp2 (Oadd (Op_int)) (Pvar t_0) (Pconst (1)%Z)) (Papp2 (Oadd (Op_int)) (Pvar t_0) (Pconst (2)%Z))) (Pconst (2)%Z)) (Pconst (64)%Z))) ]
                                                           [::])
-                                ; MkI dummy_instr_info (Cassgn (Lvar z.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar x_19040)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pvar y_19041))) (Pconst (5)%Z)))
-                                ; MkI dummy_instr_info (Cassgn (Lvar x_19040.(gv)) AT_none (aint) (Pvar y_19041))
-                                ; MkI dummy_instr_info (Cassgn (Lvar y_19041.(gv)) AT_none (aint) (Pvar z)) ]) ].
+                                ; MkI dummy_instr_info (Cassgn (Lvar z.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Oadd (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (2)%Z) (Pvar x_2)) (Papp2 (Omul (Op_int)) (Pconst (3)%Z) (Pvar y_0))) (Pconst (5)%Z)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar x_2.(gv)) AT_none (aint) (Pvar y_0))
+                                ; MkI dummy_instr_info (Cassgn (Lvar y_0.(gv)) AT_none (aint) (Pvar z)) ]) ].
 
 Definition fd_keccakf1600_rho_offsets : ufundef :=
   {|

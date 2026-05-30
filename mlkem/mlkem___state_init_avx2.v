@@ -15,22 +15,21 @@ Context {IdO : IdentOracles}.
 
 (* __state_init_avx2 *)
 (* Local variables *)
-Definition st_18861 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 7) (mkident 18861).
-Definition i_18862 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18862).
+Definition st_1 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 18861).
+Definition i_1 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18862).
 
 (* Signature *)
 Definition tyin___state_init_avx2 : seq atype := [::].
 Definition args___state_init_avx2 : seq var_i := [::].
 Definition tyout___state_init_avx2 : seq atype := [:: aarr U256 7 ].
-Definition res___state_init_avx2 : seq var_i := [:: st_18861.(gv) ].
+Definition res___state_init_avx2 : seq var_i := [:: st_1.(gv) ].
 
 (* Body *)
 Definition body___state_init_avx2 : cmd :=
   [:: MkI dummy_instr_info (Cfor
-                              (i_18862.(gv))
+                              (i_1.(gv))
                               (UpTo, Pconst (0)%Z, Pconst (7)%Z)
-                              [:: MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 st_18861.(gv) (Pvar i_18862) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::]) ]) ].
+                              [:: MkI dummy_instr_info (Copn [:: Laset Aligned AAscale U256 st_1.(gv) (Pvar i_1) ] AT_none (Oasm ((ExtOp (Oset0 U256)))) [::]) ]) ].
 
 Definition fd___state_init_avx2 : ufundef :=
   {|

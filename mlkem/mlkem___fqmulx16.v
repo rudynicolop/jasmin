@@ -15,10 +15,9 @@ Context {IdO : IdentOracles}.
 
 (* __fqmulx16 *)
 (* Local variables *)
-Definition a_19047 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19047).
-Definition b_19048 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19048).
-Definition qx16_19049 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 19049).
+Definition a_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19047).
+Definition b_4 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19048).
+Definition qx16_2 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19049).
 Definition qinvx16 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19050).
 Definition rd : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19051).
 Definition rhi : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19052).
@@ -28,20 +27,20 @@ Definition rlo : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19053).
 Definition tyin___fqmulx16 : seq atype :=
   [:: aword U256; aword U256; aword U256; aword U256 ].
 Definition args___fqmulx16 : seq var_i :=
-  [:: a_19047.(gv); b_19048.(gv); qx16_19049.(gv); qinvx16.(gv) ].
+  [:: a_3.(gv); b_4.(gv); qx16_2.(gv); qinvx16.(gv) ].
 Definition tyout___fqmulx16 : seq atype := [:: aword U256 ].
 Definition res___fqmulx16 : seq var_i := [:: rd.(gv) ].
 
 (* Body *)
 Definition body___fqmulx16 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar rhi.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar a_19047
-                                                                    ; Pvar b_19048 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar a_19047
-                                                                    ; Pvar b_19048 ])
+  [:: MkI dummy_instr_info (Copn [:: Lvar rhi.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar a_3
+                                                                    ; Pvar b_4 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar a_3
+                                                                    ; Pvar b_4 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar rlo
                                                                     ; Pvar qinvx16 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rlo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar rlo
-                                                                    ; Pvar qx16_19049 ])
+                                                                    ; Pvar qx16_2 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rd.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rhi
                                                                     ; Pvar rlo ]) ].
 

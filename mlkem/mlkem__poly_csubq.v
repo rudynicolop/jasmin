@@ -15,29 +15,27 @@ Context {IdO : IdentOracles}.
 
 (* _poly_csubq *)
 (* Local variables *)
-Definition rp_14261 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 256) (mkident 14261).
-Definition qx16_14262 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14262).
-Definition i_14263 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14263).
-Definition r_14264 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14264).
+Definition rp_1 : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 14261).
+Definition qx16_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14262).
+Definition i_74 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14263).
+Definition r_7 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14264).
 
 (* Signature *)
 Definition tyin__poly_csubq : seq atype := [:: aarr U16 256 ].
-Definition args__poly_csubq : seq var_i := [:: rp_14261.(gv) ].
+Definition args__poly_csubq : seq var_i := [:: rp_1.(gv) ].
 Definition tyout__poly_csubq : seq atype := [:: aarr U16 256 ].
-Definition res__poly_csubq : seq var_i := [:: rp_14261.(gv) ].
+Definition res__poly_csubq : seq var_i := [:: rp_1.(gv) ].
 
 (* Body *)
 Definition body__poly_csubq : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar qx16_14262.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 jqx16 (Pconst (0)%Z)))
+  [:: MkI dummy_instr_info (Cassgn (Lvar qx16_3.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 jqx16 (Pconst (0)%Z)))
     ; MkI dummy_instr_info (Cfor
-                              (i_14263.(gv))
+                              (i_74.(gv))
                               (UpTo, Pconst (0)%Z, Pconst (16)%Z)
-                              [:: MkI dummy_instr_info (Cassgn (Lvar r_14264.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 rp_14261 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14263))))
-                                ; MkI dummy_instr_info (Ccall [:: Lvar r_14264.(gv) ] __csubq [:: Pvar r_14264
-                                                                    ; Pvar qx16_14262 ])
-                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_14261.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_14263))) AT_none (aword U256) (Pvar r_14264)) ]) ].
+                              [:: MkI dummy_instr_info (Cassgn (Lvar r_7.(gv)) AT_none (aword U256) (Pget Unaligned AAdirect U256 rp_1 (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_74))))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar r_7.(gv) ] __csubq [:: Pvar r_7
+                                                                    ; Pvar qx16_3 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U256 rp_1.(gv) (Papp2 (Omul (Op_int)) (Pconst (32)%Z) (Pvar i_74))) AT_none (aword U256) (Pvar r_7)) ]) ].
 
 Definition fd__poly_csubq : ufundef :=
   {|

@@ -15,48 +15,44 @@ Context {IdO : IdentOracles}.
 
 (* __crypto_kem_enc_jazz *)
 (* Local variables *)
-Definition ct_13631 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 1088) (mkident 13631).
+Definition ct_2 : gvar := mk_rocq_gvar Slocal (aarr U8 1088) (mkident 13631).
 Definition shk : gvar := mk_rocq_gvar Slocal (aarr U8 32) (mkident 13632).
-Definition pk_13633 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 1184) (mkident 13633).
-Definition randomnessp_13634 : gvar :=
+Definition pk_2 : gvar := mk_rocq_gvar Slocal (aarr U8 1184) (mkident 13633).
+Definition randomnessp_1 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 32) (mkident 13634).
-Definition b_13635 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13635).
-Definition buf_13636 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 64) (mkident 13636).
+Definition b_10 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13635).
+Definition buf_180 : gvar := mk_rocq_gvar Slocal (aarr U8 64) (mkident 13636).
 Definition kr : gvar := mk_rocq_gvar Slocal (aarr U8 64) (mkident 13637).
-Definition k_13638 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13638).
+Definition k_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13638).
 
 (* Signature *)
 Definition tyin___crypto_kem_enc_jazz : seq atype :=
   [:: aarr U8 1088; aarr U8 32; aarr U8 1184; aarr U8 32 ].
 Definition args___crypto_kem_enc_jazz : seq var_i :=
-  [:: ct_13631.(gv); shk.(gv); pk_13633.(gv); randomnessp_13634.(gv) ].
+  [:: ct_2.(gv); shk.(gv); pk_2.(gv); randomnessp_1.(gv) ].
 Definition tyout___crypto_kem_enc_jazz : seq atype :=
   [:: aarr U8 1088; aarr U8 32 ].
-Definition res___crypto_kem_enc_jazz : seq var_i :=
-  [:: ct_13631.(gv); shk.(gv) ].
+Definition res___crypto_kem_enc_jazz : seq var_i := [:: ct_2.(gv); shk.(gv) ].
 
 (* Body *)
 Definition body___crypto_kem_enc_jazz : cmd :=
   [:: MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Spill [:: aarr U8 1184%positive
-                                                                    ; aarr U8 32%positive ])) [:: Pvar pk_13633
+                                                                    ; aarr U8 32%positive ])) [:: Pvar pk_2
                                                                     ; Pvar shk ])
-    ; MkI dummy_instr_info (Cassgn (Lvar b_13635.(gv)) AT_none (aword U256) (Pget Unaligned AAscale U256 randomnessp_13634 (Pconst (0)%Z)))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 buf_13636.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar b_13635))
-    ; MkI dummy_instr_info (Ccall [:: Lasub AAscale U8 32 buf_13636.(gv) (Pconst (32)%Z) ] _sha3_256A_A1184 [:: Psub AAscale U8 32 buf_13636 (Pconst (32)%Z)
-                                                                    ; Pvar pk_13633 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar b_10.(gv)) AT_none (aword U256) (Pget Unaligned AAscale U256 randomnessp_1 (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 buf_180.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar b_10))
+    ; MkI dummy_instr_info (Ccall [:: Lasub AAscale U8 32 buf_180.(gv) (Pconst (32)%Z) ] _sha3_256A_A1184 [:: Psub AAscale U8 32 buf_180 (Pconst (32)%Z)
+                                                                    ; Pvar pk_2 ])
     ; MkI dummy_instr_info (Ccall [:: Lvar kr.(gv) ] _sha3_512A_A64 [:: Pvar kr
-                                                                    ; Pvar buf_13636 ])
-    ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aarr U8 1184%positive ])) [:: Pvar pk_13633 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar ct_13631.(gv) ] __indcpa_enc [:: Pvar ct_13631
-                                                                    ; Psub AAscale U8 32 buf_13636 (Pconst (0)%Z)
-                                                                    ; Pvar pk_13633
+                                                                    ; Pvar buf_180 ])
+    ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aarr U8 1184%positive ])) [:: Pvar pk_2 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar ct_2.(gv) ] __indcpa_enc [:: Pvar ct_2
+                                                                    ; Psub AAscale U8 32 buf_180 (Pconst (0)%Z)
+                                                                    ; Pvar pk_2
                                                                     ; Psub AAscale U8 32 kr (Pconst (32)%Z) ])
     ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aarr U8 32%positive ])) [:: Pvar shk ])
-    ; MkI dummy_instr_info (Cassgn (Lvar k_13638.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 kr (Pconst (0)%Z)))
-    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAscale U256 shk.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar k_13638)) ].
+    ; MkI dummy_instr_info (Cassgn (Lvar k_1.(gv)) AT_none (aword U256) (Pget Aligned AAscale U256 kr (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAscale U256 shk.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Pvar k_1)) ].
 
 Definition fd___crypto_kem_enc_jazz : ufundef :=
   {|

@@ -15,23 +15,22 @@ Context {IdO : IdentOracles}.
 
 (* keccakf1600_rhotates *)
 (* Local variables *)
-Definition x_19034 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19034).
-Definition y_19035 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19035).
-Definition r_19036 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19036).
-Definition i_19037 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19037).
+Definition x_3 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19034).
+Definition y_1 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19035).
+Definition r_3 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19036).
+Definition i_0 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19037).
 
 (* Signature *)
 Definition tyin_keccakf1600_rhotates : seq atype := [:: aint; aint ].
-Definition args_keccakf1600_rhotates : seq var_i :=
-  [:: x_19034.(gv); y_19035.(gv) ].
+Definition args_keccakf1600_rhotates : seq var_i := [:: x_3.(gv); y_1.(gv) ].
 Definition tyout_keccakf1600_rhotates : seq atype := [:: aint ].
-Definition res_keccakf1600_rhotates : seq var_i := [:: r_19036.(gv) ].
+Definition res_keccakf1600_rhotates : seq var_i := [:: r_3.(gv) ].
 
 (* Body *)
 Definition body_keccakf1600_rhotates : cmd :=
-  [:: MkI dummy_instr_info (Ccall [:: Lvar i_19037.(gv) ] keccakf1600_index [:: Pvar x_19034
-                                                                    ; Pvar y_19035 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar r_19036.(gv) ] keccakf1600_rho_offsets [:: Pvar i_19037 ]) ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar i_0.(gv) ] keccakf1600_index [:: Pvar x_3
+                                                                    ; Pvar y_1 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r_3.(gv) ] keccakf1600_rho_offsets [:: Pvar i_0 ]) ].
 
 Definition fd_keccakf1600_rhotates : ufundef :=
   {|

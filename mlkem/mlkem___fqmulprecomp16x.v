@@ -15,31 +15,30 @@ Context {IdO : IdentOracles}.
 
 (* __fqmulprecomp16x *)
 (* Local variables *)
-Definition b_19054 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19054).
+Definition b_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19054).
 Definition al : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19055).
 Definition ah : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19056).
-Definition qx16_19057 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 19057).
-Definition x_19058 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19058).
+Definition qx16_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19057).
+Definition x_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19058).
 
 (* Signature *)
 Definition tyin___fqmulprecomp16x : seq atype :=
   [:: aword U256; aword U256; aword U256; aword U256 ].
 Definition args___fqmulprecomp16x : seq var_i :=
-  [:: b_19054.(gv); al.(gv); ah.(gv); qx16_19057.(gv) ].
+  [:: b_3.(gv); al.(gv); ah.(gv); qx16_1.(gv) ].
 Definition tyout___fqmulprecomp16x : seq atype := [:: aword U256 ].
-Definition res___fqmulprecomp16x : seq var_i := [:: b_19054.(gv) ].
+Definition res___fqmulprecomp16x : seq var_i := [:: b_3.(gv) ].
 
 (* Body *)
 Definition body___fqmulprecomp16x : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar x_19058.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar al
-                                                                    ; Pvar b_19054 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar b_19054.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar ah
-                                                                    ; Pvar b_19054 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar x_19058.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_19058
-                                                                    ; Pvar qx16_19057 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar b_19054.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar b_19054
-                                                                    ; Pvar x_19058 ]) ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar x_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar al
+                                                                    ; Pvar b_3 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar b_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar ah
+                                                                    ; Pvar b_3 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar x_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_0
+                                                                    ; Pvar qx16_1 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar b_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar b_3
+                                                                    ; Pvar x_0 ]) ].
 
 Definition fd___fqmulprecomp16x : ufundef :=
   {|

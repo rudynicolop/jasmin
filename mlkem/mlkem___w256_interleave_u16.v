@@ -15,10 +15,8 @@ Context {IdO : IdentOracles}.
 
 (* __w256_interleave_u16 *)
 (* Local variables *)
-Definition al_14257 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14257).
-Definition ah_14258 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14258).
+Definition al_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14257).
+Definition ah_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14258).
 Definition a0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14259).
 Definition a1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14260).
 
@@ -26,17 +24,17 @@ Definition a1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14260).
 Definition tyin___w256_interleave_u16 : seq atype :=
   [:: aword U256; aword U256 ].
 Definition args___w256_interleave_u16 : seq var_i :=
-  [:: al_14257.(gv); ah_14258.(gv) ].
+  [:: al_0.(gv); ah_0.(gv) ].
 Definition tyout___w256_interleave_u16 : seq atype :=
   [:: aword U256; aword U256 ].
 Definition res___w256_interleave_u16 : seq var_i := [:: a0.(gv); a1.(gv) ].
 
 (* Body *)
 Definition body___w256_interleave_u16 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar a0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE16 U256))))) [:: Pvar al_14257
-                                                                    ; Pvar ah_14258 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar a1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE16 U256))))) [:: Pvar al_14257
-                                                                    ; Pvar ah_14258 ]) ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar a0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE16 U256))))) [:: Pvar al_0
+                                                                    ; Pvar ah_0 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar a1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE16 U256))))) [:: Pvar al_0
+                                                                    ; Pvar ah_0 ]) ].
 
 Definition fd___w256_interleave_u16 : ufundef :=
   {|

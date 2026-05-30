@@ -15,20 +15,19 @@ Context {IdO : IdentOracles}.
 
 (* j__keccakf1600_avx2x4_ *)
 (* Local variables *)
-Definition a_18648 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 25) (mkident 18648).
+Definition a_7 : gvar := mk_rocq_gvar Slocal (aarr U256 25) (mkident 18648).
 
 (* Signature *)
 Definition tyin_j__keccakf1600_avx2x4_ : seq atype := [:: aarr U256 25 ].
-Definition args_j__keccakf1600_avx2x4_ : seq var_i := [:: a_18648.(gv) ].
+Definition args_j__keccakf1600_avx2x4_ : seq var_i := [:: a_7.(gv) ].
 Definition tyout_j__keccakf1600_avx2x4_ : seq atype := [:: aarr U256 25 ].
-Definition res_j__keccakf1600_avx2x4_ : seq var_i := [:: a_18648.(gv) ].
+Definition res_j__keccakf1600_avx2x4_ : seq var_i := [:: a_7.(gv) ].
 
 (* Body *)
 Definition body_j__keccakf1600_avx2x4_ : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar a_18648.(gv)) AT_none (aarr U256 25) (Pvar a_18648))
-    ; MkI dummy_instr_info (Ccall [:: Lvar a_18648.(gv) ] _keccakf1600_avx2x4 [:: Pvar a_18648 ])
-    ; MkI dummy_instr_info (Cassgn (Lvar a_18648.(gv)) AT_none (aarr U256 25) (Pvar a_18648)) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar a_7.(gv)) AT_none (aarr U256 25) (Pvar a_7))
+    ; MkI dummy_instr_info (Ccall [:: Lvar a_7.(gv) ] _keccakf1600_avx2x4 [:: Pvar a_7 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar a_7.(gv)) AT_none (aarr U256 25) (Pvar a_7)) ].
 
 Definition fd_j__keccakf1600_avx2x4_ : ufundef :=
   {|

@@ -17,9 +17,8 @@ Context {IdO : IdentOracles}.
 (* Local variables *)
 Definition lo : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14247).
 Definition hi : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14248).
-Definition qx16_14249 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14249).
-Definition qinvx16_14250 : gvar :=
+Definition qx16_4 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14249).
+Definition qinvx16_0 : gvar :=
   mk_rocq_gvar Slocal (aword U256) (mkident 14250).
 Definition m : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14251).
 
@@ -27,16 +26,16 @@ Definition m : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14251).
 Definition tyin___mont_red : seq atype :=
   [:: aword U256; aword U256; aword U256; aword U256 ].
 Definition args___mont_red : seq var_i :=
-  [:: lo.(gv); hi.(gv); qx16_14249.(gv); qinvx16_14250.(gv) ].
+  [:: lo.(gv); hi.(gv); qx16_4.(gv); qinvx16_0.(gv) ].
 Definition tyout___mont_red : seq atype := [:: aword U256 ].
 Definition res___mont_red : seq var_i := [:: lo.(gv) ].
 
 (* Body *)
 Definition body___mont_red : cmd :=
   [:: MkI dummy_instr_info (Copn [:: Lvar m.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar lo
-                                                                    ; Pvar qinvx16_14250 ])
+                                                                    ; Pvar qinvx16_0 ])
     ; MkI dummy_instr_info (Copn [:: Lvar m.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar m
-                                                                    ; Pvar qx16_14249 ])
+                                                                    ; Pvar qx16_4 ])
     ; MkI dummy_instr_info (Copn [:: Lvar lo.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar hi
                                                                     ; Pvar m ]) ].
 

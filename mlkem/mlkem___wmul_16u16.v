@@ -15,8 +15,8 @@ Context {IdO : IdentOracles}.
 
 (* __wmul_16u16 *)
 (* Local variables *)
-Definition x_14241 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14241).
-Definition y_14242 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14242).
+Definition x_31 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14241).
+Definition y_2 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14242).
 Definition xy0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14243).
 Definition xy1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14244).
 Definition xyL : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14245).
@@ -24,16 +24,16 @@ Definition xyH : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14246).
 
 (* Signature *)
 Definition tyin___wmul_16u16 : seq atype := [:: aword U256; aword U256 ].
-Definition args___wmul_16u16 : seq var_i := [:: x_14241.(gv); y_14242.(gv) ].
+Definition args___wmul_16u16 : seq var_i := [:: x_31.(gv); y_2.(gv) ].
 Definition tyout___wmul_16u16 : seq atype := [:: aword U256; aword U256 ].
 Definition res___wmul_16u16 : seq var_i := [:: xy0.(gv); xy1.(gv) ].
 
 (* Body *)
 Definition body___wmul_16u16 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar xyL.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar x_14241
-                                                                    ; Pvar y_14242 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar xyH.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_14241
-                                                                    ; Pvar y_14242 ])
+  [:: MkI dummy_instr_info (Copn [:: Lvar xyL.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar x_31
+                                                                    ; Pvar y_2 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar xyH.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar x_31
+                                                                    ; Pvar y_2 ])
     ; MkI dummy_instr_info (Ccall [:: Lvar xy0.(gv); Lvar xy1.(gv) ] __w256_interleave_u16 [:: Pvar xyL
                                                                     ; Pvar xyH ]) ].
 

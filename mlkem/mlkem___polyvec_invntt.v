@@ -15,22 +15,21 @@ Context {IdO : IdentOracles}.
 
 (* __polyvec_invntt *)
 (* Local variables *)
-Definition r_13942 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 768) (mkident 13942).
-Definition i_13943 : gvar := mk_rocq_gvar Slocal (aint) (mkident 13943).
+Definition r_12 : gvar := mk_rocq_gvar Slocal (aarr U16 768) (mkident 13942).
+Definition i_89 : gvar := mk_rocq_gvar Slocal (aint) (mkident 13943).
 
 (* Signature *)
 Definition tyin___polyvec_invntt : seq atype := [:: aarr U16 768 ].
-Definition args___polyvec_invntt : seq var_i := [:: r_13942.(gv) ].
+Definition args___polyvec_invntt : seq var_i := [:: r_12.(gv) ].
 Definition tyout___polyvec_invntt : seq atype := [:: aarr U16 768 ].
-Definition res___polyvec_invntt : seq var_i := [:: r_13942.(gv) ].
+Definition res___polyvec_invntt : seq var_i := [:: r_12.(gv) ].
 
 (* Body *)
 Definition body___polyvec_invntt : cmd :=
   [:: MkI dummy_instr_info (Cfor
-                              (i_13943.(gv))
+                              (i_89.(gv))
                               (UpTo, Pconst (0)%Z, Pconst (3)%Z)
-                              [:: MkI dummy_instr_info (Ccall [:: Lasub AAscale U16 256 r_13942.(gv) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13943)) ] _poly_invntt [:: Psub AAscale U16 256 r_13942 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_13943)) ]) ]) ].
+                              [:: MkI dummy_instr_info (Ccall [:: Lasub AAscale U16 256 r_12.(gv) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_89)) ] _poly_invntt [:: Psub AAscale U16 256 r_12 (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Pvar i_89)) ]) ]) ].
 
 Definition fd___polyvec_invntt : ufundef :=
   {|

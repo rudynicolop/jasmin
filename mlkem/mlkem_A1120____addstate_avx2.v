@@ -15,216 +15,204 @@ Context {IdO : IdentOracles}.
 
 (* A1120____addstate_avx2 *)
 (* Local variables *)
-Definition st_15315 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 7) (mkident 15315).
-Definition AT_15316 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15316).
-Definition buf_15317 : gvar :=
+Definition st_90 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 15315).
+Definition AT_89 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15316).
+Definition buf_132 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 1120) (mkident 15317).
-Definition offset_15318 : gvar :=
+Definition offset_136 : gvar :=
   mk_rocq_gvar Slocal (aword U64) (mkident 15318).
-Definition _LEN_15319 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15319).
-Definition _TRAILB_15320 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15320).
-Definition DELTA_15321 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15321).
-Definition r0_15322 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15322).
-Definition r1_15323 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15323).
-Definition t64_2_15324 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 15324).
-Definition t128_1_15325 : gvar :=
+Definition _LEN_83 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15319).
+Definition _TRAILB_49 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15320).
+Definition DELTA_92 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15321).
+Definition r0_13 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15322).
+Definition r1_13 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15323).
+Definition t64_2_8 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15324).
+Definition t128_1_29 : gvar :=
   mk_rocq_gvar Slocal (aword U128) (mkident 15325).
-Definition t128_2_15326 : gvar :=
+Definition t128_2_8 : gvar :=
   mk_rocq_gvar Slocal (aword U128) (mkident 15326).
-Definition r3_15327 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15327).
-Definition t64_3_15328 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 15328).
-Definition r4_15329 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15329).
-Definition t64_4_15330 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 15330).
-Definition r5_15331 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15331).
-Definition t64_5_15332 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 15332).
-Definition r6_15333 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15333).
-Definition r2_15334 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 15334).
+Definition r3_13 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15327).
+Definition t64_3_8 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15328).
+Definition r4_13 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15329).
+Definition t64_4_8 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15330).
+Definition r5_13 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15331).
+Definition t64_5_8 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15332).
+Definition r6_13 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15333).
+Definition r2_10 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 15334).
 
 (* Signature *)
 Definition tyin_A1120____addstate_avx2 : seq atype :=
   [:: aarr U256 7; aint; aarr U8 1120; aword U64; aint; aint ].
 Definition args_A1120____addstate_avx2 : seq var_i :=
-  [:: st_15315.(gv)
-    ; AT_15316.(gv)
-    ; buf_15317.(gv)
-    ; offset_15318.(gv)
-    ; _LEN_15319.(gv)
-    ; _TRAILB_15320.(gv) ].
+  [:: st_90.(gv)
+    ; AT_89.(gv)
+    ; buf_132.(gv)
+    ; offset_136.(gv)
+    ; _LEN_83.(gv)
+    ; _TRAILB_49.(gv) ].
 Definition tyout_A1120____addstate_avx2 : seq atype :=
   [:: aarr U256 7; aint; aword U64 ].
 Definition res_A1120____addstate_avx2 : seq var_i :=
-  [:: st_15315.(gv); AT_15316.(gv); offset_15318.(gv) ].
+  [:: st_90.(gv); AT_89.(gv); offset_136.(gv) ].
 
 (* Body *)
 Definition body_A1120____addstate_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar DELTA_15321.(gv)) AT_none (aint) (Pconst (0)%Z))
+  [:: MkI dummy_instr_info (Cassgn (Lvar DELTA_92.(gv)) AT_none (aint) (Pconst (0)%Z))
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Olt (Cmp_int)) (Pvar AT_15316) (Pconst (8)%Z))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar DELTA_15321.(gv)
-                                                                ; Lvar _LEN_15319.(gv)
-                                                                ; Lvar _TRAILB_15320.(gv)
-                                                                ; Lvar AT_15316.(gv)
-                                                                ; Lvar r0_15322.(gv) ] A1120____a_ilen_read_bcast_upto8_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                              (Papp2 (Olt (Cmp_int)) (Pvar AT_89) (Pconst (8)%Z))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar DELTA_92.(gv)
+                                                                ; Lvar _LEN_83.(gv)
+                                                                ; Lvar _TRAILB_49.(gv)
+                                                                ; Lvar AT_89.(gv)
+                                                                ; Lvar r0_13.(gv) ] A1120____a_ilen_read_bcast_upto8_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (0)%Z
-                                                                    ; Pvar AT_15316 ])
-                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_15315.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_15315 (Pconst (0)%Z)) (Pvar r0_15322))) ]
+                                                                    ; Pvar AT_89 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_90.(gv) (Pconst (0)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_90 (Pconst (0)%Z)) (Pvar r0_13))) ]
                               [::])
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Oand) (Papp2 (Olt (Cmp_int)) (Pvar AT_15316) (Pconst (40)%Z)) (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_15319)) (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_15320) (Pconst (0)%Z))))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar DELTA_15321.(gv)
-                                                                ; Lvar _LEN_15319.(gv)
-                                                                ; Lvar _TRAILB_15320.(gv)
-                                                                ; Lvar AT_15316.(gv)
-                                                                ; Lvar r1_15323.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                              (Papp2 (Oand) (Papp2 (Olt (Cmp_int)) (Pvar AT_89) (Pconst (40)%Z)) (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_83)) (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_49) (Pconst (0)%Z))))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar DELTA_92.(gv)
+                                                                ; Lvar _LEN_83.(gv)
+                                                                ; Lvar _TRAILB_49.(gv)
+                                                                ; Lvar AT_89.(gv)
+                                                                ; Lvar r1_13.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (8)%Z
-                                                                    ; Pvar AT_15316 ])
-                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_15315.(gv) (Pconst (1)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_15315 (Pconst (1)%Z)) (Pvar r1_15323))) ]
+                                                                    ; Pvar AT_89 ])
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_90.(gv) (Pconst (1)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_90 (Pconst (1)%Z)) (Pvar r1_13))) ]
                               [::])
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_15319)) (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_15320) (Pconst (0)%Z)))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar DELTA_15321.(gv)
-                                                                ; Lvar _LEN_15319.(gv)
-                                                                ; Lvar _TRAILB_15320.(gv)
-                                                                ; Lvar AT_15316.(gv)
-                                                                ; Lvar t64_2_15324.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                              (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_83)) (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_49) (Pconst (0)%Z)))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar DELTA_92.(gv)
+                                                                ; Lvar _LEN_83.(gv)
+                                                                ; Lvar _TRAILB_49.(gv)
+                                                                ; Lvar AT_89.(gv)
+                                                                ; Lvar t64_2_8.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (40)%Z
-                                                                    ; Pvar AT_15316 ])
-                                ; MkI dummy_instr_info (Cassgn (Lvar t128_1_15325.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_2_15324)))
-                                ; MkI dummy_instr_info (Copn [:: Lvar t128_2_15326.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U128)))) [::])
+                                                                    ; Pvar AT_89 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar t128_1_29.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_2_8)))
+                                ; MkI dummy_instr_info (Copn [:: Lvar t128_2_8.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U128)))) [::])
                                 ; MkI dummy_instr_info (Cif
-                                                          (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_15319)) (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_15320) (Pconst (0)%Z)))
+                                                          (Papp2 (Oor) (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar _LEN_83)) (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_49) (Pconst (0)%Z)))
                                                           [:: MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar r3_15327.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar r3_13.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (48)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar t64_3_15328.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar t64_3_8.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (80)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar t128_2_15326.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_3_15328)))
+                                                          Cassgn (Lvar t128_2_8.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_3_8)))
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar r4_15329.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar r4_13.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (88)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar t64_4_15330.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar t64_4_8.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (120)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Copn [:: Lvar t128_1_15325.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_1_15325
-                                                                    ; Pvar t64_4_15330
+                                                          Copn [:: Lvar t128_1_29.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_1_29
+                                                                    ; Pvar t64_4_8
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar r5_15331.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar r5_13.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (128)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar t64_5_15332.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar t64_5_8.(gv) ] A1120____a_ilen_read_upto8_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (160)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Copn [:: Lvar t128_2_15326.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_2_15326
-                                                                    ; Pvar t64_5_15332
+                                                          Copn [:: Lvar t128_2_8.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPINSR VE64))))) [:: Pvar t128_2_8
+                                                                    ; Pvar t64_5_8
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar DELTA_15321.(gv)
-                                                                  ; Lvar _LEN_15319.(gv)
-                                                                  ; Lvar _TRAILB_15320.(gv)
-                                                                  ; Lvar AT_15316.(gv)
-                                                                  ; Lvar r6_15333.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_15317
-                                                                    ; Pvar offset_15318
-                                                                    ; Pvar DELTA_15321
-                                                                    ; Pvar _LEN_15319
-                                                                    ; Pvar _TRAILB_15320
+                                                          Ccall [:: Lvar DELTA_92.(gv)
+                                                                  ; Lvar _LEN_83.(gv)
+                                                                  ; Lvar _TRAILB_49.(gv)
+                                                                  ; Lvar AT_89.(gv)
+                                                                  ; Lvar r6_13.(gv) ] A1120____a_ilen_read_upto32_at [:: Pvar buf_132
+                                                                    ; Pvar offset_136
+                                                                    ; Pvar DELTA_92
+                                                                    ; Pvar _LEN_83
+                                                                    ; Pvar _TRAILB_49
                                                                     ; Pconst (168)%Z
-                                                                    ; Pvar AT_15316 ])
+                                                                    ; Pvar AT_89 ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar st_15315.(gv) ] __addstate_r3456_avx2 [:: Pvar st_15315
-                                                                    ; Pvar r3_15327
-                                                                    ; Pvar r4_15329
-                                                                    ; Pvar r5_15331
-                                                                    ; Pvar r6_15333 ]) ]
+                                                          Ccall [:: Lvar st_90.(gv) ] __addstate_r3456_avx2 [:: Pvar st_90
+                                                                    ; Pvar r3_13
+                                                                    ; Pvar r4_13
+                                                                    ; Pvar r5_13
+                                                                    ; Pvar r6_13 ]) ]
                                                           [::])
-                                ; MkI dummy_instr_info (Cassgn (Lvar r2_15334.(gv)) AT_none (aword U256) (Papp1 (Ozeroext U256 U128) (Pvar t128_2_15326)))
-                                ; MkI dummy_instr_info (Copn [:: Lvar r2_15334.(gv) ] AT_none (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar r2_15334
-                                                                    ; Pvar t128_1_15325
+                                ; MkI dummy_instr_info (Cassgn (Lvar r2_10.(gv)) AT_none (aword U256) (Papp1 (Ozeroext U256 U128) (Pvar t128_2_8)))
+                                ; MkI dummy_instr_info (Copn [:: Lvar r2_10.(gv) ] AT_none (Oasm ((BaseOp ((None), VINSERTI128)))) [:: Pvar r2_10
+                                                                    ; Pvar t128_1_29
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
-                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_15315.(gv) (Pconst (2)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_15315 (Pconst (2)%Z)) (Pvar r2_15334))) ]
+                                ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_90.(gv) (Pconst (2)%Z)) AT_none (aword U256) (Papp2 (Olxor U256) (Pget Aligned AAscale U256 st_90 (Pconst (2)%Z)) (Pvar r2_10))) ]
                               [::])
-    ; MkI dummy_instr_info (Cassgn (Lvar offset_15318.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_15318) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_15321)))) ].
+    ; MkI dummy_instr_info (Cassgn (Lvar offset_136.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar offset_136) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar DELTA_92)))) ].
 
 Definition fd_A1120____addstate_avx2 : ufundef :=
   {|

@@ -27,16 +27,11 @@ Definition zl0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14092).
 Definition zl1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14093).
 Definition zh0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14094).
 Definition zh1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14095).
-Definition qx16_14096 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14096).
-Definition t0_14097 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14097).
-Definition t1_14098 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14098).
-Definition t2_14099 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14099).
-Definition t3_14100 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 14100).
+Definition qx16_8 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14096).
+Definition t0_27 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14097).
+Definition t1_27 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14098).
+Definition t2_25 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14099).
+Definition t3_25 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 14100).
 
 (* Signature *)
 Definition tyin___invntt___butterfly64x : seq atype :=
@@ -66,7 +61,7 @@ Definition args___invntt___butterfly64x : seq var_i :=
     ; zl1.(gv)
     ; zh0.(gv)
     ; zh1.(gv)
-    ; qx16_14096.(gv) ].
+    ; qx16_8.(gv) ].
 Definition tyout___invntt___butterfly64x : seq atype :=
   [:: aword U256
     ; aword U256
@@ -88,53 +83,53 @@ Definition res___invntt___butterfly64x : seq var_i :=
 
 (* Body *)
 Definition body___invntt___butterfly64x : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar t0_14097.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl0
+  [:: MkI dummy_instr_info (Copn [:: Lvar t0_27.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl0
                                                                     ; Pvar rh0 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t1_14098.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl1
+    ; MkI dummy_instr_info (Copn [:: Lvar t1_27.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl1
                                                                     ; Pvar rh1 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t2_14099.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl2
+    ; MkI dummy_instr_info (Copn [:: Lvar t2_25.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl2
                                                                     ; Pvar rh2 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rl0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar rh0
                                                                     ; Pvar rl0 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rl1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar rh1
                                                                     ; Pvar rl1 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rh0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar zl0
-                                                                    ; Pvar t0_14097 ])
+                                                                    ; Pvar t0_27 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rl2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar rh2
                                                                     ; Pvar rl2 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rh1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar zl0
-                                                                    ; Pvar t1_14098 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t3_14100.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl3
+                                                                    ; Pvar t1_27 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t3_25.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar rl3
                                                                     ; Pvar rh3 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rl3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPADD VE16 U256))))) [:: Pvar rh3
                                                                     ; Pvar rl3 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rh2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar zl1
-                                                                    ; Pvar t2_14099 ])
+                                                                    ; Pvar t2_25 ])
     ; MkI dummy_instr_info (Copn [:: Lvar rh3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULL VE16 U256))))) [:: Pvar zl1
-                                                                    ; Pvar t3_14100 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t0_14097.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh0
-                                                                    ; Pvar t0_14097 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t1_14098.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh0
-                                                                    ; Pvar t1_14098 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t2_14099.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh1
-                                                                    ; Pvar t2_14099 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t3_14100.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh1
-                                                                    ; Pvar t3_14100 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_14096
+                                                                    ; Pvar t3_25 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t0_27.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh0
+                                                                    ; Pvar t0_27 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t1_27.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh0
+                                                                    ; Pvar t1_27 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t2_25.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh1
+                                                                    ; Pvar t2_25 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t3_25.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar zh1
+                                                                    ; Pvar t3_25 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar rh0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_8
                                                                     ; Pvar rh0 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_14096
+    ; MkI dummy_instr_info (Copn [:: Lvar rh1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_8
                                                                     ; Pvar rh1 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_14096
+    ; MkI dummy_instr_info (Copn [:: Lvar rh2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_8
                                                                     ; Pvar rh2 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_14096
+    ; MkI dummy_instr_info (Copn [:: Lvar rh3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPMULH U256))))) [:: Pvar qx16_8
                                                                     ; Pvar rh3 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t0_14097
+    ; MkI dummy_instr_info (Copn [:: Lvar rh0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t0_27
                                                                     ; Pvar rh0 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t1_14098
+    ; MkI dummy_instr_info (Copn [:: Lvar rh1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t1_27
                                                                     ; Pvar rh1 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t2_14099
+    ; MkI dummy_instr_info (Copn [:: Lvar rh2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t2_25
                                                                     ; Pvar rh2 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar rh3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t3_14100
+    ; MkI dummy_instr_info (Copn [:: Lvar rh3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSUB VE16 U256))))) [:: Pvar t3_25
                                                                     ; Pvar rh3 ]) ].
 
 Definition fd___invntt___butterfly64x : ufundef :=

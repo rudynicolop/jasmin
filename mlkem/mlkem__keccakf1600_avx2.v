@@ -15,18 +15,18 @@ Context {IdO : IdentOracles}.
 
 (* _keccakf1600_avx2 *)
 (* Local variables *)
-Definition state_19015 : gvar :=
+Definition state_1 : gvar :=
   mk_rocq_gvar Slocal (aarr U256 7) (mkident 19015).
 
 (* Signature *)
 Definition tyin__keccakf1600_avx2 : seq atype := [:: aarr U256 7 ].
-Definition args__keccakf1600_avx2 : seq var_i := [:: state_19015.(gv) ].
+Definition args__keccakf1600_avx2 : seq var_i := [:: state_1.(gv) ].
 Definition tyout__keccakf1600_avx2 : seq atype := [:: aarr U256 7 ].
-Definition res__keccakf1600_avx2 : seq var_i := [:: state_19015.(gv) ].
+Definition res__keccakf1600_avx2 : seq var_i := [:: state_1.(gv) ].
 
 (* Body *)
 Definition body__keccakf1600_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Ccall [:: Lvar state_19015.(gv) ] __keccakf1600_avx2 [:: Pvar state_19015 ]) ].
+  [:: MkI dummy_instr_info (Ccall [:: Lvar state_1.(gv) ] __keccakf1600_avx2 [:: Pvar state_1 ]) ].
 
 Definition fd__keccakf1600_avx2 : ufundef :=
   {|

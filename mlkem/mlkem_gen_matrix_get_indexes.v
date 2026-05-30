@@ -15,26 +15,25 @@ Context {IdO : IdentOracles}.
 
 (* gen_matrix_get_indexes *)
 (* Local variables *)
-Definition b_13780 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13780).
+Definition b_9 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13780).
 Definition _t : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13781).
-Definition t_13782 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13782).
+Definition t_17 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13782).
 Definition idxs : gvar := mk_rocq_gvar Slocal (aarr U8 32) (mkident 13783).
 
 (* Signature *)
 Definition tyin_gen_matrix_get_indexes : seq atype :=
   [:: aword U64; aword U64 ].
-Definition args_gen_matrix_get_indexes : seq var_i :=
-  [:: b_13780.(gv); _t.(gv) ].
+Definition args_gen_matrix_get_indexes : seq var_i := [:: b_9.(gv); _t.(gv) ].
 Definition tyout_gen_matrix_get_indexes : seq atype := [:: aword U64 ].
-Definition res_gen_matrix_get_indexes : seq var_i := [:: t_13782.(gv) ].
+Definition res_gen_matrix_get_indexes : seq var_i := [:: t_17.(gv) ].
 
 (* Body *)
 Definition body_gen_matrix_get_indexes : cmd :=
   [:: MkI dummy_instr_info (Cassgn (Lvar idxs.(gv)) AT_none (aarr U8 32) (Pvar gen_matrix_indexes))
-    ; MkI dummy_instr_info (Cassgn (Lvar t_13782.(gv)) AT_none (aword U64) (Pvar _t))
-    ; MkI dummy_instr_info (Cassgn (Lvar t_13782.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t_13782) (Papp1 (Oword_of_int U8) (Papp2 (Oadd (Op_int)) (Pconst (3)%Z) (Pconst (1)%Z)))))
-    ; MkI dummy_instr_info (Cassgn (Lvar b_13780.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar b_13780) (Pvar t_13782)))
-    ; MkI dummy_instr_info (Cassgn (Lvar t_13782.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 idxs (Papp1 (Oint_of_word Unsigned U64) (Pvar b_13780)))) ].
+    ; MkI dummy_instr_info (Cassgn (Lvar t_17.(gv)) AT_none (aword U64) (Pvar _t))
+    ; MkI dummy_instr_info (Cassgn (Lvar t_17.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t_17) (Papp1 (Oword_of_int U8) (Papp2 (Oadd (Op_int)) (Pconst (3)%Z) (Pconst (1)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Lvar b_9.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar b_9) (Pvar t_17)))
+    ; MkI dummy_instr_info (Cassgn (Lvar t_17.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 idxs (Papp1 (Oint_of_word Unsigned U64) (Pvar b_9)))) ].
 
 Definition fd_gen_matrix_get_indexes : ufundef :=
   {|

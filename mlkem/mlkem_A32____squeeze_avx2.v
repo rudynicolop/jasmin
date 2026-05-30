@@ -15,54 +15,52 @@ Context {IdO : IdentOracles}.
 
 (* A32____squeeze_avx2 *)
 (* Local variables *)
-Definition st_17424 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 7) (mkident 17424).
-Definition buf_17425 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 32) (mkident 17425).
-Definition _RATE8_17426 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17426).
-Definition offset_17427 : gvar :=
+Definition st_39 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 17424).
+Definition buf_53 : gvar := mk_rocq_gvar Slocal (aarr U8 32) (mkident 17425).
+Definition _RATE8_15 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17426).
+Definition offset_43 : gvar :=
   mk_rocq_gvar Slocal (aword U64) (mkident 17427).
-Definition _LEN_17428 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17428).
-Definition ITERS_17429 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17429).
-Definition LO_17430 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17430).
-Definition i_17431 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17431).
+Definition _LEN_32 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17428).
+Definition ITERS_15 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17429).
+Definition LO_5 : gvar := mk_rocq_gvar Slocal (aint) (mkident 17430).
+Definition i_24 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17431).
 
 (* Signature *)
 Definition tyin_A32____squeeze_avx2 : seq atype :=
   [:: aarr U256 7; aarr U8 32; aint ].
 Definition args_A32____squeeze_avx2 : seq var_i :=
-  [:: st_17424.(gv); buf_17425.(gv); _RATE8_17426.(gv) ].
+  [:: st_39.(gv); buf_53.(gv); _RATE8_15.(gv) ].
 Definition tyout_A32____squeeze_avx2 : seq atype :=
   [:: aarr U256 7; aarr U8 32 ].
 Definition res_A32____squeeze_avx2 : seq var_i :=
-  [:: st_17424.(gv); buf_17425.(gv) ].
+  [:: st_39.(gv); buf_53.(gv) ].
 
 (* Body *)
 Definition body_A32____squeeze_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar offset_17427.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
-    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_17428.(gv)) AT_none (aint) (Pconst (32)%Z))
-    ; MkI dummy_instr_info (Cassgn (Lvar ITERS_17429.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_17428) (Pvar _RATE8_17426)))
-    ; MkI dummy_instr_info (Cassgn (Lvar LO_17430.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_17428) (Pvar _RATE8_17426)))
-    ; MkI dummy_instr_info (Cassgn (Lvar i_17431.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+  [:: MkI dummy_instr_info (Cassgn (Lvar offset_43.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_32.(gv)) AT_none (aint) (Pconst (32)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar ITERS_15.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_32) (Pvar _RATE8_15)))
+    ; MkI dummy_instr_info (Cassgn (Lvar LO_5.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_32) (Pvar _RATE8_15)))
+    ; MkI dummy_instr_info (Cassgn (Lvar i_24.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
     ; MkI dummy_instr_info (Cwhile Align
                               [::]
-                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_17431) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_17429)))
+                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_24) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_15)))
                               dummy_instr_info
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_17424.(gv) ] _keccakf1600_avx2 [:: Pvar st_17424 ])
-                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_17425.(gv)
-                                                                ; Lvar offset_17427.(gv) ] A32____dumpstate_avx2 [:: Pvar buf_17425
-                                                                    ; Pvar offset_17427
-                                                                    ; Pvar _RATE8_17426
-                                                                    ; Pvar st_17424 ])
-                                ; MkI dummy_instr_info (Cassgn (Lvar i_17431.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_17431) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_39.(gv) ] _keccakf1600_avx2 [:: Pvar st_39 ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_53.(gv)
+                                                                ; Lvar offset_43.(gv) ] A32____dumpstate_avx2 [:: Pvar buf_53
+                                                                    ; Pvar offset_43
+                                                                    ; Pvar _RATE8_15
+                                                                    ; Pvar st_39 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar i_24.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_24) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LO_17430))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_17424.(gv) ] _keccakf1600_avx2 [:: Pvar st_17424 ])
-                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_17425.(gv)
-                                                                ; Lvar offset_17427.(gv) ] A32____dumpstate_avx2 [:: Pvar buf_17425
-                                                                    ; Pvar offset_17427
-                                                                    ; Pvar LO_17430
-                                                                    ; Pvar st_17424 ]) ]
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LO_5))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_39.(gv) ] _keccakf1600_avx2 [:: Pvar st_39 ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_53.(gv)
+                                                                ; Lvar offset_43.(gv) ] A32____dumpstate_avx2 [:: Pvar buf_53
+                                                                    ; Pvar offset_43
+                                                                    ; Pvar LO_5
+                                                                    ; Pvar st_39 ]) ]
                               [::]) ].
 
 Definition fd_A32____squeeze_avx2 : ufundef :=

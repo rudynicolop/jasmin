@@ -16,7 +16,7 @@ Context {IdO : IdentOracles}.
 (* _keccakf1600_st25_avx2 *)
 (* Local variables *)
 Definition st25 : gvar := mk_rocq_gvar Slocal (aarr U64 25) (mkident 18993).
-Definition state_18994 : gvar :=
+Definition state_4 : gvar :=
   mk_rocq_gvar Slocal (aarr U256 7) (mkident 18994).
 
 (* Signature *)
@@ -27,10 +27,10 @@ Definition res__keccakf1600_st25_avx2 : seq var_i := [:: st25.(gv) ].
 
 (* Body *)
 Definition body__keccakf1600_st25_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Ccall [:: Lvar state_18994.(gv) ] __stavx2_pack [:: Pvar st25 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar state_18994.(gv) ] __keccakf1600_avx2 [:: Pvar state_18994 ])
+  [:: MkI dummy_instr_info (Ccall [:: Lvar state_4.(gv) ] __stavx2_pack [:: Pvar st25 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar state_4.(gv) ] __keccakf1600_avx2 [:: Pvar state_4 ])
     ; MkI dummy_instr_info (Ccall [:: Lvar st25.(gv) ] __stavx2_unpack [:: Pvar st25
-                                                                    ; Pvar state_18994 ]) ].
+                                                                    ; Pvar state_4 ]) ].
 
 Definition fd__keccakf1600_st25_avx2 : ufundef :=
   {|

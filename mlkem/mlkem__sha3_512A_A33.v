@@ -17,8 +17,7 @@ Context {IdO : IdentOracles}.
 (* Local variables *)
 Definition out : gvar := mk_rocq_gvar Slocal (aarr U8 64) (mkident 14362).
 Definition j_in : gvar := mk_rocq_gvar Slocal (aarr U8 33) (mkident 14363).
-Definition st_14364 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 7) (mkident 14364).
+Definition st_120 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 14364).
 
 (* Signature *)
 Definition tyin__sha3_512A_A33 : seq atype := [:: aarr U8 64; aarr U8 33 ].
@@ -28,15 +27,15 @@ Definition res__sha3_512A_A33 : seq var_i := [:: out.(gv) ].
 
 (* Body *)
 Definition body__sha3_512A_A33 : cmd :=
-  [:: MkI dummy_instr_info (Ccall [:: Lvar st_14364.(gv) ] __state_init_avx2 [::])
-    ; MkI dummy_instr_info (Ccall [:: Lvar st_14364.(gv)
-                                    ; Lnone dummy_var_info (aint) ] A33____absorb_avx2 [:: Pvar st_14364
+  [:: MkI dummy_instr_info (Ccall [:: Lvar st_120.(gv) ] __state_init_avx2 [::])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_120.(gv)
+                                    ; Lnone dummy_var_info (aint) ] A33____absorb_avx2 [:: Pvar st_120
                                                                     ; Pconst (0)%Z
                                                                     ; Pvar j_in
                                                                     ; Pconst (6)%Z
                                                                     ; Pconst (72)%Z ])
     ; MkI dummy_instr_info (Ccall [:: Lnone dummy_var_info (aarr U256 7)
-                                    ; Lvar out.(gv) ] A64____squeeze_avx2 [:: Pvar st_14364
+                                    ; Lvar out.(gv) ] A64____squeeze_avx2 [:: Pvar st_120
                                                                     ; Pvar out
                                                                     ; Pconst (72)%Z ]) ].
 

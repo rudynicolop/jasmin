@@ -15,21 +15,21 @@ Context {IdO : IdentOracles}.
 
 (* __SHLDQ *)
 (* Local variables *)
-Definition x_18989 : gvar := mk_rocq_gvar Slocal (aword U128) (mkident 18989).
-Definition shbytes_18990 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18990).
+Definition x_5 : gvar := mk_rocq_gvar Slocal (aword U128) (mkident 18989).
+Definition shbytes_0 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18990).
 
 (* Signature *)
 Definition tyin___SHLDQ : seq atype := [:: aword U128; aint ].
-Definition args___SHLDQ : seq var_i := [:: x_18989.(gv); shbytes_18990.(gv) ].
+Definition args___SHLDQ : seq var_i := [:: x_5.(gv); shbytes_0.(gv) ].
 Definition tyout___SHLDQ : seq atype := [:: aword U128 ].
-Definition res___SHLDQ : seq var_i := [:: x_18989.(gv) ].
+Definition res___SHLDQ : seq var_i := [:: x_5.(gv) ].
 
 (* Body *)
 Definition body___SHLDQ : cmd :=
   [:: MkI dummy_instr_info (Cif
-                              (Papp2 (Oneq (Op_int)) (Pvar shbytes_18990) (Pconst (0)%Z))
-                              [:: MkI dummy_instr_info (Copn [:: Lvar x_18989.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLLDQ U128))))) [:: Pvar x_18989
-                                                                    ; Papp1 (Oword_of_int U8) (Pvar shbytes_18990) ]) ]
+                              (Papp2 (Oneq (Op_int)) (Pvar shbytes_0) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Copn [:: Lvar x_5.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSLLDQ U128))))) [:: Pvar x_5
+                                                                    ; Papp1 (Oword_of_int U8) (Pvar shbytes_0) ]) ]
                               [::]) ].
 
 Definition fd___SHLDQ : ufundef :=

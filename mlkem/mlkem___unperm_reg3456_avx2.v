@@ -15,45 +15,37 @@ Context {IdO : IdentOracles}.
 
 (* __unperm_reg3456_avx2 *)
 (* Local variables *)
-Definition st3_18838 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18838).
-Definition st4_18839 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18839).
-Definition st5_18840 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18840).
-Definition st6_18841 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18841).
-Definition r3_18842 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18842).
-Definition r4_18843 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18843).
-Definition r5_18844 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18844).
-Definition r6_18845 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18845).
-Definition t256_0_18846 : gvar :=
+Definition st3_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18838).
+Definition st4_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18839).
+Definition st5_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18840).
+Definition st6_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18841).
+Definition r3_2 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18842).
+Definition r4_2 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18843).
+Definition r5_2 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18844).
+Definition r6_2 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18845).
+Definition t256_0_2 : gvar :=
   mk_rocq_gvar Slocal (aword U256) (mkident 18846).
-Definition t256_1_18847 : gvar :=
+Definition t256_1_2 : gvar :=
   mk_rocq_gvar Slocal (aword U256) (mkident 18847).
-Definition t256_2_18848 : gvar :=
+Definition t256_2_2 : gvar :=
   mk_rocq_gvar Slocal (aword U256) (mkident 18848).
-Definition t256_3_18849 : gvar :=
+Definition t256_3_0 : gvar :=
   mk_rocq_gvar Slocal (aword U256) (mkident 18849).
 
 (* Signature *)
 Definition tyin___unperm_reg3456_avx2 : seq atype :=
   [:: aword U256; aword U256; aword U256; aword U256 ].
 Definition args___unperm_reg3456_avx2 : seq var_i :=
-  [:: st3_18838.(gv); st4_18839.(gv); st5_18840.(gv); st6_18841.(gv) ].
+  [:: st3_0.(gv); st4_0.(gv); st5_0.(gv); st6_0.(gv) ].
 Definition tyout___unperm_reg3456_avx2 : seq atype :=
   [:: aword U256; aword U256; aword U256; aword U256 ].
 Definition res___unperm_reg3456_avx2 : seq var_i :=
-  [:: r3_18842.(gv); r4_18843.(gv); r5_18844.(gv); r6_18845.(gv) ].
+  [:: r3_2.(gv); r4_2.(gv); r5_2.(gv); r6_2.(gv) ].
 
 (* Body *)
 Definition body___unperm_reg3456_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar t256_0_18846.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st3_18838
-                                                                    ; Pvar st4_18839
+  [:: MkI dummy_instr_info (Copn [:: Lvar t256_0_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st3_0
+                                                                    ; Pvar st4_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -62,8 +54,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t256_1_18847.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st4_18839
-                                                                    ; Pvar st3_18838
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_1_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st4_0
+                                                                    ; Pvar st3_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -72,8 +64,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t256_2_18848.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st5_18840
-                                                                    ; Pvar st6_18841
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_2_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st5_0
+                                                                    ; Pvar st6_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -82,8 +74,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t256_3_18849.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st6_18841
-                                                                    ; Pvar st5_18840
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_3_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar st6_0
+                                                                    ; Pvar st5_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
@@ -92,8 +84,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (0)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar r3_18842.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_18846
-                                                                    ; Pvar t256_3_18849
+    ; MkI dummy_instr_info (Copn [:: Lvar r3_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_0_2
+                                                                    ; Pvar t256_3_0
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
@@ -102,8 +94,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar r4_18843.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_3_18849
-                                                                    ; Pvar t256_1_18847
+    ; MkI dummy_instr_info (Copn [:: Lvar r4_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_3_0
+                                                                    ; Pvar t256_1_2
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
@@ -112,8 +104,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar r5_18844.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_18848
-                                                                    ; Pvar t256_0_18846
+    ; MkI dummy_instr_info (Copn [:: Lvar r5_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_2_2
+                                                                    ; Pvar t256_0_2
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z
@@ -122,8 +114,8 @@ Definition body___unperm_reg3456_avx2 : cmd :=
                                                                     ; Pconst (0)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar r6_18845.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_18847
-                                                                    ; Pvar t256_2_18848
+    ; MkI dummy_instr_info (Copn [:: Lvar r6_2.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar t256_1_2
+                                                                    ; Pvar t256_2_2
                                                                     ; PappN (Opack U8 PE1) [:: Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z

@@ -15,93 +15,89 @@ Context {IdO : IdentOracles}.
 
 (* A33____a_rlen_read_upto8_noninline *)
 (* Local variables *)
-Definition a_17130 : gvar := mk_rocq_gvar Slocal (aarr U8 33) (mkident 17130).
-Definition off__17131 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 17131).
-Definition len__17132 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 17132).
-Definition w_17133 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17133).
-Definition off_17134 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 17134).
-Definition len_17135 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 17135).
-Definition zf_17136 : gvar := mk_rocq_gvar Slocal (abool) (mkident 17136).
-Definition sh_17137 : gvar := mk_rocq_gvar Slocal (aword U8) (mkident 17137).
-Definition x_17138 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17138).
+Definition a_16 : gvar := mk_rocq_gvar Slocal (aarr U8 33) (mkident 17130).
+Definition off__2 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17131).
+Definition len__2 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17132).
+Definition w_46 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17133).
+Definition off_9 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17134).
+Definition len_11 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17135).
+Definition zf_11 : gvar := mk_rocq_gvar Slocal (abool) (mkident 17136).
+Definition sh_7 : gvar := mk_rocq_gvar Slocal (aword U8) (mkident 17137).
+Definition x_16 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 17138).
 
 (* Signature *)
 Definition tyin_A33____a_rlen_read_upto8_noninline : seq atype :=
   [:: aarr U8 33; aword U64; aword U64 ].
 Definition args_A33____a_rlen_read_upto8_noninline : seq var_i :=
-  [:: a_17130.(gv); off__17131.(gv); len__17132.(gv) ].
+  [:: a_16.(gv); off__2.(gv); len__2.(gv) ].
 Definition tyout_A33____a_rlen_read_upto8_noninline : seq atype :=
   [:: aword U64; aword U64 ].
 Definition res_A33____a_rlen_read_upto8_noninline : seq var_i :=
-  [:: off__17131.(gv); w_17133.(gv) ].
+  [:: off__2.(gv); w_46.(gv) ].
 
 (* Body *)
 Definition body_A33____a_rlen_read_upto8_noninline : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar off_17134.(gv)) AT_none (aword U64) (Pvar off__17131))
-    ; MkI dummy_instr_info (Cassgn (Lvar len_17135.(gv)) AT_none (aword U64) (Pvar len__17132))
+  [:: MkI dummy_instr_info (Cassgn (Lvar off_9.(gv)) AT_none (aword U64) (Pvar off__2))
+    ; MkI dummy_instr_info (Cassgn (Lvar len_11.(gv)) AT_none (aword U64) (Pvar len__2))
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Owi2 Unsigned U64 WIge) (Pvar len_17135) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (8)%Z)))
-                              [:: MkI dummy_instr_info (Cassgn (Lvar w_17133.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 a_17130 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_17134))))
-                                ; MkI dummy_instr_info (Cassgn (Lvar off_17134.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_17134) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (8)%Z)))) ]
+                              (Papp2 (Owi2 Unsigned U64 WIge) (Pvar len_11) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (8)%Z)))
+                              [:: MkI dummy_instr_info (Cassgn (Lvar w_46.(gv)) AT_none (aword U64) (Pget Unaligned AAdirect U64 a_16 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_9))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar off_9.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_9) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (8)%Z)))) ]
                               [:: MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
-                                                               ; Lvar zf_17136.(gv) ] AT_none (Oasm ((BaseOp ((None), (TEST U64))))) [:: Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar len_17135)
+                                                               ; Lvar zf_11.(gv) ] AT_none (Oasm ((BaseOp ((None), (TEST U64))))) [:: Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar len_11)
                                                                     ; Papp1 (Oword_of_int U64) (Pconst (4)%Z) ])
                                 ; MkI dummy_instr_info (Cif
-                                                          (Papp1 (Onot) (Pvar zf_17136))
+                                                          (Papp1 (Onot) (Pvar zf_11))
                                                           [:: MkI dummy_instr_info (
-                                                          Cassgn (Lvar w_17133.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U32) (Pget Unaligned AAdirect U32 a_17130 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_17134)))))
+                                                          Cassgn (Lvar w_46.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U32) (Pget Unaligned AAdirect U32 a_16 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_9)))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar off_17134.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_17134) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (4)%Z))))
+                                                          Cassgn (Lvar off_9.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_9) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (4)%Z))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar sh_17137.(gv)) AT_none (aword U8) (Papp1 (Oword_of_int U8) (Pconst (32)%Z))) ]
+                                                          Cassgn (Lvar sh_7.(gv)) AT_none (aword U8) (Papp1 (Oword_of_int U8) (Pconst (32)%Z))) ]
                                                           [:: MkI dummy_instr_info (
-                                                          Cassgn (Lvar w_17133.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (0)%Z)))
+                                                          Cassgn (Lvar w_46.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (0)%Z)))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar sh_17137.(gv)) AT_none (aword U8) (Papp1 (Oword_of_int U8) (Pconst (0)%Z))) ])
+                                                          Cassgn (Lvar sh_7.(gv)) AT_none (aword U8) (Papp1 (Oword_of_int U8) (Pconst (0)%Z))) ])
                                 ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
-                                                               ; Lvar zf_17136.(gv) ] AT_none (Oasm ((BaseOp ((None), (TEST U64))))) [:: Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar len_17135)
+                                                               ; Lvar zf_11.(gv) ] AT_none (Oasm ((BaseOp ((None), (TEST U64))))) [:: Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar len_11)
                                                                     ; Papp1 (Oword_of_int U64) (Pconst (2)%Z) ])
                                 ; MkI dummy_instr_info (Cif
-                                                          (Papp1 (Onot) (Pvar zf_17136))
+                                                          (Papp1 (Onot) (Pvar zf_11))
                                                           [:: MkI dummy_instr_info (
-                                                          Cassgn (Lvar x_17138.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U16) (Pget Unaligned AAdirect U16 a_17130 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_17134)))))
+                                                          Cassgn (Lvar x_16.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U16) (Pget Unaligned AAdirect U16 a_16 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_9)))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar x_17138.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar x_17138) (Papp2 (Oland U8) (Pvar sh_17137) (Papp1 (Oword_of_int U8) (Pconst (63)%Z)))))
+                                                          Cassgn (Lvar x_16.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar x_16) (Papp2 (Oland U8) (Pvar sh_7) (Papp1 (Oword_of_int U8) (Pconst (63)%Z)))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar w_17133.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar w_17133) (Pvar x_17138)))
+                                                          Cassgn (Lvar w_46.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar w_46) (Pvar x_16)))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar off_17134.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_17134) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))
+                                                          Cassgn (Lvar off_9.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_9) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (2)%Z))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar sh_17137.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar sh_17137) (Papp1 (Oword_of_int U8) (Pconst (16)%Z)))) ]
+                                                          Cassgn (Lvar sh_7.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar sh_7) (Papp1 (Oword_of_int U8) (Pconst (16)%Z)))) ]
                                                           [::])
                                 ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
                                                                ; Lnone dummy_var_info (abool)
-                                                               ; Lvar zf_17136.(gv) ] AT_none (Oasm ((BaseOp ((None), (TEST U64))))) [:: Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar len_17135)
+                                                               ; Lvar zf_11.(gv) ] AT_none (Oasm ((BaseOp ((None), (TEST U64))))) [:: Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar len_11)
                                                                     ; Papp1 (Oword_of_int U64) (Pconst (1)%Z) ])
                                 ; MkI dummy_instr_info (Cif
-                                                          (Papp1 (Onot) (Pvar zf_17136))
+                                                          (Papp1 (Onot) (Pvar zf_11))
                                                           [:: MkI dummy_instr_info (
-                                                          Cassgn (Lvar x_17138.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U8) (Pget Unaligned AAdirect U8 a_17130 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_17134)))))
+                                                          Cassgn (Lvar x_16.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U8) (Pget Unaligned AAdirect U8 a_16 (Papp1 (Owi1 Unsigned (WIint_of_wint U64)) (Pvar off_9)))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar x_17138.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar x_17138) (Papp2 (Oland U8) (Pvar sh_17137) (Papp1 (Oword_of_int U8) (Pconst (63)%Z)))))
+                                                          Cassgn (Lvar x_16.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar x_16) (Papp2 (Oland U8) (Pvar sh_7) (Papp1 (Oword_of_int U8) (Pconst (63)%Z)))))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar w_17133.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar w_17133) (Pvar x_17138)))
+                                                          Cassgn (Lvar w_46.(gv)) AT_none (aword U64) (Papp2 (Oadd (Op_w U64)) (Pvar w_46) (Pvar x_16)))
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar off_17134.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_17134) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ]
+                                                          Cassgn (Lvar off_9.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar off_9) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ]
                                                           [::]) ])
-    ; MkI dummy_instr_info (Cassgn (Lvar off__17131.(gv)) AT_none (aword U64) (Pvar off_17134)) ].
+    ; MkI dummy_instr_info (Cassgn (Lvar off__2.(gv)) AT_none (aword U64) (Pvar off_9)) ].
 
 Definition fd_A33____a_rlen_read_upto8_noninline : ufundef :=
   {|

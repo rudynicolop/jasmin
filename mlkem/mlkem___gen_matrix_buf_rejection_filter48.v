@@ -17,26 +17,21 @@ Context {IdO : IdentOracles}.
 (* Local variables *)
 Definition pol : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 13853).
 Definition counter : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13854).
-Definition buf_13855 : gvar :=
+Definition buf_172 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 536) (mkident 13855).
 Definition buf_offset : gvar :=
   mk_rocq_gvar Slocal (aword U64) (mkident 13856).
 Definition load_shuffle : gvar :=
   mk_rocq_gvar Slocal (aword U256) (mkident 13857).
-Definition mask_13858 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 13858).
+Definition mask_4 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13858).
 Definition bounds : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13859).
 Definition sst : gvar := mk_rocq_gvar Slocal (aarr U8 2048) (mkident 13860).
 Definition ones : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13861).
 Definition ms : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13862).
-Definition f0_13863 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 13863).
-Definition f1_13864 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 13864).
-Definition g0_13865 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 13865).
-Definition g1_13866 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 13866).
+Definition f0_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13863).
+Definition f1_3 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13864).
+Definition g0_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13865).
+Definition g1_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 13866).
 Definition good : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13867).
 Definition t0_0 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13868).
 Definition shuffle_0 : gvar :=
@@ -68,10 +63,10 @@ Definition tyin___gen_matrix_buf_rejection_filter48 : seq atype :=
 Definition args___gen_matrix_buf_rejection_filter48 : seq var_i :=
   [:: pol.(gv)
     ; counter.(gv)
-    ; buf_13855.(gv)
+    ; buf_172.(gv)
     ; buf_offset.(gv)
     ; load_shuffle.(gv)
-    ; mask_13858.(gv)
+    ; mask_4.(gv)
     ; bounds.(gv)
     ; sst.(gv)
     ; ones.(gv)
@@ -83,41 +78,41 @@ Definition res___gen_matrix_buf_rejection_filter48 : seq var_i :=
 
 (* Body *)
 Definition body___gen_matrix_buf_rejection_filter48 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar f0_13863.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERMQ)))) [:: Pget Unaligned AAdirect U256 buf_13855 (Papp2 (Oadd (Op_int)) (Papp1 (Oint_of_word Unsigned U64) (Pvar buf_offset)) (Pconst (0)%Z))
+  [:: MkI dummy_instr_info (Copn [:: Lvar f0_3.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERMQ)))) [:: Pget Unaligned AAdirect U256 buf_172 (Papp2 (Oadd (Op_int)) (Papp1 (Oint_of_word Unsigned U64) (Pvar buf_offset)) (Pconst (0)%Z))
                                                                     ; PappN (Opack U8 PE2) [:: Pconst (2)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f1_13864.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERMQ)))) [:: Pget Unaligned AAdirect U256 buf_13855 (Papp2 (Oadd (Op_int)) (Papp1 (Oint_of_word Unsigned U64) (Pvar buf_offset)) (Pconst (24)%Z))
+    ; MkI dummy_instr_info (Copn [:: Lvar f1_3.(gv) ] AT_none (Oasm ((BaseOp ((None), VPERMQ)))) [:: Pget Unaligned AAdirect U256 buf_172 (Papp2 (Oadd (Op_int)) (Papp1 (Oint_of_word Unsigned U64) (Pvar buf_offset)) (Pconst (24)%Z))
                                                                     ; PappN (Opack U8 PE2) [:: Pconst (2)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (1)%Z
                                                                     ; Pconst (0)%Z ] ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f0_13863.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f0_13863
+    ; MkI dummy_instr_info (Copn [:: Lvar f0_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f0_3
                                                                     ; Pvar load_shuffle ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f1_13864.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f1_13864
+    ; MkI dummy_instr_info (Copn [:: Lvar f1_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f1_3
                                                                     ; Pvar load_shuffle ])
-    ; MkI dummy_instr_info (Copn [:: Lvar g0_13865.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE16 U256))))) [:: Pvar f0_13863
+    ; MkI dummy_instr_info (Copn [:: Lvar g0_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE16 U256))))) [:: Pvar f0_3
                                                                     ; Papp1 (Oword_of_int U128) (Pconst (4)%Z) ])
-    ; MkI dummy_instr_info (Copn [:: Lvar g1_13866.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE16 U256))))) [:: Pvar f1_13864
+    ; MkI dummy_instr_info (Copn [:: Lvar g1_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE16 U256))))) [:: Pvar f1_3
                                                                     ; Papp1 (Oword_of_int U128) (Pconst (4)%Z) ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f0_13863.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar f0_13863
-                                                                    ; Pvar g0_13865
+    ; MkI dummy_instr_info (Copn [:: Lvar f0_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar f0_3
+                                                                    ; Pvar g0_1
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f1_13864.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar f1_13864
-                                                                    ; Pvar g1_13866
+    ; MkI dummy_instr_info (Copn [:: Lvar f1_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE16 U256))))) [:: Pvar f1_3
+                                                                    ; Pvar g1_1
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f0_13863.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar f0_13863
-                                                                    ; Pvar mask_13858 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f1_13864.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar f1_13864
-                                                                    ; Pvar mask_13858 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar g0_13865.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPCMPGT VE16 U256))))) [:: Pvar bounds
-                                                                    ; Pvar f0_13863 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar g1_13866.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPCMPGT VE16 U256))))) [:: Pvar bounds
-                                                                    ; Pvar f1_13864 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar g0_13865.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPACKSS VE16 U256))))) [:: Pvar g0_13865
-                                                                    ; Pvar g1_13866 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar good.(gv) ] AT_none (Oasm ((BaseOp ((Some U64), (MOVEMASK VE8 U256))))) [:: Pvar g0_13865 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar f0_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar f0_3
+                                                                    ; Pvar mask_4 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar f1_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPAND U256))))) [:: Pvar f1_3
+                                                                    ; Pvar mask_4 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar g0_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPCMPGT VE16 U256))))) [:: Pvar bounds
+                                                                    ; Pvar f0_3 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar g1_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPCMPGT VE16 U256))))) [:: Pvar bounds
+                                                                    ; Pvar f1_3 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar g0_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPACKSS VE16 U256))))) [:: Pvar g0_1
+                                                                    ; Pvar g1_1 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar good.(gv) ] AT_none (Oasm ((BaseOp ((Some U64), (MOVEMASK VE8 U256))))) [:: Pvar g0_1 ])
     ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Odeclassify (aword U64))) [:: Pvar good ])
     ; MkI dummy_instr_info (Copn [:: Lvar good.(gv) ] AT_none (Oslh (SLHprotect U64)) [:: Pvar good
                                                                     ; Pvar ms ])
@@ -178,15 +173,15 @@ Definition body___gen_matrix_buf_rejection_filter48 : cmd :=
                                                                     ; Pvar ones ])
     ; MkI dummy_instr_info (Copn [:: Lvar shuffle_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE8 U256))))) [:: Pvar shuffle_1
                                                                     ; Pvar shuffle_t ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f0_13863.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f0_13863
+    ; MkI dummy_instr_info (Copn [:: Lvar f0_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f0_3
                                                                     ; Pvar shuffle_0 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar f1_13864.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f1_13864
+    ; MkI dummy_instr_info (Copn [:: Lvar f1_3.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSHUFB U256))))) [:: Pvar f1_3
                                                                     ; Pvar shuffle_1 ])
-    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar counter)))) AT_none (aword U128) (Pvar f0_13863))
-    ; MkI dummy_instr_info (Copn [:: Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar t0_0))) ] AT_none (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pvar f0_13863
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar counter)))) AT_none (aword U128) (Pvar f0_3))
+    ; MkI dummy_instr_info (Copn [:: Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar t0_0))) ] AT_none (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pvar f0_3
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
-    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar t0_1)))) AT_none (aword U128) (Pvar f1_13864))
-    ; MkI dummy_instr_info (Copn [:: Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar t1_0))) ] AT_none (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pvar f1_13864
+    ; MkI dummy_instr_info (Cassgn (Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar t0_1)))) AT_none (aword U128) (Pvar f1_3))
+    ; MkI dummy_instr_info (Copn [:: Laset Unaligned AAdirect U128 pol.(gv) (Papp1 (Oint_of_word Unsigned U64) (Papp2 (Omul (Op_w U64)) (Papp1 (Oword_of_int U64) (Pconst (2)%Z)) (Pvar t1_0))) ] AT_none (Oasm ((BaseOp ((None), VEXTRACTI128)))) [:: Pvar f1_3
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (1)%Z) ])
     ; MkI dummy_instr_info (Cassgn (Lvar counter.(gv)) AT_none (aword U64) (Pvar t1_1)) ].
 

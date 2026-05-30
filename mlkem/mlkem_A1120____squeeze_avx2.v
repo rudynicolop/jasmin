@@ -15,54 +15,53 @@ Context {IdO : IdentOracles}.
 
 (* A1120____squeeze_avx2 *)
 (* Local variables *)
-Definition st_15267 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 7) (mkident 15267).
-Definition buf_15268 : gvar :=
+Definition st_93 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 15267).
+Definition buf_135 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 1120) (mkident 15268).
-Definition _RATE8_15269 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15269).
-Definition offset_15270 : gvar :=
+Definition _RATE8_42 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15269).
+Definition offset_139 : gvar :=
   mk_rocq_gvar Slocal (aword U64) (mkident 15270).
-Definition _LEN_15271 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15271).
-Definition ITERS_15272 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15272).
-Definition LO_15273 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15273).
-Definition i_15274 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15274).
+Definition _LEN_86 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15271).
+Definition ITERS_42 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15272).
+Definition LO_16 : gvar := mk_rocq_gvar Slocal (aint) (mkident 15273).
+Definition i_56 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 15274).
 
 (* Signature *)
 Definition tyin_A1120____squeeze_avx2 : seq atype :=
   [:: aarr U256 7; aarr U8 1120; aint ].
 Definition args_A1120____squeeze_avx2 : seq var_i :=
-  [:: st_15267.(gv); buf_15268.(gv); _RATE8_15269.(gv) ].
+  [:: st_93.(gv); buf_135.(gv); _RATE8_42.(gv) ].
 Definition tyout_A1120____squeeze_avx2 : seq atype :=
   [:: aarr U256 7; aarr U8 1120 ].
 Definition res_A1120____squeeze_avx2 : seq var_i :=
-  [:: st_15267.(gv); buf_15268.(gv) ].
+  [:: st_93.(gv); buf_135.(gv) ].
 
 (* Body *)
 Definition body_A1120____squeeze_avx2 : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar offset_15270.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
-    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_15271.(gv)) AT_none (aint) (Pconst (1120)%Z))
-    ; MkI dummy_instr_info (Cassgn (Lvar ITERS_15272.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_15271) (Pvar _RATE8_15269)))
-    ; MkI dummy_instr_info (Cassgn (Lvar LO_15273.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_15271) (Pvar _RATE8_15269)))
-    ; MkI dummy_instr_info (Cassgn (Lvar i_15274.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+  [:: MkI dummy_instr_info (Cassgn (Lvar offset_139.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_86.(gv)) AT_none (aint) (Pconst (1120)%Z))
+    ; MkI dummy_instr_info (Cassgn (Lvar ITERS_42.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_86) (Pvar _RATE8_42)))
+    ; MkI dummy_instr_info (Cassgn (Lvar LO_16.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_86) (Pvar _RATE8_42)))
+    ; MkI dummy_instr_info (Cassgn (Lvar i_56.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
     ; MkI dummy_instr_info (Cwhile Align
                               [::]
-                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_15274) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_15272)))
+                              (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_56) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_42)))
                               dummy_instr_info
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_15267.(gv) ] _keccakf1600_avx2 [:: Pvar st_15267 ])
-                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_15268.(gv)
-                                                                ; Lvar offset_15270.(gv) ] A1120____dumpstate_avx2 [:: Pvar buf_15268
-                                                                    ; Pvar offset_15270
-                                                                    ; Pvar _RATE8_15269
-                                                                    ; Pvar st_15267 ])
-                                ; MkI dummy_instr_info (Cassgn (Lvar i_15274.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_15274) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_93.(gv) ] _keccakf1600_avx2 [:: Pvar st_93 ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_135.(gv)
+                                                                ; Lvar offset_139.(gv) ] A1120____dumpstate_avx2 [:: Pvar buf_135
+                                                                    ; Pvar offset_139
+                                                                    ; Pvar _RATE8_42
+                                                                    ; Pvar st_93 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar i_56.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_56) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LO_15273))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_15267.(gv) ] _keccakf1600_avx2 [:: Pvar st_15267 ])
-                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_15268.(gv)
-                                                                ; Lvar offset_15270.(gv) ] A1120____dumpstate_avx2 [:: Pvar buf_15268
-                                                                    ; Pvar offset_15270
-                                                                    ; Pvar LO_15273
-                                                                    ; Pvar st_15267 ]) ]
+                              (Papp2 (Olt (Cmp_int)) (Pconst (0)%Z) (Pvar LO_16))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_93.(gv) ] _keccakf1600_avx2 [:: Pvar st_93 ])
+                                ; MkI dummy_instr_info (Ccall [:: Lvar buf_135.(gv)
+                                                                ; Lvar offset_139.(gv) ] A1120____dumpstate_avx2 [:: Pvar buf_135
+                                                                    ; Pvar offset_139
+                                                                    ; Pvar LO_16
+                                                                    ; Pvar st_93 ]) ]
                               [::]) ].
 
 Definition fd_A1120____squeeze_avx2 : ufundef :=

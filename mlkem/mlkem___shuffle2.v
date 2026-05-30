@@ -15,27 +15,27 @@ Context {IdO : IdentOracles}.
 
 (* __shuffle2 *)
 (* Local variables *)
-Definition a_19089 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19089).
-Definition b_19090 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19090).
+Definition a_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19089).
+Definition b_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19090).
 Definition t0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19091).
 Definition t1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19092).
 
 (* Signature *)
 Definition tyin___shuffle2 : seq atype := [:: aword U256; aword U256 ].
-Definition args___shuffle2 : seq var_i := [:: a_19089.(gv); b_19090.(gv) ].
+Definition args___shuffle2 : seq var_i := [:: a_1.(gv); b_1.(gv) ].
 Definition tyout___shuffle2 : seq atype := [:: aword U256; aword U256 ].
 Definition res___shuffle2 : seq var_i := [:: t0.(gv); t1.(gv) ].
 
 (* Body *)
 Definition body___shuffle2 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar t0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VMOVSLDUP U256))))) [:: Pvar b_19090 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_19089
+  [:: MkI dummy_instr_info (Copn [:: Lvar t0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VMOVSLDUP U256))))) [:: Pvar b_1 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar t0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_1
                                                                     ; Pvar t0
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ])
-    ; MkI dummy_instr_info (Copn [:: Lvar a_19089.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE64 U256))))) [:: Pvar a_19089
+    ; MkI dummy_instr_info (Copn [:: Lvar a_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPSRL VE64 U256))))) [:: Pvar a_1
                                                                     ; Papp1 (Oword_of_int U128) (Pconst (32)%Z) ])
-    ; MkI dummy_instr_info (Copn [:: Lvar t1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_19089
-                                                                    ; Pvar b_19090
+    ; MkI dummy_instr_info (Copn [:: Lvar t1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBLEND VE32 U256))))) [:: Pvar a_1
+                                                                    ; Pvar b_1
                                                                     ; Papp1 (Oword_of_int U8) (Pconst (170)%Z) ]) ].
 
 Definition fd___shuffle2 : ufundef :=

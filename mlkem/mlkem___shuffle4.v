@@ -15,25 +15,23 @@ Context {IdO : IdentOracles}.
 
 (* __shuffle4 *)
 (* Local variables *)
-Definition a_19093 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19093).
-Definition b_19094 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19094).
-Definition r0_19095 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 19095).
-Definition r1_19096 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 19096).
+Definition a_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19093).
+Definition b_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19094).
+Definition r0_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19095).
+Definition r1_0 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 19096).
 
 (* Signature *)
 Definition tyin___shuffle4 : seq atype := [:: aword U256; aword U256 ].
-Definition args___shuffle4 : seq var_i := [:: a_19093.(gv); b_19094.(gv) ].
+Definition args___shuffle4 : seq var_i := [:: a_0.(gv); b_0.(gv) ].
 Definition tyout___shuffle4 : seq atype := [:: aword U256; aword U256 ].
-Definition res___shuffle4 : seq var_i := [:: r0_19095.(gv); r1_19096.(gv) ].
+Definition res___shuffle4 : seq var_i := [:: r0_0.(gv); r1_0.(gv) ].
 
 (* Body *)
 Definition body___shuffle4 : cmd :=
-  [:: MkI dummy_instr_info (Copn [:: Lvar r0_19095.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar a_19093
-                                                                    ; Pvar b_19094 ])
-    ; MkI dummy_instr_info (Copn [:: Lvar r1_19096.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar a_19093
-                                                                    ; Pvar b_19094 ]) ].
+  [:: MkI dummy_instr_info (Copn [:: Lvar r0_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKL VE64 U256))))) [:: Pvar a_0
+                                                                    ; Pvar b_0 ])
+    ; MkI dummy_instr_info (Copn [:: Lvar r1_0.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPUNPCKH VE64 U256))))) [:: Pvar a_0
+                                                                    ; Pvar b_0 ]) ].
 
 Definition fd___shuffle4 : ufundef :=
   {|

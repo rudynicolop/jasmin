@@ -20,7 +20,7 @@ Definition public_key : gvar :=
 Definition secret_key : gvar :=
   mk_rocq_gvar Slocal (aarr U8 2400) (mkident 13606).
 Definition coins : gvar := mk_rocq_gvar Slocal (aarr U8 64) (mkident 13607).
-Definition r_13608 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13608).
+Definition r_19 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13608).
 
 (* Signature *)
 Definition tyin_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : seq atype :=
@@ -30,7 +30,7 @@ Definition args_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : seq var_i :=
 Definition tyout_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : seq atype :=
   [:: aarr U8 1184; aarr U8 2400; aword U64 ].
 Definition res_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : seq var_i :=
-  [:: public_key.(gv); secret_key.(gv); r_13608.(gv) ].
+  [:: public_key.(gv); secret_key.(gv); r_19.(gv) ].
 
 (* Body *)
 Definition body_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : cmd :=
@@ -44,7 +44,7 @@ Definition body_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : cmd :=
                                    ; Lnone dummy_var_info (abool)
                                    ; Lnone dummy_var_info (abool)
                                    ; Lnone dummy_var_info (abool)
-                                   ; Lvar r_13608.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U64)))) [::]) ].
+                                   ; Lvar r_19.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U64)))) [::]) ].
 
 Definition fd_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand : ufundef :=
   {|

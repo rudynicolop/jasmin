@@ -15,31 +15,27 @@ Context {IdO : IdentOracles}.
 
 (* __addratebit_avx2x4 *)
 (* Local variables *)
-Definition st_18559 : gvar :=
-  mk_rocq_gvar Slocal (aarr U256 25) (mkident 18559).
+Definition st_9 : gvar := mk_rocq_gvar Slocal (aarr U256 25) (mkident 18559).
 Definition RATE8 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18560).
-Definition t64_18561 : gvar :=
-  mk_rocq_gvar Slocal (aword U64) (mkident 18561).
-Definition t128_18562 : gvar :=
-  mk_rocq_gvar Slocal (aword U128) (mkident 18562).
-Definition t256_18563 : gvar :=
-  mk_rocq_gvar Slocal (aword U256) (mkident 18563).
+Definition t64_1 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 18561).
+Definition t128_2 : gvar := mk_rocq_gvar Slocal (aword U128) (mkident 18562).
+Definition t256_1 : gvar := mk_rocq_gvar Slocal (aword U256) (mkident 18563).
 
 (* Signature *)
 Definition tyin___addratebit_avx2x4 : seq atype := [:: aarr U256 25; aint ].
 Definition args___addratebit_avx2x4 : seq var_i :=
-  [:: st_18559.(gv); RATE8.(gv) ].
+  [:: st_9.(gv); RATE8.(gv) ].
 Definition tyout___addratebit_avx2x4 : seq atype := [:: aarr U256 25 ].
-Definition res___addratebit_avx2x4 : seq var_i := [:: st_18559.(gv) ].
+Definition res___addratebit_avx2x4 : seq var_i := [:: st_9.(gv) ].
 
 (* Body *)
 Definition body___addratebit_avx2x4 : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar t64_18561.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (1)%Z)))
-    ; MkI dummy_instr_info (Cassgn (Lvar t64_18561.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t64_18561) (Papp1 (Oword_of_int U8) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar RATE8)) (Pconst (1)%Z)) (Pconst (64)%Z)))))
-    ; MkI dummy_instr_info (Cassgn (Lvar t128_18562.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_18561)))
-    ; MkI dummy_instr_info (Copn [:: Lvar t256_18563.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar t128_18562 ])
-    ; MkI dummy_instr_info (Cassgn (Lvar t256_18563.(gv)) AT_none (aword U256) (Papp2 (Olxor U256) (Pvar t256_18563) (Pget Aligned AAscale U256 st_18559 (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z)))))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_18559.(gv) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z))) AT_none (aword U256) (Pvar t256_18563)) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar t64_1.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Pconst (1)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar t64_1.(gv)) AT_none (aword U64) (Papp2 (Olsl (Op_w U64)) (Pvar t64_1) (Papp1 (Oword_of_int U8) (Papp2 (Omod Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Papp2 (Omul (Op_int)) (Pconst (8)%Z) (Pvar RATE8)) (Pconst (1)%Z)) (Pconst (64)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Lvar t128_2.(gv)) AT_none (aword U128) (Papp1 (Ozeroext U128 U64) (Pvar t64_1)))
+    ; MkI dummy_instr_info (Copn [:: Lvar t256_1.(gv) ] AT_none (Oasm ((BaseOp ((None), (VPBROADCAST VE64 U256))))) [:: Pvar t128_2 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar t256_1.(gv)) AT_none (aword U256) (Papp2 (Olxor U256) (Pvar t256_1) (Pget Aligned AAscale U256 st_9 (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z)))))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U256 st_9.(gv) (Papp2 (Odiv Unsigned (Op_int)) (Papp2 (Osub (Op_int)) (Pvar RATE8) (Pconst (1)%Z)) (Pconst (8)%Z))) AT_none (aword U256) (Pvar t256_1)) ].
 
 Definition fd___addratebit_avx2x4 : ufundef :=
   {|

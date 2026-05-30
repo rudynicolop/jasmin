@@ -15,32 +15,25 @@ Context {IdO : IdentOracles}.
 
 (* _poly_getnoise_eta1_4x *)
 (* Local variables *)
-Definition r0_14101 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 256) (mkident 14101).
-Definition r1_14102 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 256) (mkident 14102).
-Definition r2_14103 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 256) (mkident 14103).
-Definition r3_14104 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 256) (mkident 14104).
-Definition seed_14105 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 32) (mkident 14105).
-Definition nonce_14106 : gvar :=
-  mk_rocq_gvar Slocal (aword U8) (mkident 14106).
+Definition r0_16 : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 14101).
+Definition r1_16 : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 14102).
+Definition r2_13 : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 14103).
+Definition r3_16 : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 14104).
+Definition seed_4 : gvar := mk_rocq_gvar Slocal (aarr U8 32) (mkident 14105).
+Definition nonce_1 : gvar := mk_rocq_gvar Slocal (aword U8) (mkident 14106).
 Definition buf0_s : gvar := mk_rocq_gvar Slocal (aarr U8 128) (mkident 14107).
-Definition buf0_14108 : gvar :=
+Definition buf0_44 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 128) (mkident 14108).
 Definition buf1_s : gvar := mk_rocq_gvar Slocal (aarr U8 128) (mkident 14109).
-Definition buf1_14110 : gvar :=
+Definition buf1_44 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 128) (mkident 14110).
 Definition buf2_s : gvar := mk_rocq_gvar Slocal (aarr U8 128) (mkident 14111).
-Definition buf2_14112 : gvar :=
+Definition buf2_44 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 128) (mkident 14112).
 Definition buf3_s : gvar := mk_rocq_gvar Slocal (aarr U8 128) (mkident 14113).
-Definition buf3_14114 : gvar :=
+Definition buf3_44 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 128) (mkident 14114).
-Definition nonces_14115 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 4) (mkident 14115).
+Definition nonces_0 : gvar := mk_rocq_gvar Slocal (aarr U8 4) (mkident 14115).
 
 (* Signature *)
 Definition tyin__poly_getnoise_eta1_4x : seq atype :=
@@ -51,62 +44,62 @@ Definition tyin__poly_getnoise_eta1_4x : seq atype :=
     ; aarr U8 32
     ; aword U8 ].
 Definition args__poly_getnoise_eta1_4x : seq var_i :=
-  [:: r0_14101.(gv)
-    ; r1_14102.(gv)
-    ; r2_14103.(gv)
-    ; r3_14104.(gv)
-    ; seed_14105.(gv)
-    ; nonce_14106.(gv) ].
+  [:: r0_16.(gv)
+    ; r1_16.(gv)
+    ; r2_13.(gv)
+    ; r3_16.(gv)
+    ; seed_4.(gv)
+    ; nonce_1.(gv) ].
 Definition tyout__poly_getnoise_eta1_4x : seq atype :=
   [:: aarr U16 256; aarr U16 256; aarr U16 256; aarr U16 256 ].
 Definition res__poly_getnoise_eta1_4x : seq var_i :=
-  [:: r0_14101.(gv); r1_14102.(gv); r2_14103.(gv); r3_14104.(gv) ].
+  [:: r0_16.(gv); r1_16.(gv); r2_13.(gv); r3_16.(gv) ].
 
 (* Body *)
 Definition body__poly_getnoise_eta1_4x : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar buf0_14108.(gv)) AT_none (aarr U8 128) (Pvar buf0_s))
-    ; MkI dummy_instr_info (Cassgn (Lvar buf1_14110.(gv)) AT_none (aarr U8 128) (Pvar buf1_s))
-    ; MkI dummy_instr_info (Cassgn (Lvar buf2_14112.(gv)) AT_none (aarr U8 128) (Pvar buf2_s))
-    ; MkI dummy_instr_info (Cassgn (Lvar buf3_14114.(gv)) AT_none (aarr U8 128) (Pvar buf3_s))
+  [:: MkI dummy_instr_info (Cassgn (Lvar buf0_44.(gv)) AT_none (aarr U8 128) (Pvar buf0_s))
+    ; MkI dummy_instr_info (Cassgn (Lvar buf1_44.(gv)) AT_none (aarr U8 128) (Pvar buf1_s))
+    ; MkI dummy_instr_info (Cassgn (Lvar buf2_44.(gv)) AT_none (aarr U8 128) (Pvar buf2_s))
+    ; MkI dummy_instr_info (Cassgn (Lvar buf3_44.(gv)) AT_none (aarr U8 128) (Pvar buf3_s))
     ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Spill [:: aarr U16 256%positive
                                                                     ; aarr U16 256%positive
                                                                     ; aarr U16 256%positive
-                                                                    ; aarr U16 256%positive ])) [:: Pvar r0_14101
-                                                                    ; Pvar r1_14102
-                                                                    ; Pvar r2_14103
-                                                                    ; Pvar r3_14104 ])
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_14115.(gv) (Pconst (0)%Z)) AT_none (aword U8) (Pvar nonce_14106))
-    ; MkI dummy_instr_info (Cassgn (Lvar nonce_14106.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar nonce_14106) (Papp1 (Oword_of_int U8) (Pconst (1)%Z))))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_14115.(gv) (Pconst (1)%Z)) AT_none (aword U8) (Pvar nonce_14106))
-    ; MkI dummy_instr_info (Cassgn (Lvar nonce_14106.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar nonce_14106) (Papp1 (Oword_of_int U8) (Pconst (1)%Z))))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_14115.(gv) (Pconst (2)%Z)) AT_none (aword U8) (Pvar nonce_14106))
-    ; MkI dummy_instr_info (Cassgn (Lvar nonce_14106.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar nonce_14106) (Papp1 (Oword_of_int U8) (Pconst (1)%Z))))
-    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_14115.(gv) (Pconst (3)%Z)) AT_none (aword U8) (Pvar nonce_14106))
-    ; MkI dummy_instr_info (Ccall [:: Lvar buf0_14108.(gv)
-                                    ; Lvar buf1_14110.(gv)
-                                    ; Lvar buf2_14112.(gv)
-                                    ; Lvar buf3_14114.(gv) ] _shake256x4_A128__A32_A1 [:: Pvar buf0_14108
-                                                                    ; Pvar buf1_14110
-                                                                    ; Pvar buf2_14112
-                                                                    ; Pvar buf3_14114
-                                                                    ; Pvar seed_14105
-                                                                    ; Pvar nonces_14115 ])
+                                                                    ; aarr U16 256%positive ])) [:: Pvar r0_16
+                                                                    ; Pvar r1_16
+                                                                    ; Pvar r2_13
+                                                                    ; Pvar r3_16 ])
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_0.(gv) (Pconst (0)%Z)) AT_none (aword U8) (Pvar nonce_1))
+    ; MkI dummy_instr_info (Cassgn (Lvar nonce_1.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar nonce_1) (Papp1 (Oword_of_int U8) (Pconst (1)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_0.(gv) (Pconst (1)%Z)) AT_none (aword U8) (Pvar nonce_1))
+    ; MkI dummy_instr_info (Cassgn (Lvar nonce_1.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar nonce_1) (Papp1 (Oword_of_int U8) (Pconst (1)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_0.(gv) (Pconst (2)%Z)) AT_none (aword U8) (Pvar nonce_1))
+    ; MkI dummy_instr_info (Cassgn (Lvar nonce_1.(gv)) AT_none (aword U8) (Papp2 (Oadd (Op_w U8)) (Pvar nonce_1) (Papp1 (Oword_of_int U8) (Pconst (1)%Z))))
+    ; MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U8 nonces_0.(gv) (Pconst (3)%Z)) AT_none (aword U8) (Pvar nonce_1))
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf0_44.(gv)
+                                    ; Lvar buf1_44.(gv)
+                                    ; Lvar buf2_44.(gv)
+                                    ; Lvar buf3_44.(gv) ] _shake256x4_A128__A32_A1 [:: Pvar buf0_44
+                                                                    ; Pvar buf1_44
+                                                                    ; Pvar buf2_44
+                                                                    ; Pvar buf3_44
+                                                                    ; Pvar seed_4
+                                                                    ; Pvar nonces_0 ])
     ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (aword U64) ] AT_none (Oslh (SLHinit)) [::])
     ; MkI dummy_instr_info (Copn [::] AT_none (Opseudo_op (Ospill Unspill [:: aarr U16 256%positive
                                                                     ; aarr U16 256%positive
                                                                     ; aarr U16 256%positive
-                                                                    ; aarr U16 256%positive ])) [:: Pvar r0_14101
-                                                                    ; Pvar r1_14102
-                                                                    ; Pvar r2_14103
-                                                                    ; Pvar r3_14104 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar r0_14101.(gv) ] __poly_cbd_eta1 [:: Pvar r0_14101
-                                                                    ; Pvar buf0_14108 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar r1_14102.(gv) ] __poly_cbd_eta1 [:: Pvar r1_14102
-                                                                    ; Pvar buf1_14110 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar r2_14103.(gv) ] __poly_cbd_eta1 [:: Pvar r2_14103
-                                                                    ; Pvar buf2_14112 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar r3_14104.(gv) ] __poly_cbd_eta1 [:: Pvar r3_14104
-                                                                    ; Pvar buf3_14114 ]) ].
+                                                                    ; aarr U16 256%positive ])) [:: Pvar r0_16
+                                                                    ; Pvar r1_16
+                                                                    ; Pvar r2_13
+                                                                    ; Pvar r3_16 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r0_16.(gv) ] __poly_cbd_eta1 [:: Pvar r0_16
+                                                                    ; Pvar buf0_44 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r1_16.(gv) ] __poly_cbd_eta1 [:: Pvar r1_16
+                                                                    ; Pvar buf1_44 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r2_13.(gv) ] __poly_cbd_eta1 [:: Pvar r2_13
+                                                                    ; Pvar buf2_44 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar r3_16.(gv) ] __poly_cbd_eta1 [:: Pvar r3_16
+                                                                    ; Pvar buf3_44 ]) ].
 
 Definition fd__poly_getnoise_eta1_4x : ufundef :=
   {|

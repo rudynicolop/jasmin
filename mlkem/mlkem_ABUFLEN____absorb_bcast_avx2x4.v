@@ -15,83 +15,83 @@ Context {IdO : IdentOracles}.
 
 (* ABUFLEN____absorb_bcast_avx2x4 *)
 (* Local variables *)
-Definition st_14468 : gvar :=
+Definition st_115 : gvar :=
   mk_rocq_gvar Slocal (aarr U256 25) (mkident 14468).
-Definition AT_14469 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14469).
-Definition buf_14470 : gvar :=
+Definition AT_112 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14469).
+Definition buf_165 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 536) (mkident 14470).
-Definition _TRAILB_14471 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14471).
-Definition _RATE8_14472 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14472).
-Definition offset_14473 : gvar :=
+Definition _TRAILB_64 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14471).
+Definition _RATE8_53 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14472).
+Definition offset_175 : gvar :=
   mk_rocq_gvar Slocal (aword U64) (mkident 14473).
-Definition _LEN_14474 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14474).
-Definition ITERS_14475 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14475).
-Definition i_14476 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 14476).
+Definition _LEN_108 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14474).
+Definition ITERS_53 : gvar := mk_rocq_gvar Slocal (aint) (mkident 14475).
+Definition i_69 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 14476).
 
 (* Signature *)
 Definition tyin_ABUFLEN____absorb_bcast_avx2x4 : seq atype :=
   [:: aarr U256 25; aint; aarr U8 536; aint; aint ].
 Definition args_ABUFLEN____absorb_bcast_avx2x4 : seq var_i :=
-  [:: st_14468.(gv)
-    ; AT_14469.(gv)
-    ; buf_14470.(gv)
-    ; _TRAILB_14471.(gv)
-    ; _RATE8_14472.(gv) ].
+  [:: st_115.(gv)
+    ; AT_112.(gv)
+    ; buf_165.(gv)
+    ; _TRAILB_64.(gv)
+    ; _RATE8_53.(gv) ].
 Definition tyout_ABUFLEN____absorb_bcast_avx2x4 : seq atype :=
   [:: aarr U256 25; aint ].
 Definition res_ABUFLEN____absorb_bcast_avx2x4 : seq var_i :=
-  [:: st_14468.(gv); AT_14469.(gv) ].
+  [:: st_115.(gv); AT_112.(gv) ].
 
 (* Body *)
 Definition body_ABUFLEN____absorb_bcast_avx2x4 : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar offset_14473.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
-    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_14474.(gv)) AT_none (aint) (Pconst (536)%Z))
+  [:: MkI dummy_instr_info (Cassgn (Lvar offset_175.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+    ; MkI dummy_instr_info (Cassgn (Lvar _LEN_108.(gv)) AT_none (aint) (Pconst (536)%Z))
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Oge (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar AT_14469) (Pvar _LEN_14474)) (Pvar _RATE8_14472))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_14468.(gv)
+                              (Papp2 (Oge (Cmp_int)) (Papp2 (Oadd (Op_int)) (Pvar AT_112) (Pvar _LEN_108)) (Pvar _RATE8_53))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_115.(gv)
                                                                 ; Lnone dummy_var_info (aint)
-                                                                ; Lvar offset_14473.(gv) ] ABUFLEN____addstate_bcast_avx2x4 [:: Pvar st_14468
-                                                                    ; Pvar AT_14469
-                                                                    ; Pvar buf_14470
-                                                                    ; Pvar offset_14473
-                                                                    ; Papp2 (Osub (Op_int)) (Pvar _RATE8_14472) (Pvar AT_14469)
+                                                                ; Lvar offset_175.(gv) ] ABUFLEN____addstate_bcast_avx2x4 [:: Pvar st_115
+                                                                    ; Pvar AT_112
+                                                                    ; Pvar buf_165
+                                                                    ; Pvar offset_175
+                                                                    ; Papp2 (Osub (Op_int)) (Pvar _RATE8_53) (Pvar AT_112)
                                                                     ; Pconst (0)%Z ])
-                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_14474.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_14474) (Papp2 (Osub (Op_int)) (Pvar _RATE8_14472) (Pvar AT_14469))))
-                                ; MkI dummy_instr_info (Cassgn (Lvar AT_14469.(gv)) AT_none (aint) (Pconst (0)%Z))
-                                ; MkI dummy_instr_info (Ccall [:: Lvar st_14468.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_14468 ])
-                                ; MkI dummy_instr_info (Cassgn (Lvar ITERS_14475.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_14474) (Pvar _RATE8_14472)))
-                                ; MkI dummy_instr_info (Cassgn (Lvar i_14476.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_108.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar _LEN_108) (Papp2 (Osub (Op_int)) (Pvar _RATE8_53) (Pvar AT_112))))
+                                ; MkI dummy_instr_info (Cassgn (Lvar AT_112.(gv)) AT_none (aint) (Pconst (0)%Z))
+                                ; MkI dummy_instr_info (Ccall [:: Lvar st_115.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_115 ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar ITERS_53.(gv)) AT_none (aint) (Papp2 (Odiv Unsigned (Op_int)) (Pvar _LEN_108) (Pvar _RATE8_53)))
+                                ; MkI dummy_instr_info (Cassgn (Lvar i_69.(gv)) AT_none (aword U64) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (0)%Z)))
                                 ; MkI dummy_instr_info (Cwhile Align
                                                           [::]
-                                                          (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_14476) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_14475)))
+                                                          (Papp2 (Owi2 Unsigned U64 WIlt) (Pvar i_69) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pvar ITERS_53)))
                                                           dummy_instr_info
                                                           [:: MkI dummy_instr_info (
-                                                          Ccall [:: Lvar st_14468.(gv)
+                                                          Ccall [:: Lvar st_115.(gv)
                                                                   ; Lnone dummy_var_info (aint)
-                                                                  ; Lvar offset_14473.(gv) ] ABUFLEN____addstate_bcast_avx2x4 [:: Pvar st_14468
+                                                                  ; Lvar offset_175.(gv) ] ABUFLEN____addstate_bcast_avx2x4 [:: Pvar st_115
                                                                     ; Pconst (0)%Z
-                                                                    ; Pvar buf_14470
-                                                                    ; Pvar offset_14473
-                                                                    ; Pvar _RATE8_14472
+                                                                    ; Pvar buf_165
+                                                                    ; Pvar offset_175
+                                                                    ; Pvar _RATE8_53
                                                                     ; Pconst (0)%Z ])
                                                             ; MkI dummy_instr_info (
-                                                          Ccall [:: Lvar st_14468.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_14468 ])
+                                                          Ccall [:: Lvar st_115.(gv) ] _keccakf1600_avx2x4 [:: Pvar st_115 ])
                                                             ; MkI dummy_instr_info (
-                                                          Cassgn (Lvar i_14476.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_14476) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
-                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_14474.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_14474) (Pvar _RATE8_14472))) ]
+                                                          Cassgn (Lvar i_69.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar i_69) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z)))) ])
+                                ; MkI dummy_instr_info (Cassgn (Lvar _LEN_108.(gv)) AT_none (aint) (Papp2 (Omod Unsigned (Op_int)) (Pvar _LEN_108) (Pvar _RATE8_53))) ]
                               [::])
-    ; MkI dummy_instr_info (Ccall [:: Lvar st_14468.(gv)
-                                    ; Lvar AT_14469.(gv)
-                                    ; Lnone dummy_var_info (aword U64) ] ABUFLEN____addstate_bcast_avx2x4 [:: Pvar st_14468
-                                                                    ; Pvar AT_14469
-                                                                    ; Pvar buf_14470
-                                                                    ; Pvar offset_14473
-                                                                    ; Pvar _LEN_14474
-                                                                    ; Pvar _TRAILB_14471 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar st_115.(gv)
+                                    ; Lvar AT_112.(gv)
+                                    ; Lnone dummy_var_info (aword U64) ] ABUFLEN____addstate_bcast_avx2x4 [:: Pvar st_115
+                                                                    ; Pvar AT_112
+                                                                    ; Pvar buf_165
+                                                                    ; Pvar offset_175
+                                                                    ; Pvar _LEN_108
+                                                                    ; Pvar _TRAILB_64 ])
     ; MkI dummy_instr_info (Cif
-                              (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_14471) (Pconst (0)%Z))
-                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_14468.(gv) ] __addratebit_avx2x4 [:: Pvar st_14468
-                                                                    ; Pvar _RATE8_14472 ]) ]
+                              (Papp2 (Oneq (Op_int)) (Pvar _TRAILB_64) (Pconst (0)%Z))
+                              [:: MkI dummy_instr_info (Ccall [:: Lvar st_115.(gv) ] __addratebit_avx2x4 [:: Pvar st_115
+                                                                    ; Pvar _RATE8_53 ]) ]
                               [::]) ].
 
 Definition fd_ABUFLEN____absorb_bcast_avx2x4 : ufundef :=

@@ -15,19 +15,19 @@ Context {IdO : IdentOracles}.
 
 (* keccakf1600_index *)
 (* Local variables *)
-Definition x_19044 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19044).
+Definition x_1 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19044).
 Definition y : gvar := mk_rocq_gvar Slocal (aint) (mkident 19045).
-Definition r_19046 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19046).
+Definition r_1 : gvar := mk_rocq_gvar Slocal (aint) (mkident 19046).
 
 (* Signature *)
 Definition tyin_keccakf1600_index : seq atype := [:: aint; aint ].
-Definition args_keccakf1600_index : seq var_i := [:: x_19044.(gv); y.(gv) ].
+Definition args_keccakf1600_index : seq var_i := [:: x_1.(gv); y.(gv) ].
 Definition tyout_keccakf1600_index : seq atype := [:: aint ].
-Definition res_keccakf1600_index : seq var_i := [:: r_19046.(gv) ].
+Definition res_keccakf1600_index : seq var_i := [:: r_1.(gv) ].
 
 (* Body *)
 Definition body_keccakf1600_index : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Lvar r_19046.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar x_19044) (Pconst (5)%Z)) (Papp2 (Omul (Op_int)) (Pconst (5)%Z) (Papp2 (Omod Unsigned (Op_int)) (Pvar y) (Pconst (5)%Z))))) ].
+  [:: MkI dummy_instr_info (Cassgn (Lvar r_1.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar x_1) (Pconst (5)%Z)) (Papp2 (Omul (Op_int)) (Pconst (5)%Z) (Papp2 (Omod Unsigned (Op_int)) (Pvar y) (Pconst (5)%Z))))) ].
 
 Definition fd_keccakf1600_index : ufundef :=
   {|

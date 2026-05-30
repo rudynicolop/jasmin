@@ -15,37 +15,33 @@ Context {IdO : IdentOracles}.
 
 (* __gen_matrix_sample_one_polynomial *)
 (* Local variables *)
-Definition pol_13744 : gvar :=
-  mk_rocq_gvar Slocal (aarr U16 256) (mkident 13744).
-Definition buf_13745 : gvar :=
+Definition pol_5 : gvar := mk_rocq_gvar Slocal (aarr U16 256) (mkident 13744).
+Definition buf_177 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 536) (mkident 13745).
-Definition rho_13746 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 32) (mkident 13746).
-Definition rc_13747 : gvar := mk_rocq_gvar Slocal (aword U16) (mkident 13747).
-Definition pos_13748 : gvar :=
-  mk_rocq_gvar Slocal (aarr U8 2) (mkident 13748).
+Definition rho_0 : gvar := mk_rocq_gvar Slocal (aarr U8 32) (mkident 13746).
+Definition rc_1 : gvar := mk_rocq_gvar Slocal (aword U16) (mkident 13747).
+Definition pos_1 : gvar := mk_rocq_gvar Slocal (aarr U8 2) (mkident 13748).
 Definition stavx2 : gvar := mk_rocq_gvar Slocal (aarr U256 7) (mkident 13749).
 
 (* Signature *)
 Definition tyin___gen_matrix_sample_one_polynomial : seq atype :=
   [:: aarr U16 256; aarr U8 536; aarr U8 32; aword U16 ].
 Definition args___gen_matrix_sample_one_polynomial : seq var_i :=
-  [:: pol_13744.(gv); buf_13745.(gv); rho_13746.(gv); rc_13747.(gv) ].
+  [:: pol_5.(gv); buf_177.(gv); rho_0.(gv); rc_1.(gv) ].
 Definition tyout___gen_matrix_sample_one_polynomial : seq atype :=
   [:: aarr U16 256; aarr U8 536 ].
 Definition res___gen_matrix_sample_one_polynomial : seq var_i :=
-  [:: pol_13744.(gv); buf_13745.(gv) ].
+  [:: pol_5.(gv); buf_177.(gv) ].
 
 (* Body *)
 Definition body___gen_matrix_sample_one_polynomial : cmd :=
-  [:: MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U16 pos_13748.(gv) (Pconst (0)%Z)) AT_none (aword U16) (Pvar rc_13747))
-    ; MkI dummy_instr_info (Ccall [:: Lvar stavx2.(gv) ] _shake128_absorb_A32_A2 [:: Pvar rho_13746
-                                                                    ; Pvar pos_13748 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar buf_13745.(gv) ] _shake128_squeeze3blocks [:: Pvar buf_13745
+  [:: MkI dummy_instr_info (Cassgn (Laset Aligned AAscale U16 pos_1.(gv) (Pconst (0)%Z)) AT_none (aword U16) (Pvar rc_1))
+    ; MkI dummy_instr_info (Ccall [:: Lvar stavx2.(gv) ] _shake128_absorb_A32_A2 [:: Pvar rho_0
+                                                                    ; Pvar pos_1 ])
+    ; MkI dummy_instr_info (Ccall [:: Lvar buf_177.(gv) ] _shake128_squeeze3blocks [:: Pvar buf_177
                                                                     ; Pvar stavx2 ])
-    ; MkI dummy_instr_info (Ccall [:: Lvar pol_13744.(gv)
-                                    ; Lvar buf_13745.(gv) ] __gen_matrix_fill_polynomial [:: Pvar pol_13744
-                                                                    ; Pvar buf_13745 ]) ].
+    ; MkI dummy_instr_info (Ccall [:: Lvar pol_5.(gv); Lvar buf_177.(gv) ] __gen_matrix_fill_polynomial [:: Pvar pol_5
+                                                                    ; Pvar buf_177 ]) ].
 
 Definition fd___gen_matrix_sample_one_polynomial : ufundef :=
   {|

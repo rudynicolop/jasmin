@@ -172,21 +172,26 @@ let pp_rocq_option pp =
 
 (* Shared sanitized names for variables and function names. We ensure that these
    don't clash. They may clash with other identifiers (name of the program, or
-   names derived from it). *)
+   names derived from it).
+   [tbl] memoizes the final printed name for each identifier.
+   [counts] records how many distinct identifiers have already used a given
+   sanitized base name. *)
 let smart_sanitize id name =
   let tbl = Hid.create 101 in
-  let seen = Hs.create 101 in
+  let counts = Hs.create 101 in
   fun x ->
     let i = id x in
     match Hid.find tbl i with
-    | name -> name
+    | existing_name -> existing_name
     | exception Not_found ->
         let base = rocq_sanitize_s (name x) in
+        let n = Hs.find_opt counts base |> Option.default 0 in
+        Hs.replace counts base (n + 1);
         let chosen =
-          if Hs.mem seen base then base ^ "_" ^ string_of_uid i else base
+         if n = 0 then base else base ^ "_" ^ string_of_int (n - 1) |>
+         rocq_sanitize_s
         in
-        Hid.add tbl (id x) (rocq_sanitize_s chosen);
-        Hs.add seen chosen ();
+        Hid.add tbl i chosen;
         chosen
 
 let rocq_sanitize_v = smart_sanitize (fun v -> v.v_id) (fun v -> v.v_name)

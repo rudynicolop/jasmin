@@ -15,43 +15,43 @@ Context {IdO : IdentOracles}.
 
 (* jade_kem_mlkem_mlkem768_amd64_avx2_keypair *)
 (* Local variables *)
-Definition public_key_13583 : gvar :=
+Definition public_key_1 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 1184) (mkident 13583).
-Definition secret_key_13584 : gvar :=
+Definition secret_key_0 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 2400) (mkident 13584).
-Definition r_13585 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13585).
+Definition r_21 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 13585).
 Definition randomness : gvar :=
   mk_rocq_gvar Slocal (aarr U8 64) (mkident 13586).
-Definition randomnessp_13587 : gvar :=
+Definition randomnessp_2 : gvar :=
   mk_rocq_gvar Slocal (aarr U8 64) (mkident 13587).
 
 (* Signature *)
 Definition tyin_jade_kem_mlkem_mlkem768_amd64_avx2_keypair : seq atype :=
   [:: aarr U8 1184; aarr U8 2400 ].
 Definition args_jade_kem_mlkem_mlkem768_amd64_avx2_keypair : seq var_i :=
-  [:: public_key_13583.(gv); secret_key_13584.(gv) ].
+  [:: public_key_1.(gv); secret_key_0.(gv) ].
 Definition tyout_jade_kem_mlkem_mlkem768_amd64_avx2_keypair : seq atype :=
   [:: aarr U8 1184; aarr U8 2400; aword U64 ].
 Definition res_jade_kem_mlkem_mlkem768_amd64_avx2_keypair : seq var_i :=
-  [:: public_key_13583.(gv); secret_key_13584.(gv); r_13585.(gv) ].
+  [:: public_key_1.(gv); secret_key_0.(gv); r_21.(gv) ].
 
 (* Body *)
 Definition body_jade_kem_mlkem_mlkem768_amd64_avx2_keypair : cmd :=
   [:: MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (aword U64) ] AT_none (Oslh (SLHinit)) [::])
-    ; MkI dummy_instr_info (Cassgn (Lvar public_key_13583.(gv)) AT_none (aarr U8 1184) (Pvar public_key_13583))
-    ; MkI dummy_instr_info (Cassgn (Lvar secret_key_13584.(gv)) AT_none (aarr U8 2400) (Pvar secret_key_13584))
-    ; MkI dummy_instr_info (Cassgn (Lvar randomnessp_13587.(gv)) AT_none (aarr U8 64) (Pvar randomness))
-    ; MkI dummy_instr_info (Csyscall [:: (Lvar randomnessp_13587.(gv))] (RandomBytes U8 64%positive) [:: (Pvar randomnessp_13587)])
-    ; MkI dummy_instr_info (Ccall [:: Lvar public_key_13583.(gv)
-                                    ; Lvar secret_key_13584.(gv) ] __crypto_kem_keypair_jazz [:: Pvar public_key_13583
-                                                                    ; Pvar secret_key_13584
-                                                                    ; Pvar randomnessp_13587 ])
+    ; MkI dummy_instr_info (Cassgn (Lvar public_key_1.(gv)) AT_none (aarr U8 1184) (Pvar public_key_1))
+    ; MkI dummy_instr_info (Cassgn (Lvar secret_key_0.(gv)) AT_none (aarr U8 2400) (Pvar secret_key_0))
+    ; MkI dummy_instr_info (Cassgn (Lvar randomnessp_2.(gv)) AT_none (aarr U8 64) (Pvar randomness))
+    ; MkI dummy_instr_info (Csyscall [:: (Lvar randomnessp_2.(gv))] (RandomBytes U8 64%positive) [:: (Pvar randomnessp_2)])
+    ; MkI dummy_instr_info (Ccall [:: Lvar public_key_1.(gv)
+                                    ; Lvar secret_key_0.(gv) ] __crypto_kem_keypair_jazz [:: Pvar public_key_1
+                                                                    ; Pvar secret_key_0
+                                                                    ; Pvar randomnessp_2 ])
     ; MkI dummy_instr_info (Copn [:: Lnone dummy_var_info (abool)
                                    ; Lnone dummy_var_info (abool)
                                    ; Lnone dummy_var_info (abool)
                                    ; Lnone dummy_var_info (abool)
                                    ; Lnone dummy_var_info (abool)
-                                   ; Lvar r_13585.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U64)))) [::]) ].
+                                   ; Lvar r_21.(gv) ] AT_none (Oasm ((ExtOp (Oset0 U64)))) [::]) ].
 
 Definition fd_jade_kem_mlkem_mlkem768_amd64_avx2_keypair : ufundef :=
   {|

@@ -23,7 +23,7 @@ Definition AT : gvar := mk_rocq_gvar Slocal (aint) (mkident 18972).
 Definition w : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 18973).
 Definition AT8 : gvar := mk_rocq_gvar Slocal (aint) (mkident 18974).
 Definition t16 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 18975).
-Definition t8_18976 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 18976).
+Definition t8_0 : gvar := mk_rocq_gvar Slocal (aword U64) (mkident 18976).
 
 (* Signature *)
 Definition tyin___m_ilen_read_upto8_at : seq atype :=
@@ -94,18 +94,18 @@ Definition body___m_ilen_read_upto8_at : cmd :=
                                                             Cif
                                                               (Papp2 (Ole (Cmp_int)) (Pconst (1)%Z) (Pvar LEN))
                                                               [:: MkI dummy_instr_info (
-                                                              Cassgn (Lvar t8_18976.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U8) (Pload Unaligned U8 (Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar buf)))))
+                                                              Cassgn (Lvar t8_0.(gv)) AT_none (aword U64) (Papp1 (Ozeroext U64 U8) (Pload Unaligned U8 (Papp1 (Owi1 Unsigned (WIword_of_wint U64)) (Pvar buf)))))
                                                                 ; MkI dummy_instr_info (
-                                                              Cassgn (Lvar t8_18976.(gv)) AT_none (aword U64) (Papp2 (Olor U64) (Pvar t8_18976) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Papp2 (Omod Unsigned (Op_int)) (Pvar TRAIL) (Pconst (256)%Z))))))
+                                                              Cassgn (Lvar t8_0.(gv)) AT_none (aword U64) (Papp2 (Olor U64) (Pvar t8_0) (Papp1 (Oword_of_int U64) (Papp2 (Omul (Op_int)) (Pconst (256)%Z) (Papp2 (Omod Unsigned (Op_int)) (Pvar TRAIL) (Pconst (256)%Z))))))
                                                                 ; MkI dummy_instr_info (
                                                               Cassgn (Lvar buf.(gv)) AT_none (aword U64) (Papp2 (Owi2 Unsigned U64 WIadd) (Pvar buf) (Papp1 (Owi1 Unsigned (WIwint_of_int U64)) (Pconst (1)%Z))))
                                                                 ; MkI dummy_instr_info (
                                                               Cassgn (Lvar LEN.(gv)) AT_none (aint) (Papp2 (Osub (Op_int)) (Pvar LEN) (Pconst (1)%Z)))
                                                                 ; MkI dummy_instr_info (
-                                                              Ccall [:: Lvar t8_18976.(gv) ] __SHLQ [:: Pvar t8_18976
+                                                              Ccall [:: Lvar t8_0.(gv) ] __SHLQ [:: Pvar t8_0
                                                                     ; Pvar AT8 ])
                                                                 ; MkI dummy_instr_info (
-                                                              Cassgn (Lvar w.(gv)) AT_none (aword U64) (Papp2 (Olor U64) (Pvar w) (Pvar t8_18976)))
+                                                              Cassgn (Lvar w.(gv)) AT_none (aword U64) (Papp2 (Olor U64) (Pvar w) (Pvar t8_0)))
                                                                 ; MkI dummy_instr_info (
                                                               Cassgn (Lvar AT8.(gv)) AT_none (aint) (Papp2 (Oadd (Op_int)) (Pvar AT8) (Pconst (1)%Z)))
                                                                 ; MkI dummy_instr_info (
@@ -120,12 +120,12 @@ Definition body___m_ilen_read_upto8_at : cmd :=
                                                               Cif
                                                                 (Papp2 (Oneq (Op_int)) (Papp2 (Omod Unsigned (Op_int)) (Pvar TRAIL) (Pconst (256)%Z)) (Pconst (0)%Z))
                                                                 [:: MkI dummy_instr_info (
-                                                                Cassgn (Lvar t8_18976.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omod Unsigned (Op_int)) (Pvar TRAIL) (Pconst (256)%Z))))
+                                                                Cassgn (Lvar t8_0.(gv)) AT_none (aword U64) (Papp1 (Oword_of_int U64) (Papp2 (Omod Unsigned (Op_int)) (Pvar TRAIL) (Pconst (256)%Z))))
                                                                   ; MkI dummy_instr_info (
-                                                                Ccall [:: Lvar t8_18976.(gv) ] __SHLQ [:: Pvar t8_18976
+                                                                Ccall [:: Lvar t8_0.(gv) ] __SHLQ [:: Pvar t8_0
                                                                     ; Pvar AT8 ])
                                                                   ; MkI dummy_instr_info (
-                                                                Cassgn (Lvar w.(gv)) AT_none (aword U64) (Papp2 (Olor U64) (Pvar w) (Pvar t8_18976)))
+                                                                Cassgn (Lvar w.(gv)) AT_none (aword U64) (Papp2 (Olor U64) (Pvar w) (Pvar t8_0)))
                                                                   ; MkI dummy_instr_info (
                                                                 Cassgn (Lvar TRAIL.(gv)) AT_none (aint) (Pconst (0)%Z))
                                                                   ; MkI dummy_instr_info (
