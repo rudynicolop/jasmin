@@ -1,0 +1,12 @@
+# To get the Jasmin Rocq library?
+
+# -R ../../proofs/3rdparty Jasmin
+# -R ../../proofs/arch Jasmin
+# -R ../../proofs/compiler Jasmin
+# -R ../../proofs/lang Jasmin
+# -R ../../proofs/ssrmisc Jasmin
+# -R ../../proofs/itrees Jasmin
+# -R ../../proofs/printing Printing
+
+# This directory
+-Q playground playground
