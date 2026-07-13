@@ -7,6 +7,11 @@ module Sint = Set.Make (BatInt)
 module Mint = Map.Make (BatInt)
 
 (* -------------------------------------------------------------------- *)
+module Hs = Hash.Make(struct
+  type t = string
+  let equal = String.equal
+  let hash = Hashtbl.hash
+end)
 module Ss = Set.Make(String)
 module Ms = Map.Make(String)
 

@@ -6,10 +6,10 @@ Require Import
   expr
   flag_combination
   sem_type
-  shift_kind
   strings
   utils
   wsize.
+Require Export shift_kind.
 
 Require Import
   arch_decl

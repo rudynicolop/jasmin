@@ -11,6 +11,8 @@ end
 type uid = Uint63.t
 let string_of_uid = Uint63.to_string
 
+module Hid = Hash.Make(Uint63)
+
 (* ------------------------------------------------------------------------ *)
 type base_ty =
   | Bool

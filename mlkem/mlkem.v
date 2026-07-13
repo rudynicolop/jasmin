@@ -1,0 +1,712 @@
+From Coq Require Import ZArith.
+From mathcomp Require Import ssreflect ssrbool ssrfun ssrnat eqtype seq.
+
+Require Import expr ident var type global pseudo_operator sopn arch_extra.
+From Printing Require Import atoi data notations.
+
+Require Import x86_decl x86_instr_decl x86_extra.
+Existing Instance x86_atoI.
+
+Require Import mlkem_globs.
+Require Import mlkem_funnames.
+Require Import mlkem___shuffle8.
+Require Import mlkem___shuffle4.
+Require Import mlkem___shuffle2.
+Require Import mlkem___shuffle1.
+Require Import mlkem___nttunpack128.
+Require Import mlkem__nttunpack.
+Require Import mlkem___csubq.
+Require Import mlkem___red16x.
+Require Import mlkem___fqmulprecomp16x.
+Require Import mlkem___fqmulx16.
+Require Import mlkem_keccakf1600_index.
+Require Import mlkem_keccakf1600_rho_offsets.
+Require Import mlkem_keccakf1600_rhotates.
+Require Import mlkem___keccakf1600_pround_avx2.
+Require Import mlkem___keccakf1600_avx2.
+Require Import mlkem__keccakf1600_avx2.
+Require Import mlkem___stavx2_pack.
+Require Import mlkem___stavx2_unpack.
+Require Import mlkem__keccakf1600_st25_avx2.
+Require Import mlkem___SHLQ.
+Require Import mlkem___SHLDQ.
+Require Import mlkem___SHLQ_256.
+Require Import mlkem___m_ilen_read_upto8_at.
+Require Import mlkem___m_ilen_read_upto16_at.
+Require Import mlkem___m_ilen_read_upto32_at.
+Require Import mlkem___m_ilen_read_bcast_upto8_at.
+Require Import mlkem___m_ilen_write_upto8.
+Require Import mlkem___m_ilen_write_upto16.
+Require Import mlkem___m_ilen_write_upto32.
+Require Import mlkem___m_rlen_read_upto8.
+Require Import mlkem___m_rlen_write_upto8.
+Require Import mlkem___u64_to_u256.
+Require Import mlkem___state_init_avx2.
+Require Import mlkem___perm_reg3456_avx2.
+Require Import mlkem___unperm_reg3456_avx2.
+Require Import mlkem___addstate_r3456_avx2.
+Require Import mlkem___stavx2_pos_avx2.
+Require Import mlkem___addratebit_avx2.
+Require Import mlkem___addstate_m_avx2.
+Require Import mlkem___absorb_m_avx2.
+Require Import mlkem___dumpstate_m_avx2.
+Require Import mlkem___squeeze_m_avx2.
+Require Import mlkem__keccakf1600_4x_pround.
+Require Import mlkem___keccakf1600_avx2x4.
+Require Import mlkem__keccakf1600_avx2x4.
+Require Import mlkem_j__keccakf1600_avx2x4_.
+Require Import mlkem___u256x4_4u64x4.
+Require Import mlkem___st4x_pack.
+Require Import mlkem___4u64x4_u256x4.
+Require Import mlkem___st4x_unpack.
+Require Import mlkem___keccakf1600_pround_unpacked.
+Require Import mlkem___keccakf1600_pround_equiv.
+Require Import mlkem___state_init_avx2x4.
+Require Import mlkem___addratebit_avx2x4.
+Require Import mlkem___addstate_m_bcast_avx2x4.
+Require Import mlkem___absorb_m_bcast_avx2x4.
+Require Import mlkem___addstate_m_avx2x4.
+Require Import mlkem___absorb_m_avx2x4.
+Require Import mlkem___dumpstate_m_avx2x4.
+Require Import mlkem___squeeze_m_avx2x4.
+Require Import mlkem_A1____a_ilen_read_upto8_at.
+Require Import mlkem_A1____a_ilen_read_upto16_at.
+Require Import mlkem_A1____a_ilen_read_upto32_at.
+Require Import mlkem_A1____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A1____a_ilen_write_upto8.
+Require Import mlkem_A1____a_ilen_write_upto16.
+Require Import mlkem_A1____a_ilen_write_upto32.
+Require Import mlkem_A1____a_rlen_read_upto8.
+Require Import mlkem_A1____a_rlen_read_upto8_noninline.
+Require Import mlkem_A1____a_rlen_write_upto8.
+Require Import mlkem_A1____addstate_avx2.
+Require Import mlkem_A1____absorb_avx2.
+Require Import mlkem_A1____dumpstate_avx2.
+Require Import mlkem_A1____squeeze_avx2.
+Require Import mlkem_A1____addstate_bcast_avx2x4.
+Require Import mlkem_A1____absorb_bcast_avx2x4.
+Require Import mlkem_A1____addstate_avx2x4.
+Require Import mlkem_A1____absorb_avx2x4.
+Require Import mlkem_A1____dumpstate_avx2x4.
+Require Import mlkem_A1____squeeze_avx2x4.
+Require Import mlkem_A2____a_ilen_read_upto8_at.
+Require Import mlkem_A2____a_ilen_read_upto16_at.
+Require Import mlkem_A2____a_ilen_read_upto32_at.
+Require Import mlkem_A2____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A2____a_ilen_write_upto8.
+Require Import mlkem_A2____a_ilen_write_upto16.
+Require Import mlkem_A2____a_ilen_write_upto32.
+Require Import mlkem_A2____a_rlen_read_upto8.
+Require Import mlkem_A2____a_rlen_read_upto8_noninline.
+Require Import mlkem_A2____a_rlen_write_upto8.
+Require Import mlkem_A2____addstate_avx2.
+Require Import mlkem_A2____absorb_avx2.
+Require Import mlkem_A2____dumpstate_avx2.
+Require Import mlkem_A2____squeeze_avx2.
+Require Import mlkem_A2____addstate_bcast_avx2x4.
+Require Import mlkem_A2____absorb_bcast_avx2x4.
+Require Import mlkem_A2____addstate_avx2x4.
+Require Import mlkem_A2____absorb_avx2x4.
+Require Import mlkem_A2____dumpstate_avx2x4.
+Require Import mlkem_A2____squeeze_avx2x4.
+Require Import mlkem_A32____a_ilen_read_upto8_at.
+Require Import mlkem_A32____a_ilen_read_upto16_at.
+Require Import mlkem_A32____a_ilen_read_upto32_at.
+Require Import mlkem_A32____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A32____a_ilen_write_upto8.
+Require Import mlkem_A32____a_ilen_write_upto16.
+Require Import mlkem_A32____a_ilen_write_upto32.
+Require Import mlkem_A32____a_rlen_read_upto8.
+Require Import mlkem_A32____a_rlen_read_upto8_noninline.
+Require Import mlkem_A32____a_rlen_write_upto8.
+Require Import mlkem_A32____addstate_avx2.
+Require Import mlkem_A32____absorb_avx2.
+Require Import mlkem_A32____dumpstate_avx2.
+Require Import mlkem_A32____squeeze_avx2.
+Require Import mlkem_A32____addstate_bcast_avx2x4.
+Require Import mlkem_A32____absorb_bcast_avx2x4.
+Require Import mlkem_A32____addstate_avx2x4.
+Require Import mlkem_A32____absorb_avx2x4.
+Require Import mlkem_A32____dumpstate_avx2x4.
+Require Import mlkem_A32____squeeze_avx2x4.
+Require Import mlkem_A33____a_ilen_read_upto8_at.
+Require Import mlkem_A33____a_ilen_read_upto16_at.
+Require Import mlkem_A33____a_ilen_read_upto32_at.
+Require Import mlkem_A33____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A33____a_ilen_write_upto8.
+Require Import mlkem_A33____a_ilen_write_upto16.
+Require Import mlkem_A33____a_ilen_write_upto32.
+Require Import mlkem_A33____a_rlen_read_upto8.
+Require Import mlkem_A33____a_rlen_read_upto8_noninline.
+Require Import mlkem_A33____a_rlen_write_upto8.
+Require Import mlkem_A33____addstate_avx2.
+Require Import mlkem_A33____absorb_avx2.
+Require Import mlkem_A33____dumpstate_avx2.
+Require Import mlkem_A33____squeeze_avx2.
+Require Import mlkem_A33____addstate_bcast_avx2x4.
+Require Import mlkem_A33____absorb_bcast_avx2x4.
+Require Import mlkem_A33____addstate_avx2x4.
+Require Import mlkem_A33____absorb_avx2x4.
+Require Import mlkem_A33____dumpstate_avx2x4.
+Require Import mlkem_A33____squeeze_avx2x4.
+Require Import mlkem_A64____a_ilen_read_upto8_at.
+Require Import mlkem_A64____a_ilen_read_upto16_at.
+Require Import mlkem_A64____a_ilen_read_upto32_at.
+Require Import mlkem_A64____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A64____a_ilen_write_upto8.
+Require Import mlkem_A64____a_ilen_write_upto16.
+Require Import mlkem_A64____a_ilen_write_upto32.
+Require Import mlkem_A64____a_rlen_read_upto8.
+Require Import mlkem_A64____a_rlen_read_upto8_noninline.
+Require Import mlkem_A64____a_rlen_write_upto8.
+Require Import mlkem_A64____addstate_avx2.
+Require Import mlkem_A64____absorb_avx2.
+Require Import mlkem_A64____dumpstate_avx2.
+Require Import mlkem_A64____squeeze_avx2.
+Require Import mlkem_A128____a_ilen_read_upto8_at.
+Require Import mlkem_A128____a_ilen_read_upto16_at.
+Require Import mlkem_A128____a_ilen_read_upto32_at.
+Require Import mlkem_A128____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A128____a_ilen_write_upto8.
+Require Import mlkem_A128____a_ilen_write_upto16.
+Require Import mlkem_A128____a_ilen_write_upto32.
+Require Import mlkem_A128____a_rlen_read_upto8.
+Require Import mlkem_A128____a_rlen_read_upto8_noninline.
+Require Import mlkem_A128____a_rlen_write_upto8.
+Require Import mlkem_A128____addstate_avx2.
+Require Import mlkem_A128____absorb_avx2.
+Require Import mlkem_A128____dumpstate_avx2.
+Require Import mlkem_A128____squeeze_avx2.
+Require Import mlkem_A128____addstate_bcast_avx2x4.
+Require Import mlkem_A128____absorb_bcast_avx2x4.
+Require Import mlkem_A128____addstate_avx2x4.
+Require Import mlkem_A128____absorb_avx2x4.
+Require Import mlkem_A128____dumpstate_avx2x4.
+Require Import mlkem_A128____squeeze_avx2x4.
+Require Import mlkem_A1184____a_ilen_read_upto8_at.
+Require Import mlkem_A1184____a_ilen_read_upto16_at.
+Require Import mlkem_A1184____a_ilen_read_upto32_at.
+Require Import mlkem_A1184____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A1184____a_ilen_write_upto8.
+Require Import mlkem_A1184____a_ilen_write_upto16.
+Require Import mlkem_A1184____a_ilen_write_upto32.
+Require Import mlkem_A1184____a_rlen_read_upto8.
+Require Import mlkem_A1184____a_rlen_read_upto8_noninline.
+Require Import mlkem_A1184____a_rlen_write_upto8.
+Require Import mlkem_A1184____addstate_avx2.
+Require Import mlkem_A1184____absorb_avx2.
+Require Import mlkem_A1184____dumpstate_avx2.
+Require Import mlkem_A1184____squeeze_avx2.
+Require Import mlkem_A1184____addstate_bcast_avx2x4.
+Require Import mlkem_A1184____absorb_bcast_avx2x4.
+Require Import mlkem_A1184____addstate_avx2x4.
+Require Import mlkem_A1184____absorb_avx2x4.
+Require Import mlkem_A1184____dumpstate_avx2x4.
+Require Import mlkem_A1184____squeeze_avx2x4.
+Require Import mlkem_A1568____a_ilen_read_upto8_at.
+Require Import mlkem_A1568____a_ilen_read_upto16_at.
+Require Import mlkem_A1568____a_ilen_read_upto32_at.
+Require Import mlkem_A1568____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A1568____a_ilen_write_upto8.
+Require Import mlkem_A1568____a_ilen_write_upto16.
+Require Import mlkem_A1568____a_ilen_write_upto32.
+Require Import mlkem_A1568____a_rlen_read_upto8.
+Require Import mlkem_A1568____a_rlen_read_upto8_noninline.
+Require Import mlkem_A1568____a_rlen_write_upto8.
+Require Import mlkem_A1568____addstate_avx2.
+Require Import mlkem_A1568____absorb_avx2.
+Require Import mlkem_A1568____dumpstate_avx2.
+Require Import mlkem_A1568____squeeze_avx2.
+Require Import mlkem_A1568____addstate_bcast_avx2x4.
+Require Import mlkem_A1568____absorb_bcast_avx2x4.
+Require Import mlkem_A1568____addstate_avx2x4.
+Require Import mlkem_A1568____absorb_avx2x4.
+Require Import mlkem_A1568____dumpstate_avx2x4.
+Require Import mlkem_A1568____squeeze_avx2x4.
+Require Import mlkem_A1120____a_ilen_read_upto8_at.
+Require Import mlkem_A1120____a_ilen_read_upto16_at.
+Require Import mlkem_A1120____a_ilen_read_upto32_at.
+Require Import mlkem_A1120____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A1120____a_ilen_write_upto8.
+Require Import mlkem_A1120____a_ilen_write_upto16.
+Require Import mlkem_A1120____a_ilen_write_upto32.
+Require Import mlkem_A1120____a_rlen_read_upto8.
+Require Import mlkem_A1120____a_rlen_read_upto8_noninline.
+Require Import mlkem_A1120____a_rlen_write_upto8.
+Require Import mlkem_A1120____addstate_avx2.
+Require Import mlkem_A1120____absorb_avx2.
+Require Import mlkem_A1120____dumpstate_avx2.
+Require Import mlkem_A1120____squeeze_avx2.
+Require Import mlkem_A1120____addstate_bcast_avx2x4.
+Require Import mlkem_A1120____absorb_bcast_avx2x4.
+Require Import mlkem_A1120____addstate_avx2x4.
+Require Import mlkem_A1120____absorb_avx2x4.
+Require Import mlkem_A1120____dumpstate_avx2x4.
+Require Import mlkem_A1120____squeeze_avx2x4.
+Require Import mlkem_A1600____a_ilen_read_upto8_at.
+Require Import mlkem_A1600____a_ilen_read_upto16_at.
+Require Import mlkem_A1600____a_ilen_read_upto32_at.
+Require Import mlkem_A1600____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_A1600____a_ilen_write_upto8.
+Require Import mlkem_A1600____a_ilen_write_upto16.
+Require Import mlkem_A1600____a_ilen_write_upto32.
+Require Import mlkem_A1600____a_rlen_read_upto8.
+Require Import mlkem_A1600____a_rlen_read_upto8_noninline.
+Require Import mlkem_A1600____a_rlen_write_upto8.
+Require Import mlkem_A1600____addstate_avx2.
+Require Import mlkem_A1600____absorb_avx2.
+Require Import mlkem_A1600____dumpstate_avx2.
+Require Import mlkem_A1600____squeeze_avx2.
+Require Import mlkem_A1600____addstate_bcast_avx2x4.
+Require Import mlkem_A1600____absorb_bcast_avx2x4.
+Require Import mlkem_A1600____addstate_avx2x4.
+Require Import mlkem_A1600____absorb_avx2x4.
+Require Import mlkem_A1600____dumpstate_avx2x4.
+Require Import mlkem_A1600____squeeze_avx2x4.
+Require Import mlkem_ABUFLEN____a_ilen_read_upto8_at.
+Require Import mlkem_ABUFLEN____a_ilen_read_upto16_at.
+Require Import mlkem_ABUFLEN____a_ilen_read_upto32_at.
+Require Import mlkem_ABUFLEN____a_ilen_read_bcast_upto8_at.
+Require Import mlkem_ABUFLEN____a_ilen_write_upto8.
+Require Import mlkem_ABUFLEN____a_ilen_write_upto16.
+Require Import mlkem_ABUFLEN____a_ilen_write_upto32.
+Require Import mlkem_ABUFLEN____a_rlen_read_upto8.
+Require Import mlkem_ABUFLEN____a_rlen_read_upto8_noninline.
+Require Import mlkem_ABUFLEN____a_rlen_write_upto8.
+Require Import mlkem_ABUFLEN____addstate_avx2.
+Require Import mlkem_ABUFLEN____absorb_avx2.
+Require Import mlkem_ABUFLEN____dumpstate_avx2.
+Require Import mlkem_ABUFLEN____squeeze_avx2.
+Require Import mlkem_ABUFLEN____addstate_bcast_avx2x4.
+Require Import mlkem_ABUFLEN____absorb_bcast_avx2x4.
+Require Import mlkem_ABUFLEN____addstate_avx2x4.
+Require Import mlkem_ABUFLEN____absorb_avx2x4.
+Require Import mlkem_ABUFLEN____dumpstate_avx2x4.
+Require Import mlkem_ABUFLEN____squeeze_avx2x4.
+Require Import mlkem__sha3_512A_A33.
+Require Import mlkem__sha3_512A_A64.
+Require Import mlkem__shake256_A128__A32_A1.
+Require Import mlkem__shake256x4_A128__A32_A1.
+Require Import mlkem__shake128_absorb_A32_A2.
+Require Import mlkem__shake128x4_absorb_A32_A2.
+Require Import mlkem__shake128_squeeze3blocks.
+Require Import mlkem__shake128_next_state.
+Require Import mlkem__shake128x4_squeeze3blocks.
+Require Import mlkem__sha3_256A_A1184.
+Require Import mlkem__sha3_256A_A1568.
+Require Import mlkem__shake256_A32__A1120.
+Require Import mlkem__shake256_A32__A1600.
+Require Import mlkem__poly_add2.
+Require Import mlkem__poly_csubq.
+Require Import mlkem___w256_interleave_u16.
+Require Import mlkem___w256_deinterleave_u16.
+Require Import mlkem___mont_red.
+Require Import mlkem___wmul_16u16.
+Require Import mlkem___schoolbook16x.
+Require Import mlkem__poly_basemul.
+Require Import mlkem__i_poly_frombytes.
+Require Import mlkem__poly_frommont.
+Require Import mlkem__i_poly_frommsg.
+Require Import mlkem___cbd2.
+Require Import mlkem___poly_cbd_eta1.
+Require Import mlkem__poly_getnoise_eta2.
+Require Import mlkem__poly_getnoise_eta1_4x.
+Require Import mlkem___invntt___butterfly64x.
+Require Import mlkem__poly_invntt.
+Require Import mlkem___butterfly64x.
+Require Import mlkem__poly_ntt.
+Require Import mlkem___poly_reduce.
+Require Import mlkem__poly_sub.
+Require Import mlkem__i_poly_tobytes.
+Require Import mlkem__i_poly_tomsg.
+Require Import mlkem__i_poly_compress.
+Require Import mlkem__i_poly_decompress.
+Require Import mlkem___polyvec_add2.
+Require Import mlkem___polyvec_csubq.
+Require Import mlkem___polyvec_invntt.
+Require Import mlkem___polyvec_ntt.
+Require Import mlkem___polyvec_reduce.
+Require Import mlkem___i_polyvec_frombytes.
+Require Import mlkem___i_polyvec_tobytes.
+Require Import mlkem___polyvec_pointwise_acc.
+Require Import mlkem___i_polyvec_decompress.
+Require Import mlkem___i_polyvec_compress.
+Require Import mlkem___gen_matrix_buf_rejection_filter48.
+Require Import mlkem___write_u128_boundchk.
+Require Import mlkem___gen_matrix_buf_rejection_filter24.
+Require Import mlkem__gen_matrix_buf_rejection.
+Require Import mlkem_gen_matrix_get_indexes.
+Require Import mlkem___gen_matrix_fill_polynomial.
+Require Import mlkem__gen_matrix_sample_four_polynomials.
+Require Import mlkem___gen_matrix_sample_one_polynomial.
+Require Import mlkem__gen_matrix_avx2.
+Require Import mlkem___indcpa_keypair.
+Require Import mlkem___indcpa_enc.
+Require Import mlkem___indcpa_dec.
+Require Import mlkem___verify.
+Require Import mlkem___cmov.
+Require Import mlkem___crypto_kem_keypair_jazz.
+Require Import mlkem___crypto_kem_enc_jazz.
+Require Import mlkem___crypto_kem_dec_jazz.
+Require Import mlkem_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand.
+Require Import mlkem_jade_kem_mlkem_mlkem768_amd64_avx2_enc_derand.
+Require Import mlkem_jade_kem_mlkem_mlkem768_amd64_avx2_keypair.
+Require Import mlkem_jade_kem_mlkem_mlkem768_amd64_avx2_enc.
+Require Import mlkem_jade_kem_mlkem_mlkem768_amd64_avx2_dec.
+
+Axiom IdO : IdentOracles.
+Existing Instance IdO.
+
+(* -------------------------------------------------------------------------- *)
+(* Program *)
+
+Definition mlkem : uprog :=
+  {|
+    p_globs := mlkem_gds;
+    p_funcs :=
+      [:: (__shuffle8, fd___shuffle8)
+        ; (__shuffle4, fd___shuffle4)
+        ; (__shuffle2, fd___shuffle2)
+        ; (__shuffle1, fd___shuffle1)
+        ; (__nttunpack128, fd___nttunpack128)
+        ; (_nttunpack, fd__nttunpack)
+        ; (__csubq, fd___csubq)
+        ; (__red16x, fd___red16x)
+        ; (__fqmulprecomp16x, fd___fqmulprecomp16x)
+        ; (__fqmulx16, fd___fqmulx16)
+        ; (keccakf1600_index, fd_keccakf1600_index)
+        ; (keccakf1600_rho_offsets, fd_keccakf1600_rho_offsets)
+        ; (keccakf1600_rhotates, fd_keccakf1600_rhotates)
+        ; (__keccakf1600_pround_avx2, fd___keccakf1600_pround_avx2)
+        ; (__keccakf1600_avx2, fd___keccakf1600_avx2)
+        ; (_keccakf1600_avx2, fd__keccakf1600_avx2)
+        ; (__stavx2_pack, fd___stavx2_pack)
+        ; (__stavx2_unpack, fd___stavx2_unpack)
+        ; (_keccakf1600_st25_avx2, fd__keccakf1600_st25_avx2)
+        ; (__SHLQ, fd___SHLQ)
+        ; (__SHLDQ, fd___SHLDQ)
+        ; (__SHLQ_256, fd___SHLQ_256)
+        ; (__m_ilen_read_upto8_at, fd___m_ilen_read_upto8_at)
+        ; (__m_ilen_read_upto16_at, fd___m_ilen_read_upto16_at)
+        ; (__m_ilen_read_upto32_at, fd___m_ilen_read_upto32_at)
+        ; (__m_ilen_read_bcast_upto8_at, fd___m_ilen_read_bcast_upto8_at)
+        ; (__m_ilen_write_upto8, fd___m_ilen_write_upto8)
+        ; (__m_ilen_write_upto16, fd___m_ilen_write_upto16)
+        ; (__m_ilen_write_upto32, fd___m_ilen_write_upto32)
+        ; (__m_rlen_read_upto8, fd___m_rlen_read_upto8)
+        ; (__m_rlen_write_upto8, fd___m_rlen_write_upto8)
+        ; (__u64_to_u256, fd___u64_to_u256)
+        ; (__state_init_avx2, fd___state_init_avx2)
+        ; (__perm_reg3456_avx2, fd___perm_reg3456_avx2)
+        ; (__unperm_reg3456_avx2, fd___unperm_reg3456_avx2)
+        ; (__addstate_r3456_avx2, fd___addstate_r3456_avx2)
+        ; (__stavx2_pos_avx2, fd___stavx2_pos_avx2)
+        ; (__addratebit_avx2, fd___addratebit_avx2)
+        ; (__addstate_m_avx2, fd___addstate_m_avx2)
+        ; (__absorb_m_avx2, fd___absorb_m_avx2)
+        ; (__dumpstate_m_avx2, fd___dumpstate_m_avx2)
+        ; (__squeeze_m_avx2, fd___squeeze_m_avx2)
+        ; (_keccakf1600_4x_pround, fd__keccakf1600_4x_pround)
+        ; (__keccakf1600_avx2x4, fd___keccakf1600_avx2x4)
+        ; (_keccakf1600_avx2x4, fd__keccakf1600_avx2x4)
+        ; (j__keccakf1600_avx2x4_, fd_j__keccakf1600_avx2x4_)
+        ; (__u256x4_4u64x4, fd___u256x4_4u64x4)
+        ; (__st4x_pack, fd___st4x_pack)
+        ; (__4u64x4_u256x4, fd___4u64x4_u256x4)
+        ; (__st4x_unpack, fd___st4x_unpack)
+        ; (__keccakf1600_pround_unpacked, fd___keccakf1600_pround_unpacked)
+        ; (__keccakf1600_pround_equiv, fd___keccakf1600_pround_equiv)
+        ; (__state_init_avx2x4, fd___state_init_avx2x4)
+        ; (__addratebit_avx2x4, fd___addratebit_avx2x4)
+        ; (__addstate_m_bcast_avx2x4, fd___addstate_m_bcast_avx2x4)
+        ; (__absorb_m_bcast_avx2x4, fd___absorb_m_bcast_avx2x4)
+        ; (__addstate_m_avx2x4, fd___addstate_m_avx2x4)
+        ; (__absorb_m_avx2x4, fd___absorb_m_avx2x4)
+        ; (__dumpstate_m_avx2x4, fd___dumpstate_m_avx2x4)
+        ; (__squeeze_m_avx2x4, fd___squeeze_m_avx2x4)
+        ; (A1____a_ilen_read_upto8_at, fd_A1____a_ilen_read_upto8_at)
+        ; (A1____a_ilen_read_upto16_at, fd_A1____a_ilen_read_upto16_at)
+        ; (A1____a_ilen_read_upto32_at, fd_A1____a_ilen_read_upto32_at)
+        ; (A1____a_ilen_read_bcast_upto8_at, fd_A1____a_ilen_read_bcast_upto8_at)
+        ; (A1____a_ilen_write_upto8, fd_A1____a_ilen_write_upto8)
+        ; (A1____a_ilen_write_upto16, fd_A1____a_ilen_write_upto16)
+        ; (A1____a_ilen_write_upto32, fd_A1____a_ilen_write_upto32)
+        ; (A1____a_rlen_read_upto8, fd_A1____a_rlen_read_upto8)
+        ; (A1____a_rlen_read_upto8_noninline, fd_A1____a_rlen_read_upto8_noninline)
+        ; (A1____a_rlen_write_upto8, fd_A1____a_rlen_write_upto8)
+        ; (A1____addstate_avx2, fd_A1____addstate_avx2)
+        ; (A1____absorb_avx2, fd_A1____absorb_avx2)
+        ; (A1____dumpstate_avx2, fd_A1____dumpstate_avx2)
+        ; (A1____squeeze_avx2, fd_A1____squeeze_avx2)
+        ; (A1____addstate_bcast_avx2x4, fd_A1____addstate_bcast_avx2x4)
+        ; (A1____absorb_bcast_avx2x4, fd_A1____absorb_bcast_avx2x4)
+        ; (A1____addstate_avx2x4, fd_A1____addstate_avx2x4)
+        ; (A1____absorb_avx2x4, fd_A1____absorb_avx2x4)
+        ; (A1____dumpstate_avx2x4, fd_A1____dumpstate_avx2x4)
+        ; (A1____squeeze_avx2x4, fd_A1____squeeze_avx2x4)
+        ; (A2____a_ilen_read_upto8_at, fd_A2____a_ilen_read_upto8_at)
+        ; (A2____a_ilen_read_upto16_at, fd_A2____a_ilen_read_upto16_at)
+        ; (A2____a_ilen_read_upto32_at, fd_A2____a_ilen_read_upto32_at)
+        ; (A2____a_ilen_read_bcast_upto8_at, fd_A2____a_ilen_read_bcast_upto8_at)
+        ; (A2____a_ilen_write_upto8, fd_A2____a_ilen_write_upto8)
+        ; (A2____a_ilen_write_upto16, fd_A2____a_ilen_write_upto16)
+        ; (A2____a_ilen_write_upto32, fd_A2____a_ilen_write_upto32)
+        ; (A2____a_rlen_read_upto8, fd_A2____a_rlen_read_upto8)
+        ; (A2____a_rlen_read_upto8_noninline, fd_A2____a_rlen_read_upto8_noninline)
+        ; (A2____a_rlen_write_upto8, fd_A2____a_rlen_write_upto8)
+        ; (A2____addstate_avx2, fd_A2____addstate_avx2)
+        ; (A2____absorb_avx2, fd_A2____absorb_avx2)
+        ; (A2____dumpstate_avx2, fd_A2____dumpstate_avx2)
+        ; (A2____squeeze_avx2, fd_A2____squeeze_avx2)
+        ; (A2____addstate_bcast_avx2x4, fd_A2____addstate_bcast_avx2x4)
+        ; (A2____absorb_bcast_avx2x4, fd_A2____absorb_bcast_avx2x4)
+        ; (A2____addstate_avx2x4, fd_A2____addstate_avx2x4)
+        ; (A2____absorb_avx2x4, fd_A2____absorb_avx2x4)
+        ; (A2____dumpstate_avx2x4, fd_A2____dumpstate_avx2x4)
+        ; (A2____squeeze_avx2x4, fd_A2____squeeze_avx2x4)
+        ; (A32____a_ilen_read_upto8_at, fd_A32____a_ilen_read_upto8_at)
+        ; (A32____a_ilen_read_upto16_at, fd_A32____a_ilen_read_upto16_at)
+        ; (A32____a_ilen_read_upto32_at, fd_A32____a_ilen_read_upto32_at)
+        ; (A32____a_ilen_read_bcast_upto8_at, fd_A32____a_ilen_read_bcast_upto8_at)
+        ; (A32____a_ilen_write_upto8, fd_A32____a_ilen_write_upto8)
+        ; (A32____a_ilen_write_upto16, fd_A32____a_ilen_write_upto16)
+        ; (A32____a_ilen_write_upto32, fd_A32____a_ilen_write_upto32)
+        ; (A32____a_rlen_read_upto8, fd_A32____a_rlen_read_upto8)
+        ; (A32____a_rlen_read_upto8_noninline, fd_A32____a_rlen_read_upto8_noninline)
+        ; (A32____a_rlen_write_upto8, fd_A32____a_rlen_write_upto8)
+        ; (A32____addstate_avx2, fd_A32____addstate_avx2)
+        ; (A32____absorb_avx2, fd_A32____absorb_avx2)
+        ; (A32____dumpstate_avx2, fd_A32____dumpstate_avx2)
+        ; (A32____squeeze_avx2, fd_A32____squeeze_avx2)
+        ; (A32____addstate_bcast_avx2x4, fd_A32____addstate_bcast_avx2x4)
+        ; (A32____absorb_bcast_avx2x4, fd_A32____absorb_bcast_avx2x4)
+        ; (A32____addstate_avx2x4, fd_A32____addstate_avx2x4)
+        ; (A32____absorb_avx2x4, fd_A32____absorb_avx2x4)
+        ; (A32____dumpstate_avx2x4, fd_A32____dumpstate_avx2x4)
+        ; (A32____squeeze_avx2x4, fd_A32____squeeze_avx2x4)
+        ; (A33____a_ilen_read_upto8_at, fd_A33____a_ilen_read_upto8_at)
+        ; (A33____a_ilen_read_upto16_at, fd_A33____a_ilen_read_upto16_at)
+        ; (A33____a_ilen_read_upto32_at, fd_A33____a_ilen_read_upto32_at)
+        ; (A33____a_ilen_read_bcast_upto8_at, fd_A33____a_ilen_read_bcast_upto8_at)
+        ; (A33____a_ilen_write_upto8, fd_A33____a_ilen_write_upto8)
+        ; (A33____a_ilen_write_upto16, fd_A33____a_ilen_write_upto16)
+        ; (A33____a_ilen_write_upto32, fd_A33____a_ilen_write_upto32)
+        ; (A33____a_rlen_read_upto8, fd_A33____a_rlen_read_upto8)
+        ; (A33____a_rlen_read_upto8_noninline, fd_A33____a_rlen_read_upto8_noninline)
+        ; (A33____a_rlen_write_upto8, fd_A33____a_rlen_write_upto8)
+        ; (A33____addstate_avx2, fd_A33____addstate_avx2)
+        ; (A33____absorb_avx2, fd_A33____absorb_avx2)
+        ; (A33____dumpstate_avx2, fd_A33____dumpstate_avx2)
+        ; (A33____squeeze_avx2, fd_A33____squeeze_avx2)
+        ; (A33____addstate_bcast_avx2x4, fd_A33____addstate_bcast_avx2x4)
+        ; (A33____absorb_bcast_avx2x4, fd_A33____absorb_bcast_avx2x4)
+        ; (A33____addstate_avx2x4, fd_A33____addstate_avx2x4)
+        ; (A33____absorb_avx2x4, fd_A33____absorb_avx2x4)
+        ; (A33____dumpstate_avx2x4, fd_A33____dumpstate_avx2x4)
+        ; (A33____squeeze_avx2x4, fd_A33____squeeze_avx2x4)
+        ; (A64____a_ilen_read_upto8_at, fd_A64____a_ilen_read_upto8_at)
+        ; (A64____a_ilen_read_upto16_at, fd_A64____a_ilen_read_upto16_at)
+        ; (A64____a_ilen_read_upto32_at, fd_A64____a_ilen_read_upto32_at)
+        ; (A64____a_ilen_read_bcast_upto8_at, fd_A64____a_ilen_read_bcast_upto8_at)
+        ; (A64____a_ilen_write_upto8, fd_A64____a_ilen_write_upto8)
+        ; (A64____a_ilen_write_upto16, fd_A64____a_ilen_write_upto16)
+        ; (A64____a_ilen_write_upto32, fd_A64____a_ilen_write_upto32)
+        ; (A64____a_rlen_read_upto8, fd_A64____a_rlen_read_upto8)
+        ; (A64____a_rlen_read_upto8_noninline, fd_A64____a_rlen_read_upto8_noninline)
+        ; (A64____a_rlen_write_upto8, fd_A64____a_rlen_write_upto8)
+        ; (A64____addstate_avx2, fd_A64____addstate_avx2)
+        ; (A64____absorb_avx2, fd_A64____absorb_avx2)
+        ; (A64____dumpstate_avx2, fd_A64____dumpstate_avx2)
+        ; (A64____squeeze_avx2, fd_A64____squeeze_avx2)
+        ; (A128____a_ilen_read_upto8_at, fd_A128____a_ilen_read_upto8_at)
+        ; (A128____a_ilen_read_upto16_at, fd_A128____a_ilen_read_upto16_at)
+        ; (A128____a_ilen_read_upto32_at, fd_A128____a_ilen_read_upto32_at)
+        ; (A128____a_ilen_read_bcast_upto8_at, fd_A128____a_ilen_read_bcast_upto8_at)
+        ; (A128____a_ilen_write_upto8, fd_A128____a_ilen_write_upto8)
+        ; (A128____a_ilen_write_upto16, fd_A128____a_ilen_write_upto16)
+        ; (A128____a_ilen_write_upto32, fd_A128____a_ilen_write_upto32)
+        ; (A128____a_rlen_read_upto8, fd_A128____a_rlen_read_upto8)
+        ; (A128____a_rlen_read_upto8_noninline, fd_A128____a_rlen_read_upto8_noninline)
+        ; (A128____a_rlen_write_upto8, fd_A128____a_rlen_write_upto8)
+        ; (A128____addstate_avx2, fd_A128____addstate_avx2)
+        ; (A128____absorb_avx2, fd_A128____absorb_avx2)
+        ; (A128____dumpstate_avx2, fd_A128____dumpstate_avx2)
+        ; (A128____squeeze_avx2, fd_A128____squeeze_avx2)
+        ; (A128____addstate_bcast_avx2x4, fd_A128____addstate_bcast_avx2x4)
+        ; (A128____absorb_bcast_avx2x4, fd_A128____absorb_bcast_avx2x4)
+        ; (A128____addstate_avx2x4, fd_A128____addstate_avx2x4)
+        ; (A128____absorb_avx2x4, fd_A128____absorb_avx2x4)
+        ; (A128____dumpstate_avx2x4, fd_A128____dumpstate_avx2x4)
+        ; (A128____squeeze_avx2x4, fd_A128____squeeze_avx2x4)
+        ; (A1184____a_ilen_read_upto8_at, fd_A1184____a_ilen_read_upto8_at)
+        ; (A1184____a_ilen_read_upto16_at, fd_A1184____a_ilen_read_upto16_at)
+        ; (A1184____a_ilen_read_upto32_at, fd_A1184____a_ilen_read_upto32_at)
+        ; (A1184____a_ilen_read_bcast_upto8_at, fd_A1184____a_ilen_read_bcast_upto8_at)
+        ; (A1184____a_ilen_write_upto8, fd_A1184____a_ilen_write_upto8)
+        ; (A1184____a_ilen_write_upto16, fd_A1184____a_ilen_write_upto16)
+        ; (A1184____a_ilen_write_upto32, fd_A1184____a_ilen_write_upto32)
+        ; (A1184____a_rlen_read_upto8, fd_A1184____a_rlen_read_upto8)
+        ; (A1184____a_rlen_read_upto8_noninline, fd_A1184____a_rlen_read_upto8_noninline)
+        ; (A1184____a_rlen_write_upto8, fd_A1184____a_rlen_write_upto8)
+        ; (A1184____addstate_avx2, fd_A1184____addstate_avx2)
+        ; (A1184____absorb_avx2, fd_A1184____absorb_avx2)
+        ; (A1184____dumpstate_avx2, fd_A1184____dumpstate_avx2)
+        ; (A1184____squeeze_avx2, fd_A1184____squeeze_avx2)
+        ; (A1184____addstate_bcast_avx2x4, fd_A1184____addstate_bcast_avx2x4)
+        ; (A1184____absorb_bcast_avx2x4, fd_A1184____absorb_bcast_avx2x4)
+        ; (A1184____addstate_avx2x4, fd_A1184____addstate_avx2x4)
+        ; (A1184____absorb_avx2x4, fd_A1184____absorb_avx2x4)
+        ; (A1184____dumpstate_avx2x4, fd_A1184____dumpstate_avx2x4)
+        ; (A1184____squeeze_avx2x4, fd_A1184____squeeze_avx2x4)
+        ; (A1568____a_ilen_read_upto8_at, fd_A1568____a_ilen_read_upto8_at)
+        ; (A1568____a_ilen_read_upto16_at, fd_A1568____a_ilen_read_upto16_at)
+        ; (A1568____a_ilen_read_upto32_at, fd_A1568____a_ilen_read_upto32_at)
+        ; (A1568____a_ilen_read_bcast_upto8_at, fd_A1568____a_ilen_read_bcast_upto8_at)
+        ; (A1568____a_ilen_write_upto8, fd_A1568____a_ilen_write_upto8)
+        ; (A1568____a_ilen_write_upto16, fd_A1568____a_ilen_write_upto16)
+        ; (A1568____a_ilen_write_upto32, fd_A1568____a_ilen_write_upto32)
+        ; (A1568____a_rlen_read_upto8, fd_A1568____a_rlen_read_upto8)
+        ; (A1568____a_rlen_read_upto8_noninline, fd_A1568____a_rlen_read_upto8_noninline)
+        ; (A1568____a_rlen_write_upto8, fd_A1568____a_rlen_write_upto8)
+        ; (A1568____addstate_avx2, fd_A1568____addstate_avx2)
+        ; (A1568____absorb_avx2, fd_A1568____absorb_avx2)
+        ; (A1568____dumpstate_avx2, fd_A1568____dumpstate_avx2)
+        ; (A1568____squeeze_avx2, fd_A1568____squeeze_avx2)
+        ; (A1568____addstate_bcast_avx2x4, fd_A1568____addstate_bcast_avx2x4)
+        ; (A1568____absorb_bcast_avx2x4, fd_A1568____absorb_bcast_avx2x4)
+        ; (A1568____addstate_avx2x4, fd_A1568____addstate_avx2x4)
+        ; (A1568____absorb_avx2x4, fd_A1568____absorb_avx2x4)
+        ; (A1568____dumpstate_avx2x4, fd_A1568____dumpstate_avx2x4)
+        ; (A1568____squeeze_avx2x4, fd_A1568____squeeze_avx2x4)
+        ; (A1120____a_ilen_read_upto8_at, fd_A1120____a_ilen_read_upto8_at)
+        ; (A1120____a_ilen_read_upto16_at, fd_A1120____a_ilen_read_upto16_at)
+        ; (A1120____a_ilen_read_upto32_at, fd_A1120____a_ilen_read_upto32_at)
+        ; (A1120____a_ilen_read_bcast_upto8_at, fd_A1120____a_ilen_read_bcast_upto8_at)
+        ; (A1120____a_ilen_write_upto8, fd_A1120____a_ilen_write_upto8)
+        ; (A1120____a_ilen_write_upto16, fd_A1120____a_ilen_write_upto16)
+        ; (A1120____a_ilen_write_upto32, fd_A1120____a_ilen_write_upto32)
+        ; (A1120____a_rlen_read_upto8, fd_A1120____a_rlen_read_upto8)
+        ; (A1120____a_rlen_read_upto8_noninline, fd_A1120____a_rlen_read_upto8_noninline)
+        ; (A1120____a_rlen_write_upto8, fd_A1120____a_rlen_write_upto8)
+        ; (A1120____addstate_avx2, fd_A1120____addstate_avx2)
+        ; (A1120____absorb_avx2, fd_A1120____absorb_avx2)
+        ; (A1120____dumpstate_avx2, fd_A1120____dumpstate_avx2)
+        ; (A1120____squeeze_avx2, fd_A1120____squeeze_avx2)
+        ; (A1120____addstate_bcast_avx2x4, fd_A1120____addstate_bcast_avx2x4)
+        ; (A1120____absorb_bcast_avx2x4, fd_A1120____absorb_bcast_avx2x4)
+        ; (A1120____addstate_avx2x4, fd_A1120____addstate_avx2x4)
+        ; (A1120____absorb_avx2x4, fd_A1120____absorb_avx2x4)
+        ; (A1120____dumpstate_avx2x4, fd_A1120____dumpstate_avx2x4)
+        ; (A1120____squeeze_avx2x4, fd_A1120____squeeze_avx2x4)
+        ; (A1600____a_ilen_read_upto8_at, fd_A1600____a_ilen_read_upto8_at)
+        ; (A1600____a_ilen_read_upto16_at, fd_A1600____a_ilen_read_upto16_at)
+        ; (A1600____a_ilen_read_upto32_at, fd_A1600____a_ilen_read_upto32_at)
+        ; (A1600____a_ilen_read_bcast_upto8_at, fd_A1600____a_ilen_read_bcast_upto8_at)
+        ; (A1600____a_ilen_write_upto8, fd_A1600____a_ilen_write_upto8)
+        ; (A1600____a_ilen_write_upto16, fd_A1600____a_ilen_write_upto16)
+        ; (A1600____a_ilen_write_upto32, fd_A1600____a_ilen_write_upto32)
+        ; (A1600____a_rlen_read_upto8, fd_A1600____a_rlen_read_upto8)
+        ; (A1600____a_rlen_read_upto8_noninline, fd_A1600____a_rlen_read_upto8_noninline)
+        ; (A1600____a_rlen_write_upto8, fd_A1600____a_rlen_write_upto8)
+        ; (A1600____addstate_avx2, fd_A1600____addstate_avx2)
+        ; (A1600____absorb_avx2, fd_A1600____absorb_avx2)
+        ; (A1600____dumpstate_avx2, fd_A1600____dumpstate_avx2)
+        ; (A1600____squeeze_avx2, fd_A1600____squeeze_avx2)
+        ; (A1600____addstate_bcast_avx2x4, fd_A1600____addstate_bcast_avx2x4)
+        ; (A1600____absorb_bcast_avx2x4, fd_A1600____absorb_bcast_avx2x4)
+        ; (A1600____addstate_avx2x4, fd_A1600____addstate_avx2x4)
+        ; (A1600____absorb_avx2x4, fd_A1600____absorb_avx2x4)
+        ; (A1600____dumpstate_avx2x4, fd_A1600____dumpstate_avx2x4)
+        ; (A1600____squeeze_avx2x4, fd_A1600____squeeze_avx2x4)
+        ; (ABUFLEN____a_ilen_read_upto8_at, fd_ABUFLEN____a_ilen_read_upto8_at)
+        ; (ABUFLEN____a_ilen_read_upto16_at, fd_ABUFLEN____a_ilen_read_upto16_at)
+        ; (ABUFLEN____a_ilen_read_upto32_at, fd_ABUFLEN____a_ilen_read_upto32_at)
+        ; (ABUFLEN____a_ilen_read_bcast_upto8_at, fd_ABUFLEN____a_ilen_read_bcast_upto8_at)
+        ; (ABUFLEN____a_ilen_write_upto8, fd_ABUFLEN____a_ilen_write_upto8)
+        ; (ABUFLEN____a_ilen_write_upto16, fd_ABUFLEN____a_ilen_write_upto16)
+        ; (ABUFLEN____a_ilen_write_upto32, fd_ABUFLEN____a_ilen_write_upto32)
+        ; (ABUFLEN____a_rlen_read_upto8, fd_ABUFLEN____a_rlen_read_upto8)
+        ; (ABUFLEN____a_rlen_read_upto8_noninline, fd_ABUFLEN____a_rlen_read_upto8_noninline)
+        ; (ABUFLEN____a_rlen_write_upto8, fd_ABUFLEN____a_rlen_write_upto8)
+        ; (ABUFLEN____addstate_avx2, fd_ABUFLEN____addstate_avx2)
+        ; (ABUFLEN____absorb_avx2, fd_ABUFLEN____absorb_avx2)
+        ; (ABUFLEN____dumpstate_avx2, fd_ABUFLEN____dumpstate_avx2)
+        ; (ABUFLEN____squeeze_avx2, fd_ABUFLEN____squeeze_avx2)
+        ; (ABUFLEN____addstate_bcast_avx2x4, fd_ABUFLEN____addstate_bcast_avx2x4)
+        ; (ABUFLEN____absorb_bcast_avx2x4, fd_ABUFLEN____absorb_bcast_avx2x4)
+        ; (ABUFLEN____addstate_avx2x4, fd_ABUFLEN____addstate_avx2x4)
+        ; (ABUFLEN____absorb_avx2x4, fd_ABUFLEN____absorb_avx2x4)
+        ; (ABUFLEN____dumpstate_avx2x4, fd_ABUFLEN____dumpstate_avx2x4)
+        ; (ABUFLEN____squeeze_avx2x4, fd_ABUFLEN____squeeze_avx2x4)
+        ; (_sha3_512A_A33, fd__sha3_512A_A33)
+        ; (_sha3_512A_A64, fd__sha3_512A_A64)
+        ; (_shake256_A128__A32_A1, fd__shake256_A128__A32_A1)
+        ; (_shake256x4_A128__A32_A1, fd__shake256x4_A128__A32_A1)
+        ; (_shake128_absorb_A32_A2, fd__shake128_absorb_A32_A2)
+        ; (_shake128x4_absorb_A32_A2, fd__shake128x4_absorb_A32_A2)
+        ; (_shake128_squeeze3blocks, fd__shake128_squeeze3blocks)
+        ; (_shake128_next_state, fd__shake128_next_state)
+        ; (_shake128x4_squeeze3blocks, fd__shake128x4_squeeze3blocks)
+        ; (_sha3_256A_A1184, fd__sha3_256A_A1184)
+        ; (_sha3_256A_A1568, fd__sha3_256A_A1568)
+        ; (_shake256_A32__A1120, fd__shake256_A32__A1120)
+        ; (_shake256_A32__A1600, fd__shake256_A32__A1600)
+        ; (_poly_add2, fd__poly_add2)
+        ; (_poly_csubq, fd__poly_csubq)
+        ; (__w256_interleave_u16, fd___w256_interleave_u16)
+        ; (__w256_deinterleave_u16, fd___w256_deinterleave_u16)
+        ; (__mont_red, fd___mont_red)
+        ; (__wmul_16u16, fd___wmul_16u16)
+        ; (__schoolbook16x, fd___schoolbook16x)
+        ; (_poly_basemul, fd__poly_basemul)
+        ; (_i_poly_frombytes, fd__i_poly_frombytes)
+        ; (_poly_frommont, fd__poly_frommont)
+        ; (_i_poly_frommsg, fd__i_poly_frommsg)
+        ; (__cbd2, fd___cbd2)
+        ; (__poly_cbd_eta1, fd___poly_cbd_eta1)
+        ; (_poly_getnoise_eta2, fd__poly_getnoise_eta2)
+        ; (_poly_getnoise_eta1_4x, fd__poly_getnoise_eta1_4x)
+        ; (__invntt___butterfly64x, fd___invntt___butterfly64x)
+        ; (_poly_invntt, fd__poly_invntt)
+        ; (__butterfly64x, fd___butterfly64x)
+        ; (_poly_ntt, fd__poly_ntt)
+        ; (__poly_reduce, fd___poly_reduce)
+        ; (_poly_sub, fd__poly_sub)
+        ; (_i_poly_tobytes, fd__i_poly_tobytes)
+        ; (_i_poly_tomsg, fd__i_poly_tomsg)
+        ; (_i_poly_compress, fd__i_poly_compress)
+        ; (_i_poly_decompress, fd__i_poly_decompress)
+        ; (__polyvec_add2, fd___polyvec_add2)
+        ; (__polyvec_csubq, fd___polyvec_csubq)
+        ; (__polyvec_invntt, fd___polyvec_invntt)
+        ; (__polyvec_ntt, fd___polyvec_ntt)
+        ; (__polyvec_reduce, fd___polyvec_reduce)
+        ; (__i_polyvec_frombytes, fd___i_polyvec_frombytes)
+        ; (__i_polyvec_tobytes, fd___i_polyvec_tobytes)
+        ; (__polyvec_pointwise_acc, fd___polyvec_pointwise_acc)
+        ; (__i_polyvec_decompress, fd___i_polyvec_decompress)
+        ; (__i_polyvec_compress, fd___i_polyvec_compress)
+        ; (__gen_matrix_buf_rejection_filter48, fd___gen_matrix_buf_rejection_filter48)
+        ; (__write_u128_boundchk, fd___write_u128_boundchk)
+        ; (__gen_matrix_buf_rejection_filter24, fd___gen_matrix_buf_rejection_filter24)
+        ; (_gen_matrix_buf_rejection, fd__gen_matrix_buf_rejection)
+        ; (gen_matrix_get_indexes, fd_gen_matrix_get_indexes)
+        ; (__gen_matrix_fill_polynomial, fd___gen_matrix_fill_polynomial)
+        ; (_gen_matrix_sample_four_polynomials, fd__gen_matrix_sample_four_polynomials)
+        ; (__gen_matrix_sample_one_polynomial, fd___gen_matrix_sample_one_polynomial)
+        ; (_gen_matrix_avx2, fd__gen_matrix_avx2)
+        ; (__indcpa_keypair, fd___indcpa_keypair)
+        ; (__indcpa_enc, fd___indcpa_enc)
+        ; (__indcpa_dec, fd___indcpa_dec)
+        ; (__verify, fd___verify)
+        ; (__cmov, fd___cmov)
+        ; (__crypto_kem_keypair_jazz, fd___crypto_kem_keypair_jazz)
+        ; (__crypto_kem_enc_jazz, fd___crypto_kem_enc_jazz)
+        ; (__crypto_kem_dec_jazz, fd___crypto_kem_dec_jazz)
+        ; (jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand, fd_jade_kem_mlkem_mlkem768_amd64_avx2_keypair_derand)
+        ; (jade_kem_mlkem_mlkem768_amd64_avx2_enc_derand, fd_jade_kem_mlkem_mlkem768_amd64_avx2_enc_derand)
+        ; (jade_kem_mlkem_mlkem768_amd64_avx2_keypair, fd_jade_kem_mlkem_mlkem768_amd64_avx2_keypair)
+        ; (jade_kem_mlkem_mlkem768_amd64_avx2_enc, fd_jade_kem_mlkem_mlkem768_amd64_avx2_enc)
+        ; (jade_kem_mlkem_mlkem768_amd64_avx2_dec, fd_jade_kem_mlkem_mlkem768_amd64_avx2_dec) ];
+    p_extra := tt;
+  |}.

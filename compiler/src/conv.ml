@@ -332,13 +332,18 @@ let prog_of_csprog p =
 
 
 (* ---------------------------------------------------------------------------- *)
+let arr_get len s ws t i =
+  match Warray_.WArray.get len Aligned s ws t (cz_of_int i) with
+  | Utils0.Ok w -> z_of_word ws w
+  | _ -> assert false
+
 let to_array ty len t =
   let ws, n = array_kind ty in
-  let get i =
-    match Warray_.WArray.get len Aligned Warray_.AAscale ws t (cz_of_int i) with
-    | Utils0.Ok w -> z_of_word ws w
-    | _    -> assert false in
-  ws, Array.init n get
+  ws, Array.init n (arr_get len Warray_.AAscale ws t)
+
+let to_array8 ty len t =
+  let ws, n = array_kind ty in
+  Array.init (arr_size ws n) (arr_get len Warray_.AAdirect U8 t)
 
 (* ---------------------------------------------------------------------------- *)
 

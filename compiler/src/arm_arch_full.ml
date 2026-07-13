@@ -34,6 +34,106 @@ module Arm_core = struct
   (* All of the extra ops compile into CT instructions (no DIV). *)
   let is_ct_asm_extra (_o : extra_op) = true
 
+  (* All of the extra ops compile into DIT instructions only, but this needs to be checked manually. *)
+  let is_doit_asm_extra (o : extra_op) =
+    match o with
+    | Oarm_swap _ -> true
+    | Oarm_add_large_imm -> true
+    | (Osmart_li _ | Osmart_li_cc _) -> true (* emit MOVT *)
+
+  let pp_shift_kind fmt = function
+    | Shift_kind.SLSL -> ToRocq.pp_bare fmt "SLSL"
+    | SLSR -> ToRocq.pp_bare fmt "SLSR"
+    | SASR -> ToRocq.pp_bare fmt "SASR"
+    | SROR -> ToRocq.pp_bare fmt "SROR"
+
+  let pp_arm_options fmt (o : Arm_instr_decl.arm_options) =
+    Format.fprintf fmt "{| set_flags := %b; is_conditional := %b; has_shift := (%a) |}"
+      o.set_flags o.is_conditional
+      (ToRocq.pp_rocq_option pp_shift_kind)
+      o.has_shift
+
+  let pp_halfword fmt = function
+    | Arm_instr_decl.HWB -> ToRocq.pp_bare fmt "HWB"
+    | HWT -> ToRocq.pp_bare fmt "HWT"
+
+  let pp_hw2 name fmt (h1, h2) =
+    Format.fprintf fmt "(%s %a %a)" name pp_halfword h1 pp_halfword h2
+
+  let pp_hw name fmt h =
+    Format.fprintf fmt "(%s %a)" name pp_halfword h
+
+  let pp_arm_mnemonic fmt (m : Arm_instr_decl.arm_mnemonic) =
+    let open Arm_instr_decl in
+    match m with
+    | ADD -> ToRocq.pp_bare fmt "ADD"
+    | ADC -> ToRocq.pp_bare fmt "ADC"
+    | MUL -> ToRocq.pp_bare fmt "MUL"
+    | MLA -> ToRocq.pp_bare fmt "MLA"
+    | MLS -> ToRocq.pp_bare fmt "MLS"
+    | SDIV -> ToRocq.pp_bare fmt "SDIV"
+    | SUB -> ToRocq.pp_bare fmt "SUB"
+    | SBC -> ToRocq.pp_bare fmt "SBC"
+    | RSB -> ToRocq.pp_bare fmt "RSB"
+    | UDIV -> ToRocq.pp_bare fmt "UDIV"
+    | UMULL -> ToRocq.pp_bare fmt "UMULL"
+    | UMAAL -> ToRocq.pp_bare fmt "UMAAL"
+    | UMLAL -> ToRocq.pp_bare fmt "UMLAL"
+    | SMULL -> ToRocq.pp_bare fmt "SMULL"
+    | SMLAL -> ToRocq.pp_bare fmt "SMLAL"
+    | SMMUL -> ToRocq.pp_bare fmt "SMMUL"
+    | SMMULR -> ToRocq.pp_bare fmt "SMMULR"
+    | SMUL_hw (h1, h2) -> pp_hw2 "SMUL_hw" fmt (h1, h2)
+    | SMLA_hw (h1, h2) -> pp_hw2 "SMLA_hw" fmt (h1, h2)
+    | SMULW_hw h -> pp_hw "SMULW_hw" fmt h
+    | AND -> ToRocq.pp_bare fmt "AND"
+    | BFC -> ToRocq.pp_bare fmt "BFC"
+    | BFI -> ToRocq.pp_bare fmt "BFI"
+    | BIC -> ToRocq.pp_bare fmt "BIC"
+    | EOR -> ToRocq.pp_bare fmt "EOR"
+    | MVN -> ToRocq.pp_bare fmt "MVN"
+    | ORR -> ToRocq.pp_bare fmt "ORR"
+    | ASR -> ToRocq.pp_bare fmt "ASR"
+    | LSL -> ToRocq.pp_bare fmt "LSL"
+    | LSR -> ToRocq.pp_bare fmt "LSR"
+    | ROR -> ToRocq.pp_bare fmt "ROR"
+    | REV -> ToRocq.pp_bare fmt "REV"
+    | REV16 -> ToRocq.pp_bare fmt "REV16"
+    | REVSH -> ToRocq.pp_bare fmt "REVSH"
+    | ADR -> ToRocq.pp_bare fmt "ADR"
+    | MOV -> ToRocq.pp_bare fmt "MOV"
+    | MOVT -> ToRocq.pp_bare fmt "MOVT"
+    | UBFX -> ToRocq.pp_bare fmt "UBFX"
+    | UXTB -> ToRocq.pp_bare fmt "UXTB"
+    | UXTH -> ToRocq.pp_bare fmt "UXTH"
+    | SBFX -> ToRocq.pp_bare fmt "SBFX"
+    | CLZ -> ToRocq.pp_bare fmt "CLZ"
+    | CMP -> ToRocq.pp_bare fmt "CMP"
+    | TST -> ToRocq.pp_bare fmt "TST"
+    | CMN -> ToRocq.pp_bare fmt "CMN"
+    | LDR -> ToRocq.pp_bare fmt "LDR"
+    | LDRB -> ToRocq.pp_bare fmt "LDRB"
+    | LDRH -> ToRocq.pp_bare fmt "LDRH"
+    | LDRSB -> ToRocq.pp_bare fmt "LDRSB"
+    | LDRSH -> ToRocq.pp_bare fmt "LDRSH"
+    | STR -> ToRocq.pp_bare fmt "STR"
+    | STRB -> ToRocq.pp_bare fmt "STRB"
+    | STRH -> ToRocq.pp_bare fmt "STRH"
+    | SXTB -> ToRocq.pp_bare fmt "SXTB"
+    | SXTH -> ToRocq.pp_bare fmt "SXTH"
+
+  let pp_asm_op_for_rocq fmt (o : asm_op) =
+    let Arm_instr_decl.ARM_op (m, opts) = o in
+    Format.fprintf fmt "(ARM_op %a %a)" pp_arm_mnemonic m pp_arm_options opts
+
+  let pp_extra_op_for_rocq fmt (o : extra_op) =
+    let open Arm_extra in
+    match o with
+    | Oarm_swap ws -> ToRocq.pp_with_ws fmt "Oarm_swap" ws
+    | Oarm_add_large_imm -> ToRocq.pp_bare fmt "Oarm_add_large_imm"
+    | Osmart_li ws -> ToRocq.pp_with_ws fmt "Osmart_li" ws
+    | Osmart_li_cc ws -> ToRocq.pp_with_ws fmt "Osmart_li_cc" ws
+
 end
 
 module Arm (Lowering_params : Arm_input) : Arch_full.Core_arch
