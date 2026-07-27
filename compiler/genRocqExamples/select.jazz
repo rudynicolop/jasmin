@@ -1,0 +1,32 @@
+/* Testing conditional expressions */
+
+export
+fn from_char(reg u8 x) -> reg u8 {
+   // return value
+   reg u8 r;
+
+   r = x - 48;
+
+   return r;
+}
+
+export
+fn main(reg u64 argc argv) -> reg u8 {
+
+   // Return value
+   reg u8 r;
+
+   // argc is 2 because C is C I guess
+   if argc == 2 {
+      // Get input
+      reg u64 y = [:u64 argv + 8];
+
+      r = from_char([:u8 y]);
+   } else {
+
+     // Oops
+     r = -1;
+   }
+
+   return r;
+}
