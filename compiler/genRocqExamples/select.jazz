@@ -1,4 +1,13 @@
-/* Testing conditional expressions */
+/* Testing conditional expressions
+
+Jasmin does not even let me compile this...
+compilation error in function main:
+linearization: The following assignment remains:
+RAX = RDI ==8u (8u) 0 ? (8u) 0 : (8u) 100 /8u RDI
+Is there an instruction in the target architecture that can implement it?
+More information may be found online: https://jasmin-lang.readthedocs.io/en/stable/misc/faq.html#linearization
+
+*/
 
 export
 fn from_char(reg u8 x) -> reg u8 {
@@ -19,9 +28,10 @@ fn main(reg u64 argc argv) -> reg u8 {
    // argc is 2 because C is C I guess
    if argc == 2 {
       // Get input
-      reg u64 y = [:u64 argv + 8];
+      reg u64 f = [:u64 argv + 8];
+      reg u8 y = from_char([:u8 f]);
 
-      r = from_char([:u8 y]);
+      r = y == (8u)0 ? (8u)0 : (8u)100 / y;
    } else {
 
      // Oops
