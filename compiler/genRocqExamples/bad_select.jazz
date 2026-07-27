@@ -1,0 +1,21 @@
+/*
+Jasmin doesn't let me do anything:
+
+compilation error in function zam_select:
+linearization: The following assignment remains:
+RAX = (32u) (RDI >u (32u) 0 ? 100 / (uint) RDI : 0)
+Is there an instruction in the target architecture that can implement it?
+More information may be found online: https://jasmin-lang.readthedocs.io/en/stable/misc/faq.html#linearization
+*/
+
+export
+fn zam_select(reg u32 x) -> reg u32 {
+
+   // return value
+   reg u32 r;
+
+   // See what happens...
+   r = x > 0 ? 100 / (uint)x : 0;
+
+   return r;
+}
