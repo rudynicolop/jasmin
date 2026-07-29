@@ -18,3 +18,11 @@ fn jmemcpy (
     i += 1;
   }
 }
+
+// export
+// fn main () {
+//    reg u64 target;
+//    reg u64 source;
+//    reg u64 size;
+//    jmemcpy(target, source, size);
+// }

@@ -10,4 +10,10 @@
 \jasminindent{2}[:\jasmintype{u32} target + i * 4] = x;\\
 \jasminindent{2}i += 1;\\
 \jasminindent{1}\}\\
+\}\\
+\jasminkw{export} \jasminkw{fn} \jasmindname{main}() \{\\
+\jasminindent{1}\jasminstorageclass{reg} \jasmintype{u64} target;\\
+\jasminindent{1}\jasminstorageclass{reg} \jasmintype{u64} source;\\
+\jasminindent{1}\jasminstorageclass{reg} \jasmintype{u64} size;\\
+\jasminindent{1}jmemcpy(target, source, size);\\
 \}
