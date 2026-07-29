@@ -12,15 +12,17 @@ Zam!
 
 const int SIZE = 8;
 
-extern void jmemcpy(uint64_t *target, uint64_t *source, uint64_t size);
+/* In Jasmin, we just copy 32-bit words, not caring about the sign.
+   Here in C, we can pretend that the values are singned 32-bit integers! */
+extern void jmemcpy(int32_t *target, int32_t *source, int64_t size);
 
 int main(void) {
-  uint64_t source[] = {2, 4, 8, 16, 32, 66, 666, 42};
-  uint64_t target[SIZE];
+  int32_t source[] = {2, -4, -8, 16, -32, 66, 666, -42};
+  int32_t target[SIZE];
   jmemcpy(target, source, SIZE);
 
   for (int i = 0; i < SIZE; i++) {
-    printf("%lu ", (unsigned long)target[i]);
+    printf("%d ", target[i]);
   }
 
   return 0;
