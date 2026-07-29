@@ -1,5 +1,8 @@
 /* Arguments `target` and `source` are really pointers!
-   We treat them as pointers to arrays of `u32` words in memory. */
+   We treat them as pointers to arrays of `u32` words in memory.
+
+   To get the latex version, run: [./jasmin2tex -o memory_copy.tex memory_copy.jazz]
+*/
 export
 fn jmemcpy (
    reg u64 target,

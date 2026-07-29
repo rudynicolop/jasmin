@@ -1,0 +1,13 @@
+% The produced LATEX snippet is meant to be included in a
+% jasmincode environment provided by the jasmin package
+% defined in file: 
+% https://jasmin-lang.readthedocs.io/en/stable/_static/jasmin.sty
+%
+\jasminkw{export} \jasminkw{fn} \jasmindname{jmemcpy}(\jasminstorageclass{reg} \jasmintype{u64} target, \jasminstorageclass{reg} \jasmintype{u64} source, \jasminstorageclass{reg} \jasmintype{u64} size) \{\\
+\jasminindent{1}\jasminstorageclass{reg} \jasmintype{u64} i = 0;\\
+\jasminindent{1}\jasminkw{while}  (i < size) \{\\
+\jasminindent{2}\jasminstorageclass{reg} \jasmintype{u32} x = [:\jasmintype{u32} source + i * 4];\\
+\jasminindent{2}[:\jasmintype{u32} target + i * 4] = x;\\
+\jasminindent{2}i += 1;\\
+\jasminindent{1}\}\\
+\}
