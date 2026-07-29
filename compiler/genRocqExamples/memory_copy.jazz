@@ -1,9 +1,10 @@
+/* `target` and `source` are really pointers! */
 export
 fn jmemcpy (
    reg u64 target,
    reg u64 source,
    reg u64 size
-) -> reg u64, reg u64 {
+) {
 
   reg u64 i = 0;
 
@@ -12,7 +13,4 @@ fn jmemcpy (
     [:u64 target + i * 8] = x;
     i += 1;
   }
-
-  return (target, source);
-
 }
