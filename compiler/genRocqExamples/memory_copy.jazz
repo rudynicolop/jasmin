@@ -1,0 +1,18 @@
+export
+fn jmemcpy (
+   reg u64 target,
+   reg u64 source,
+   reg u64 size
+) -> reg u64, reg u64 {
+
+  reg u64 i = 0;
+
+  while (i < size) {
+    reg u64 x = [:u64 source + i * 8];
+    [:u64 target + i * 8] = x;
+    i += 1;
+  }
+
+  return (target, source);
+
+}
