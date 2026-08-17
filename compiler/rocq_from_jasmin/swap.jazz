@@ -1,0 +1,46 @@
+/* Example of a memory swap function.
+
+   To generate the Rocq code, run the command:
+   ```sh
+   dune exec jasmin2rocq -- rocq_from_jasmin/swap.jazz swap_prog -o  rocq_from_jasmin/swap_jazz.v
+   ```
+/*
+
+/* A swap function for pointers (with addresses in the space of 64-bit words),
+   which hold 32-bit words in memory.
+
+   Parameters:
+   - `x` an `u64` address storing a `u32`
+   - `y` an `u64` address storing a `u32`
+
+   Returns: Nothing
+
+   Modifies:
+   - `x` stores the value pointed to by `y`
+   - `y` stores the value pointed to by `x`
+*/
+export
+fn swap(reg u64 x, reg u64 y) {
+
+   // Temporary variable to store `x`'s value.
+   reg u32 z = [:u32 x];
+
+   // Move `y`'s value to `x`.
+   [:u32 x] = [:u32 y];
+
+   // Move `x`'s value to `y`.
+   [:u32 y] = z;
+}
+
+/* Test the `swap` function on some preallocated locations.
+*/
+export
+fn run_swap(reg u64 x, reg u64 y) -> reg u32 {
+
+   // Perform the swap.
+   swap(x, y);
+
+   // Should return `x`'s former value.
+   reg u32 n = [:u32 y]; 
+   return n;
+}
